@@ -3,16 +3,22 @@
   <meta charset="UTF-8" />
   <title>Meditational</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="" />
-  <style></style>
-  <script src="script.js"></script>
+  <link rel="stylesheet" href="style.css" />
   <body>
-    <div class="">
-      <h1>Meditational</h1>
+    <div class="container">
+      <h1>Meditational.</h1>
+      <div class="input-section">
+        <label for="minutes"> Set timer:</label>
+        <input type="number" id="minutes" min="1" value="1" />
+      </div>
+      <div id="countdown">
+        <p>00:00</p>
+      </div>
+      <div class="button">
+        <button id="start">start</button>
+        <button id="reset">reset</button>
+      </div>
     </div>
-
-    <section>
-      <button>start</button>
-    </section>
+    <script src="script.js"></script>
   </body>
 </html>
