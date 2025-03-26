@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <meta charset="UTF-8" />
-  <title>Meditational</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <title>Meditational</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
   <body>
+    <header>
+      <h1>Meditational.org</h1>
+    </header>
     <div class="container">
-      <h1>Meditational.</h1>
       <div class="input-section">
-        <label for="minutes"> Set timer:</label>
         <input type="number" id="minutes" min="1" value="1" />
       </div>
       <div id="countdown">
-        <p>00:00</p>
+        <p>1:00</p>
       </div>
       <div class="button">
-        <button id="start">start</button>
-        <button id="reset">reset</button>
+        <button id="playPause">▶</button>
+        <button id="reset">✕</button>
       </div>
     </div>
+    <footer>
+      <p>© 2025 Meditational.org</p>
+    </footer>
     <script src="script.js"></script>
   </body>
 </html>

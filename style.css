@@ -7,71 +7,91 @@ body {
     rgb(0, 18, 33) 450%
   );
   color: rgb(255, 255, 255);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-  height: 100%; /* Full viewport height */
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .container {
-  font-size: clamp(1.8rem, 5vw, 2.5rem); /* Scales between 1.8rem-2.5rem */
-  height: 100vh; /* 100% of viewport height */
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center horizontally */
-  padding: 10px 20px; /* Padding inside container */
-  box-sizing: border-box; /* Include padding in height calc */
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 50px auto; /* Centers the container */
+  text-align: center; /* Centers the content inside the container */
 }
-
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
 h1 {
   font-family: "Courier Prime", monospace;
   letter-spacing: 2px; /* Adds breathing space */
   font-weight: 300;
-  color: rgb(164, 176, 215);
+  color: rgb(193, 201, 229);
   margin-top: 0;
   font-size: 2.5rem; /* Adjust size */
   margin-bottom: 10px;
 }
-
-.input-section {
-  margin-bottom: 10px;
-}
-
-label {
-  font-size: 1rem;
-}
 input {
   width: 100px;
   padding: 5px;
-  font-size: 1rem;
-  margin-left: 10px;
-  border: 1px;
+  font-size: 1.5rem;
+  background-color: rgb(193, 201, 229);
+  color: #ffffff;
+  border: 1px solid #ccc; /* Added border style */
   border-radius: 5px;
+  display: block;
+  margin: 0 auto; /* Centers the input element */
+  text-align: center; /* Centers the numbers inside the input */
+  box-sizing: border-box;
+  transition: all 1s ease-in-out;
+}
+
+/* Fix button styles */
+.button {
+  display: flex;
+  gap: 15px; /* Space between buttons */
+  justify-content: center;
+  align-items: center;
 }
 
 .button button {
-  padding: 10px, 20px;
   font-size: 1rem;
-  margin: 10px;
-  color: rgb(126, 82, 0);
-  background-color: rgb(164, 176, 215);
+  min-width: 60px; /* Prevent width changes when icon changes */
+  height: 40px; /* Fixed height */
+  color: rgb(255, 255, 255);
+  background-color: rgb(193, 201, 229);
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-bottom: 10px;
+}
+
+/* Stabilize countdown */
+#countdown {
+  margin: 15%; /* Removes default spacing that may push elements */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem; /* Prevent height changes */
+  font-family: monospace; /* Equal width characters */
+  text-align: center;
+  font-size: 5rem;
+}
+
+#countdown p {
+  margin: 0;
+  width: 100%; /* Ensures stability */
+  text-align: center;
 }
 
 .button button:hover {
   background-color: rgb(255, 255, 255);
+  color: rgb(193, 201, 229);
 }
 
-#countdown {
-  font-size: 2rem;
-  margin-top: 20px;
-  font-weight: bold;
-  margin-bottom: 10px 0;
+footer {
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  color: rgb(193, 201, 229);
+  bottom: 0;
 }

@@ -1,33 +1,84 @@
 const minuteInput = document.getElementById("minutes");
-const startbutton = document.getElementById("start");
+const playPause = document.getElementById("playPause");
 const resetbutton = document.getElementById("reset");
 const countdowndisplay = document.getElementById("countdown");
+
 let countdowninterval;
+let timeleft = 0;
+let isPaused;
 
-startbutton.addEventListener("click", () => {
-  const minutes = minuteInput.value;
+playPause.addEventListener("click", () => {
+  if (!countdowninterval || isPaused) {
+    // Start or resume timer
+    if (timeleft === 0) {
+      const minutes = parseInt(minuteInput.value, 10) || 0;
+      timeleft = minutes * 60;
+    }
+    playPause.textContent = "⏸"; // Pause icon
+    isPaused = false;
+    minuteInput.style.visibility = "hidden"; // Make input invisible
 
-  startbutton.disabled = true;
+    // Start interval if not running
+    if (!countdowninterval) {
+      countdowninterval = setInterval(updateTimer, 1000);
+    }
+  } else {
+    // Pause timer
+    playPause.textContent = "▶"; // Play icon
+    isPaused = true;
+  }
+});
+
+resetbutton.addEventListener("click", () => {
+  resetTimer();
+});
+
+function updateTimer() {
+  if (!isPaused) {
+    timeleft--;
+    if (timeleft <= 0) {
+      clearInterval(countdowninterval);
+      countdowninterval = null;
+      timeleft = 0;
+      playPause.textContent = "▶"; // Play icon
+      isPaused = false;
+    }
+    displayTime();
+  }
+}
+
+function displayTime() {
+  const minutes = Math.floor(timeleft / 60);
+  const seconds = timeleft % 60;
+  countdowndisplay.innerHTML = `<p>${minutes}:${String(seconds).padStart(
+    2,
+    "0"
+  )}</p>`;
+}
+
+function resetTimer() {
+  clearInterval(countdowninterval);
+  countdowninterval = null;
+  const minutes = parseInt(minuteInput.value, 10) || 0;
+  timeleft = minutes * 60;
+  isPaused = false;
+  playPause.textContent = "▶"; // Play icon
+  displayTime();
+  minuteInput.style.visibility = "visible"; // Make input invisible
+}
+
+// Add this event listener for the input element
+minuteInput.addEventListener("input", updateDisplayFromInput);
+
+function updateDisplayFromInput() {
+  const minutes = parseInt(minuteInput.value, 10) || 0;
   timeleft = minutes * 60;
 
-  countdownInterval = setInterval(() => {
-    const minutes = Math.floor(timeleft / 60);
-    const seconds = timeleft % 60;
+  // Update the display without starting timer
+  const displayMinutes = Math.floor(timeleft / 60);
+  const displaySeconds = timeleft % 60;
 
-    countdowndisplay.innerText = `${minutes}:${
-      seconds < 10 ? "0" : ""
-    }${seconds}`;
-    clearInterval(countdowninterval);
-    timeleft--;
-    if (timeleft < 0) {
-      clearInterval(countdownInterval);
-      countdowndisplay.textContent = "Time's up";
-    }
-  }, 1000);
-});
-resetbutton.addEventListener("click", () => {
-  startbutton.disabled = false;
-  clearInterval(countdownInterval);
-  countdowndisplay.textContent = "00:00";
-  minuteInput.value = "";
-});
+  countdowndisplay.innerText = `${displayMinutes}:${
+    displaySeconds < 10 ? "0" : ""
+  }${displaySeconds}`;
+}
