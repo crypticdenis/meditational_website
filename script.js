@@ -11,6 +11,7 @@ playPause.addEventListener("click", () => {
   if (!countdowninterval || isPaused) {
     // Start or resume timer
     if (timeleft === 0) {
+      playSound(); // Play sound when starting the timer
       const minutes = parseInt(minuteInput.value, 10) || 0;
       timeleft = minutes * 60;
     }
@@ -20,6 +21,7 @@ playPause.addEventListener("click", () => {
 
     // Start interval if not running
     if (!countdowninterval) {
+      playSound(); // Play sound when starting the timer
       countdowninterval = setInterval(updateTimer, 1000);
     }
   } else {
@@ -33,10 +35,17 @@ resetbutton.addEventListener("click", () => {
   resetTimer();
 });
 
+function playSound() {
+  const audio = new Audio("gong.mp3"); // Replace with your sound file path
+  audio.play();
+  audio.volume = 0.5; // Set volume to 50%
+}
+
 function updateTimer() {
   if (!isPaused) {
     timeleft--;
     if (timeleft <= 0) {
+      playSound();
       clearInterval(countdowninterval);
       countdowninterval = null;
       timeleft = 0;
