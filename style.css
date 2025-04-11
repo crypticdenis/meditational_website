@@ -16,7 +16,7 @@ header {
 
 .container {
   max-width: 600px;
-  padding: 20px;
+  padding: 10px;
   border-radius: 5px;
   margin: 50px auto; /* Centers the container */
   text-align: center; /* Centers the content inside the container */
@@ -46,10 +46,21 @@ input {
   transition: all 1s ease-in-out;
 }
 
+.input-section {
+  margin-right: auto;
+}
+
+.input-section label {
+  display: block; /* Ensures label is on a new line */
+  font-size: 1.2rem; /* Adjust label font size if needed */
+  color: rgb(255, 255, 255); /* Matches the text color */
+}
+
 /* Fix button styles */
 .button {
+  margin-top: 75px; /* Space above the button section */
   display: flex;
-  gap: 15px; /* Space between buttons */
+  gap: 25px; /* Space between buttons */
   justify-content: center;
   align-items: center;
 }
@@ -67,7 +78,7 @@ input {
 
 /* Stabilize countdown */
 #countdown {
-  margin: 15%; /* Removes default spacing that may push elements */
+  margin: 5%; /* Removes default spacing that may push elements */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,4 +105,80 @@ footer {
   width: 100%;
   color: rgb(193, 201, 229);
   bottom: 0;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 65px; /* Increased width */
+  height: 24px; /* Reduced height */
+  margin: 0 auto; /* Centers the switch */
+  margin-bottom: 10px;
+  margin-top: 10px; /* Added margin for spacing */
+}
+
+.hidden {
+  visibility: hidden; /* Hides the element but keeps its space */
+  opacity: 0; /* Makes it fully transparent */
+  transition: opacity 0.3s ease-in-out; /* Smooth transition for visibility */
+}
+
+.hidden:not(.hidden) {
+  visibility: visible;
+  opacity: 1;
+}
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; /* Adjusted height */
+  width: 18px; /* Adjusted width */
+  left: 3px; /* Adjusted position */
+  bottom: 3px; /* Adjusted position */
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: rgb(193, 201, 229);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px rgb(193, 201, 229);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(40px); /* Adjusted for new width */
+  -ms-transform: translateX(40px); /* Adjusted for new width */
+  transform: translateX(40px); /* Adjusted for new width */
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 24px; /* Adjusted for new height */
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }

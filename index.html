@@ -16,8 +16,18 @@
       <h1>Meditational.org</h1>
     </header>
     <div class="container">
-      <div class="input-section">
+      <div class="input-section" id="timerInput">
+        <label for="minutes">Timer</label>
         <input type="number" id="minutes" min="1" value="1" />
+        <hr />
+      </div>
+      <div class="input-section" id="intervalInput">
+        <label for="interval">Interval</label>
+        <label class="switch">
+          <input type="checkbox" id="toggleInterval" />
+          <span class="slider round"></span>
+        </label>
+        <input type="number" id="interval" min="1" value="1" class="hidden" />
       </div>
       <div id="countdown">
         <p>1:00</p>
