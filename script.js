@@ -46,6 +46,7 @@ function updateTimer() {
     timeleft--;
     if (timeleft <= 0) {
       playSound();
+      minuteInput.style.visibility = "visible"; // Make input invisible
       clearInterval(countdowninterval);
       countdowninterval = null;
       timeleft = 0;
