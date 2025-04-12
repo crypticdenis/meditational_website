@@ -79,7 +79,6 @@ resetbutton.addEventListener("click", () => {
 function playSound() {
   const audio = new Audio("gong.mp3"); // Replace with your sound file path
   audio.play();
-  audio.volume = 0.5; // Set volume to 50%
 }
 
 document.addEventListener("DOMContentLoaded", () => {
