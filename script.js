@@ -1,27 +1,35 @@
 const minuteInput = document.getElementById("minutes");
-const timerElement = document.getElementById("timerInput");
 const interval = document.getElementById("intervalInput");
-const playPause = document.getElementById("playPause");
+const playPauseButton = document.getElementById("playPause");
 const resetbutton = document.getElementById("reset");
 const countdowndisplay = document.getElementById("countdown");
+const settings = document.getElementById("settings");
 
 let countdowninterval;
 let timeleft = 0;
 let isPaused;
 
-playPause.addEventListener("click", () => {
+playPauseButton.addEventListener("click", playPause);
+minuteInput.addEventListener("input", updateDisplayFromInput);
+
+function playPause() {
+  // Check if the timer is already running
   if (!countdowninterval || isPaused) {
     // Start or resume timer
-    if (timeleft === 0 || isPaused) {
+    if (timeleft === 0) {
       playSound(); // Play sound when starting the timer
       const minutes = parseInt(minuteInput.value, 10) || 0;
       timeleft = minutes * 60;
     }
-    playPause.textContent = "⏸"; // Pause icon
+    playPauseButton.textContent = "⏸"; // Pause icon
     isPaused = false;
-    timerElement.style.visibility = "hidden"; // Make input invisible
-    interval.style.visibility = "hidden"; // Make input invisible
-    minuteInput.style.visibility = "hidden"; // Also hide minute input
+
+    // Hide settings with a smooth fade-out
+    settings.classList.add("hidden");
+
+    // Move the countdown up
+    countdowndisplay.classList.add("move-up");
+
     // Start interval if not running
     if (!countdowninterval) {
       playSound(); // Play sound when starting the timer
@@ -29,13 +37,19 @@ playPause.addEventListener("click", () => {
     }
   } else {
     // Pause timer
-    playPause.textContent = "▶"; // Play icon
+    playPauseButton.textContent = "▶"; // Play icon
     isPaused = true;
   }
-});
+}
 
 resetbutton.addEventListener("click", () => {
   resetTimer();
+
+  // Show settings with a smooth fade-in
+  settings.classList.remove("hidden");
+
+  // Reset the countdown position
+  countdowndisplay.classList.remove("move-up");
 });
 
 function playSound() {
@@ -43,6 +57,7 @@ function playSound() {
   audio.play();
   audio.volume = 0.5; // Set volume to 50%
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("toggleInterval");
   const intervalInput = document.getElementById("interval");
@@ -55,18 +70,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
 function updateTimer() {
   if (!isPaused) {
     timeleft--;
     if (timeleft <= 0) {
       playSound();
-      minuteInput.style.visibility = "visible"; // Make input invisible
-      timerElement.style.visibility = "visible"; // Make input invisible
-      interval.style.visibility = "visible"; // Make input invisible
+      settings.classList.remove("hidden");
+      countdowndisplay.classList.remove("move-up");
       clearInterval(countdowninterval);
       countdowninterval = null;
       timeleft = 0;
-      playPause.textContent = "▶"; // Play icon
+      playPauseButton.textContent = "▶"; // Play icon
       isPaused = false;
     }
     displayTime();
@@ -88,15 +103,11 @@ function resetTimer() {
   const minutes = parseInt(minuteInput.value, 10) || 0;
   timeleft = minutes * 60;
   isPaused = false;
-  playPause.textContent = "▶"; // Play icon
+  playPauseButton.textContent = "▶"; // Play icon
   displayTime();
-  timerElement.style.visibility = "visible"; // Make input invisible
-  interval.style.visibility = "visible"; // Make input invisible
-  minuteInput.style.visibility = "visible"; // Make input invisible
+  settings.style.visibility = "visible";
+  settings.classList.remove("hidden");
 }
-
-// Add this event listener for the input element
-minuteInput.addEventListener("input", updateDisplayFromInput);
 
 function updateDisplayFromInput() {
   const minutes = parseInt(minuteInput.value, 10) || 0;

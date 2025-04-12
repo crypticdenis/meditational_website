@@ -50,6 +50,17 @@ input {
   margin-right: auto;
 }
 
+/* Smooth transition for hiding settings */
+.settings {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out; /* Smooth fade-out effect */
+}
+
+.settings.hidden {
+  opacity: 0;
+  pointer-events: none; /* Prevent interaction when hidden */
+}
+
 .input-section label {
   display: block; /* Ensures label is on a new line */
   font-size: 1.2rem; /* Adjust label font size if needed */
@@ -76,7 +87,7 @@ input {
   cursor: pointer;
 }
 
-/* Stabilize countdown */
+/* Countdown hover animation */
 #countdown {
   margin: 5%; /* Removes default spacing that may push elements */
   display: flex;
@@ -86,6 +97,11 @@ input {
   font-family: monospace; /* Equal width characters */
   text-align: center;
   font-size: 5rem;
+  transition: transform 0.5s ease-in-out; /* Smooth movement */
+}
+
+#countdown.move-up {
+  transform: translateY(-100px); /* Move the countdown up */
 }
 
 #countdown p {
