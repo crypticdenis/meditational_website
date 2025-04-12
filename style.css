@@ -11,7 +11,13 @@ body {
 
 header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+}
+
+.quote {
+  font-family: "Courier Prime", monospace;
+  color: rgb(193, 201, 229);
+  margin: 0;
 }
 
 .container {
@@ -29,7 +35,6 @@ h1 {
   color: rgb(193, 201, 229);
   margin-top: 0;
   font-size: 2.5rem; /* Adjust size */
-  margin-bottom: 10px;
 }
 input {
   width: 100px;
@@ -159,7 +164,7 @@ footer {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: #ffffff;
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
@@ -171,7 +176,7 @@ footer {
   width: 18px; /* Adjusted width */
   left: 3px; /* Adjusted position */
   bottom: 3px; /* Adjusted position */
-  background-color: white;
+  background-color: rgb(193, 201, 229);
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
@@ -185,6 +190,21 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
+  -webkit-transform: translateX(40px); /* Adjusted for new width */
+  -ms-transform: translateX(40px); /* Adjusted for new width */
+  transform: translateX(40px); /* Adjusted for new width */
+}
+.top-right-image {
+  position: absolute;
+  top: 10px; /* Adjust the distance from the top */
+  right: 10px; /* Adjust the distance from the right */
+  width: 30px; /* Adjust the size of the image */
+  height: auto; /* Maintain aspect ratio */
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+input:checked + .slider:before {
+  background-color: #ffffff; /* Change the circle to white */
   -webkit-transform: translateX(40px); /* Adjusted for new width */
   -ms-transform: translateX(40px); /* Adjusted for new width */
   transform: translateX(40px); /* Adjusted for new width */

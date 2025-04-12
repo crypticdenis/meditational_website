@@ -4,13 +4,33 @@ const playPauseButton = document.getElementById("playPause");
 const resetbutton = document.getElementById("reset");
 const countdowndisplay = document.getElementById("countdown");
 const settings = document.getElementById("settings");
+const musicOnOff = document.getElementById("musicOn");
 
 let countdowninterval;
 let timeleft = 0;
 let isPaused;
+let intervalTime = 0; // Time left for the interval
+let intervalDuration = 0; // Duration of the interval
+let audio = new Audio("background-music.mp3"); // Create a single Audio object
+audio.loop = true; // Enable looping
 
 playPauseButton.addEventListener("click", playPause);
 minuteInput.addEventListener("input", updateDisplayFromInput);
+musicOnOff.addEventListener("click", musicOnOffClick);
+
+function musicOnOffClick() {
+  const musicIcon = document.getElementById("musicOn");
+
+  if (musicIcon.src.includes("volume.png")) {
+    // Switch to music-off image
+    musicIcon.src = "volume-mute.png";
+    audio.pause(); // Stop the music
+  } else {
+    // Switch to music-on image
+    musicIcon.src = "volume.png";
+    audio.play(); // Play and loop the music
+  }
+}
 
 function playPause() {
   // Check if the timer is already running
@@ -50,6 +70,10 @@ resetbutton.addEventListener("click", () => {
 
   // Reset the countdown position
   countdowndisplay.classList.remove("move-up");
+
+  // Reset interval time
+  intervalTime = 0;
+  intervalDuration = 0;
 });
 
 function playSound() {
@@ -61,6 +85,19 @@ function playSound() {
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("toggleInterval");
   const intervalInput = document.getElementById("interval");
+
+  // Ensure interval duration is valid
+  intervalInput.addEventListener("input", () => {
+    const maxInterval = parseInt(minuteInput.value, 10) || 0;
+    const intervalValue = parseInt(intervalInput.value, 10) || 0;
+
+    if (intervalValue > maxInterval) {
+      intervalInput.value = maxInterval; // Restrict interval to timer duration
+    }
+
+    intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0; // Convert to seconds
+    intervalTime = intervalDuration; // Reset interval time
+  });
 
   toggle.addEventListener("change", () => {
     if (toggle.checked) {
@@ -75,15 +112,28 @@ function updateTimer() {
   if (!isPaused) {
     timeleft--;
     if (timeleft <= 0) {
-      playSound();
+      playSound(); // Play sound when the timer ends
       settings.classList.remove("hidden");
       countdowndisplay.classList.remove("move-up");
       clearInterval(countdowninterval);
       countdowninterval = null;
       timeleft = 0;
-      playPauseButton.textContent = "▶"; // Play icon
+      playPauseButton.textContent = "▶"; // Reset play button to play icon
       isPaused = false;
     }
+
+    // Handle interval gong
+    if (
+      document.getElementById("toggleInterval").checked &&
+      intervalDuration > 0
+    ) {
+      intervalTime--;
+      if (intervalTime <= 0) {
+        playSound(); // Play gong for interval
+        intervalTime = intervalDuration; // Reset interval time
+      }
+    }
+
     displayTime();
   }
 }
