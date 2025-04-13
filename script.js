@@ -117,7 +117,11 @@ function updateTimer() {
       countdowndisplay.classList.remove("move-up");
       clearInterval(countdowninterval);
       countdowninterval = null;
-      timeleft = 0;
+
+      const minutes = parseInt(minuteInput.value, 10) || 0;
+      timeleft = minutes * 60; // Reset timeleft
+      displayTime(); // Update the display
+
       playPauseButton.textContent = "▶"; // Reset play button to play icon
       isPaused = false;
     }
