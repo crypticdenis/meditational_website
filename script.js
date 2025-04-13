@@ -13,6 +13,7 @@ let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
 let audio = new Audio("background-music.mp3"); // Create a single Audio object
 audio.loop = true; // Enable looping
+audio.volume = 0.5; // Set volume (0.0 to 1.0)
 
 playPauseButton.addEventListener("click", playPause);
 minuteInput.addEventListener("input", updateDisplayFromInput);
