@@ -1,11 +1,73 @@
+body.pulsate::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vmax;
+  height: 100vmax;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.6) 10%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  animation: rippleEffect 3s ease-out forwards;
+}
+
+@keyframes rippleEffect {
+  0% {
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.5);
+    opacity: 0;
+  }
+}
+
+.animated-hr {
+  position: relative;
+  height: 1px;
+  background: transparent;
+  border: none;
+  margin: 2rem auto;
+  width: 100%;
+  overflow: hidden;
+}
+
+.animated-hr::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 1px;
+  width: 0;
+  background: white;
+  transform: translateX(-50%);
+  animation: hrExpand 3s ease-out forwards;
+}
+
+@keyframes hrExpand {
+  0% {
+    width: 0;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: rgb(2, 0, 36);
-  background: radial-gradient(
-    circle,
-    rgb(164, 176, 215) 0%,
-    rgb(0, 18, 33) 450%
-  );
+  background: rgb(2, 0, 20);
+  background: radial-gradient(circle, rgb(40, 50, 70) 0%, rgb(0, 8, 16) 200%);
   color: rgb(255, 255, 255);
 }
 

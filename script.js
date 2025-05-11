@@ -13,6 +13,10 @@ let isPaused;
 let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
 
+window.addEventListener("load", () => {
+  document.body.classList.add("pulsate");
+});
+
 const audioFiles = {
   "river.mp3": new Audio("river.mp3"),
   "woods.mp3": new Audio("woods.mp3"),
