@@ -48,6 +48,7 @@ input {
   margin: 0 auto; /* Centers the input element */
   text-align: center; /* Centers the numbers inside the input */
   box-sizing: border-box;
+  outline: none;
   transition: all 1s ease-in-out;
 }
 
@@ -196,11 +197,31 @@ input:checked + .slider:before {
 }
 .top-right-image {
   position: absolute;
-  top: 10px; /* Adjust the distance from the top */
+  top: 15px; /* Adjust the distance from the top */
   right: 10px; /* Adjust the distance from the right */
-  width: 30px; /* Adjust the size of the image */
+  width: 50px; /* Adjust the size of the image */
+  z-index: 1000; /* Ensure it appears above other elements */
+  margin-bottom: 5px; /* Space below the image */
+}
+
+.dropdown {
+  position: absolute;
+  top: 37px; /* Adjust the distance from the top */
+  right: 90px; /* Adjust the distance from the right */
   height: auto; /* Maintain aspect ratio */
   z-index: 1000; /* Ensure it appears above other elements */
+  margin-bottom: 5px; /* Space below the image */
+}
+
+.dropdown-s {
+  background-color: rgb(193, 201, 229);
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  padding: 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: large;
 }
 
 input:checked + .slider:before {

@@ -5,19 +5,40 @@ const resetbutton = document.getElementById("reset");
 const countdowndisplay = document.getElementById("countdown");
 const settings = document.getElementById("settings");
 const musicOnOff = document.getElementById("musicOn");
+const musicSelect = document.getElementById("musicSelect"); // >>> ADDED
 
 let countdowninterval;
 let timeleft = 0;
 let isPaused;
 let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
-let audio = new Audio("background-music.mp3"); // Create a single Audio object
-audio.loop = true; // Enable looping
-audio.volume = 0.5; // Set volume (0.0 to 1.0)
+
+const audioFiles = {
+  "river.mp3": new Audio("river.mp3"),
+  "woods.mp3": new Audio("woods.mp3"),
+};
+
+for (const a of Object.values(audioFiles)) {
+  a.loop = true;
+  a.volume = 0.5;
+}
+
+let audio = audioFiles[musicSelect.value];
 
 playPauseButton.addEventListener("click", playPause);
 minuteInput.addEventListener("input", updateDisplayFromInput);
 musicOnOff.addEventListener("click", musicOnOffClick);
+
+// >>> ADDED: handle music selection change
+musicSelect.addEventListener("change", function () {
+  const wasPlaying = !audio.paused;
+  audio.pause();
+  audio.currentTime = 0;
+  audio = audioFiles[this.value];
+  if (musicOnOff.src.includes("volume.png") && wasPlaying) {
+    audio.play();
+  }
+});
 
 function musicOnOffClick() {
   const musicIcon = document.getElementById("musicOn");
