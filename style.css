@@ -69,6 +69,7 @@ body {
   background: rgb(2, 0, 20);
   background: radial-gradient(circle, rgb(40, 50, 70) 0%, rgb(0, 8, 16) 200%);
   color: rgb(255, 255, 255);
+  overflow: hidden; /* Disable scroll */
 }
 
 header {
