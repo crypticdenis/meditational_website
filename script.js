@@ -1,3 +1,7 @@
+window.addEventListener("load", () => {
+  document.body.classList.add("pulsate");
+});
+
 const minuteInput = document.getElementById("minutes");
 const interval = document.getElementById("intervalInput");
 const playPauseButton = document.getElementById("playPause");
@@ -12,10 +16,6 @@ let timeleft = 0;
 let isPaused;
 let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
-
-window.addEventListener("load", () => {
-  document.body.classList.add("pulsate");
-});
 
 const audioFiles = {
   "river.mp3": new Audio("river.mp3"),
