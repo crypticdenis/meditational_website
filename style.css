@@ -102,7 +102,7 @@ input {
   width: 100px;
   padding: 5px;
   font-size: 1.5rem;
-  background-color: rgb(193, 201, 229);
+  background-color: rgb(141, 157, 218);
   color: #ffffff;
   border: 1px solid #ccc; /* Added border style */
   border-radius: 5px;
@@ -149,7 +149,7 @@ input {
   min-width: 60px; /* Prevent width changes when icon changes */
   height: 40px; /* Fixed height */
   color: rgb(255, 255, 255);
-  background-color: rgb(193, 201, 229);
+  background-color: rgb(141, 157, 218);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -180,14 +180,14 @@ input {
 
 .button button:hover {
   background-color: rgb(255, 255, 255);
-  color: rgb(193, 201, 229);
+  color: rgb(141, 157, 218);
 }
 
 footer {
   text-align: center;
   position: fixed;
   width: 100%;
-  color: rgb(193, 201, 229);
+  color: rgb(141, 157, 218);
   bottom: 0;
 }
 
@@ -239,17 +239,17 @@ footer {
   width: 18px; /* Adjusted width */
   left: 3px; /* Adjusted position */
   bottom: 3px; /* Adjusted position */
-  background-color: rgb(193, 201, 229);
+  background-color: rgb(141, 157, 218);
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: rgb(193, 201, 229);
+  background-color: rgb(141, 157, 218);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px rgb(193, 201, 229);
+  box-shadow: 0 0 1px rgb(141, 157, 218);
 }
 
 input:checked + .slider:before {
@@ -276,8 +276,7 @@ input:checked + .slider:before {
 }
 
 .dropdown-s {
-  background-color: rgb(193, 201, 229);
-  border: none;
+  background-color: rgb(141, 157, 218);
   outline: none;
   color: rgb(255, 255, 255);
   padding: 10px;
