@@ -260,7 +260,7 @@ input:checked + .slider:before {
 }
 .top-right-image {
   position: absolute;
-  top: 15px; /* Adjust the distance from the top */
+  top: 16px; /* Adjust the distance from the top */
   right: 10px; /* Adjust the distance from the right */
   width: 50px; /* Adjust the size of the image */
   z-index: 1000; /* Ensure it appears above other elements */
