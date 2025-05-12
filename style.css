@@ -308,3 +308,10 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+footer.scroll {
+  padding: 1rem;
+  text-align: center;
+  background: transparent; /* or your choice */
+  position: relative;
+}
