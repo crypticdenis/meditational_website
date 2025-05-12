@@ -13,6 +13,20 @@ body.pulsate::before {
   pointer-events: none;
   animation: rippleEffect 3s ease-out forwards;
 }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: rgb(2, 0, 20);
+  background: radial-gradient(circle, rgb(40, 50, 70) 0%, rgb(0, 8, 16) 200%);
+  color: rgb(255, 255, 255);
+}
+
+body.no-scroll {
+  overflow: hidden; /* Prevents scrolling */
+}
+
+body.scroll {
+  overflow-y: auto; /* Allows scrolling */
+}
 
 @keyframes rippleEffect {
   0% {
@@ -26,6 +40,10 @@ body.pulsate::before {
     transform: translate(-50%, -50%) scale(3.5);
     opacity: 0;
   }
+}
+.fullwidth-hr {
+  width: 80vw;
+  margin-left: calc(-40vw + 50%);
 }
 
 .animated-hr {
@@ -64,30 +82,59 @@ body.pulsate::before {
   }
 }
 
-* {
-  box-sizing: border-box;
+.container {
+  max-width: 600px;
+  width: 90%;
+  margin: 50px auto;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* <-- THIS centers children */
 }
 
-.container,
-.settings,
-header,
-footer {
-  max-width: 100vw;
+#countdown {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: monospace;
+  font-size: 5rem;
+  margin-top: 2rem;
+  width: 100%;
+  text-align: center;
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: rgb(2, 0, 20);
-  background: radial-gradient(circle, rgb(40, 50, 70) 0%, rgb(0, 8, 16) 200%);
-  color: rgb(255, 255, 255);
+#countdown p {
+  margin: 0;
+  text-align: center;
+  width: 100%;
 }
 
-body.no-scroll {
-  overflow: hidden; /* Prevents scrolling */
+#countdown.move-up {
+  transform: translateY(-100px); /* Move the countdown up */
+  transition: transform 1.5s ease-in-out; /* Smooth transition */
 }
 
-body.scroll {
-  overflow-y: auto; /* Allows scrolling */
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin-top: 2rem;
+  flex-wrap: wrap; /* ensures responsive wrapping */
+}
+
+.button button {
+  min-width: 60px;
+  height: 40px;
+  font-size: 1rem;
+  background-color: rgb(141, 157, 218);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 header {
@@ -99,14 +146,6 @@ header {
   font-family: "Courier Prime", monospace;
   color: rgb(193, 201, 229);
   margin: 0;
-}
-
-.container {
-  max-width: 600px;
-  padding: 10px;
-  border-radius: 5px;
-  margin: 50px auto; /* Centers the container */
-  text-align: center; /* Centers the content inside the container */
 }
 
 h1 {
@@ -152,49 +191,6 @@ input {
   display: block; /* Ensures label is on a new line */
   font-size: 1.2rem; /* Adjust label font size if needed */
   color: rgb(255, 255, 255); /* Matches the text color */
-}
-
-/* Fix button styles */
-.button {
-  margin-top: 75px; /* Space above the button section */
-  display: flex;
-  gap: 25px; /* Space between buttons */
-  justify-content: center;
-  align-items: center;
-}
-
-.button button {
-  font-size: 1rem;
-  min-width: 60px; /* Prevent width changes when icon changes */
-  height: 40px; /* Fixed height */
-  color: rgb(255, 255, 255);
-  background-color: rgb(141, 157, 218);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Countdown hover animation */
-#countdown {
-  margin: 5%; /* Removes default spacing that may push elements */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.5rem; /* Prevent height changes */
-  font-family: monospace; /* Equal width characters */
-  text-align: center;
-  font-size: 5rem;
-  transition: transform 0.5s ease-in-out; /* Smooth movement */
-}
-
-#countdown.move-up {
-  transform: translateY(-100px); /* Move the countdown up */
-}
-
-#countdown p {
-  margin: 0;
-  width: 100%; /* Ensures stability */
-  text-align: center;
 }
 
 .button button:hover {
@@ -330,4 +326,46 @@ footer.scroll {
 .link {
   color: rgb(141, 157, 218);
   text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .settings {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .input-section {
+    width: 90%;
+  }
+
+  .top-right-image {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    top: auto;
+    right: auto;
+    width: 50px;
+    z-index: 1000;
+    margin: 0;
+  }
+  .dropdown {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    top: auto;
+    left: auto;
+    z-index: 1000;
+    margin: 0;
+  }
+
+  .dropdown-s {
+    background-color: rgb(141, 157, 218);
+    outline: none;
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: large;
+    width: auto;
+  }
 }
