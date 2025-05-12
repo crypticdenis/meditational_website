@@ -315,3 +315,8 @@ footer.scroll {
   background: transparent; /* or your choice */
   position: relative;
 }
+
+.link {
+  color: rgb(141, 157, 218);
+  text-decoration: none;
+}
