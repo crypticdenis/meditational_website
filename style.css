@@ -206,6 +206,23 @@ footer {
   bottom: 0;
 }
 
+.guided-sessions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.guided-section {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 50px;
+  z-index: 1000;
+  margin: 0;
+}
+
 /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -299,7 +316,18 @@ input:checked + .slider:before {
   text-decoration: none;
   font-size: large;
 }
-
+.btn-guided {
+  background-color: rgb(141, 157, 218);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px;
+  height: auto;
+  font-size: 1.2rem;
+  margin-top: 10px;
+  height: auto;
+}
 input:checked + .slider:before {
   background-color: #ffffff; /* Change the circle to white */
   -webkit-transform: translateX(40px); /* Adjusted for new width */

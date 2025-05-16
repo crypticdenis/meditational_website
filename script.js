@@ -20,11 +20,12 @@ let intervalDuration = 0; // Duration of the interval
 const audioFiles = {
   "river.mp3": new Audio("river.mp3"),
   "woods.mp3": new Audio("woods.mp3"),
+  "white_noise.mp3": new Audio("white_noise.mp3"),
 };
 
 for (const a of Object.values(audioFiles)) {
   a.loop = true;
-  a.volume = 0.5;
+  a.volume = 0.025;
 }
 
 let audio = audioFiles[musicSelect.value];
@@ -58,6 +59,9 @@ function musicOnOffClick() {
   }
 }
 
+function changeToGuided() {
+  window.location.href = "guidedSection.html";
+}
 function playPause() {
   // Check if the timer is already running
   if (!countdowninterval || isPaused) {
