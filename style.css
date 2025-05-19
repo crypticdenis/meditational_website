@@ -264,6 +264,109 @@ footer {
   transition: 0.4s;
 }
 
+.sound-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 16px 16px 0 0;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.sound-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.slidecontainer {
+  margin-right: 5px;
+  width: 180px; /* Or 100%, or auto, as needed */
+  display: flex; /* Let the input fill the container */
+  justify-content: flex-end;
+  align-items: center;
+}
+/*Chrome*/
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input[type="range"] {
+    overflow: hidden;
+    width: 80px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #ffffff;
+  }
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 10px;
+  -webkit-appearance: none;
+  color: rgb(141, 157, 218);
+  margin-top: -1px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 10px;
+  -webkit-appearance: none;
+  height: 10px;
+  cursor: pointer;
+  background: rgb(141, 157, 218);
+  box-shadow: -80px 0 0 80px rgb(141, 157, 218);
+}
+/** FF*/
+input[type="range"]::-moz-range-progress {
+  background-color: rgb(141, 157, 218);
+}
+input[type="range"]::-moz-range-track {
+  background-color: #ffffff;
+}
+/* IE*/
+input[type="range"]::-ms-fill-lower {
+  background-color: rgb(141, 157, 218);
+}
+input[type="range"]::-ms-fill-upper {
+  background-color: #ffffff;
+}
+/* Icon styling */
+.top-right-image {
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  display: block;
+  position: static; /* No absolute positioning */
+  cursor: pointer;
+}
+
+/* Dropdown styling */
+.dropdown-s {
+  background-color: rgb(141, 157, 218);
+  outline: none;
+  color: rgb(255, 255, 255);
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 1rem;
+  border: none;
+  margin: 0;
+  position: static;
+}
+
+input[type="range"] {
+  width: 200px;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 600px) {
+  .sound-menu {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 8px 8px 0 0;
+  }
+}
 .slider:before {
   position: absolute;
   content: "";
@@ -289,33 +392,7 @@ input:checked + .slider:before {
   -ms-transform: translateX(40px); /* Adjusted for new width */
   transform: translateX(40px); /* Adjusted for new width */
 }
-.top-right-image {
-  position: absolute;
-  top: 16px; /* Adjust the distance from the top */
-  right: 10px; /* Adjust the distance from the right */
-  width: 50px; /* Adjust the size of the image */
-  z-index: 1000; /* Ensure it appears above other elements */
-  margin-bottom: 5px; /* Space below the image */
-}
 
-.dropdown {
-  position: absolute;
-  top: 37px; /* Adjust the distance from the top */
-  right: 90px; /* Adjust the distance from the right */
-  height: auto; /* Maintain aspect ratio */
-  z-index: 1000; /* Ensure it appears above other elements */
-  margin-bottom: 5px; /* Space below the image */
-}
-
-.dropdown-s {
-  background-color: rgb(141, 157, 218);
-  outline: none;
-  color: rgb(255, 255, 255);
-  padding: 10px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: large;
-}
 .btn-guided {
   background-color: rgb(141, 157, 218);
   color: white;
@@ -364,36 +441,5 @@ footer.scroll {
 
   .input-section {
     width: 90%;
-  }
-
-  .top-right-image {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    top: auto;
-    right: auto;
-    width: 50px;
-    z-index: 1000;
-    margin: 0;
-  }
-  .dropdown {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    top: auto;
-    left: auto;
-    z-index: 1000;
-    margin: 0;
-  }
-
-  .dropdown-s {
-    background-color: rgb(141, 157, 218);
-    outline: none;
-    color: rgb(255, 255, 255);
-    padding: 10px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: large;
-    width: auto;
   }
 }

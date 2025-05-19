@@ -36,18 +36,12 @@
       </div>
     </header>
     <div class="guided-section">
-        <button id="btn-guided" class="btn-guided" onclick="changeToGuided()">Guided Sessions</button>
+      <button id="btn-guided" class="btn-guided" onclick="changeToGuided()">
+        Guided Sessions
+      </button>
     </div>
     <div class="sound-menu">
-      <a href="#" id="musicToggle" class="top-right-image">
-        <img
-          src="volume-mute.png"
-          alt="Tiny Image"
-          class="top-right-image"
-          id="musicOn"
-        />
-      </a>
-      <div class="dropdown">
+      <div class="sound-row">
         <select
           class="dropdown-s"
           name="musicSelect"
@@ -58,8 +52,27 @@
           <option value="woods.mp3">woods</option>
           <option value="white_noise.mp3">white noise</option>
         </select>
+        <a href="#" id="musicToggle">
+          <img
+            src="volume-mute.png"
+            alt="Tiny Image"
+            class="top-right-image"
+            id="musicOn"
+          />
+        </a>
       </div>
-    </div>
+      <div class="slidecontainer">
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value="50"
+          class="sound-slider"
+          id="volumeSlider"
+          style="padding: 0"
+          onchange="changeVolume()"
+        />
+      </div>
     </div>
     <div class="container">
       <div class="settings" id="settings">

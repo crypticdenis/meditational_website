@@ -59,6 +59,20 @@ function musicOnOffClick() {
   }
 }
 
+function changeVolume() {
+  const volumeSlider = document.getElementById("volumeSlider");
+  const volume = volumeSlider.value / 100; // Convert to a value between 0 and 1
+  if (volume === 0) {
+    musicOnOff.src = "volume-mute.png"; // Change icon to mute
+  } else {
+    musicOnOff.src = "volume.png"; // Change icon to volume
+    audio.play(); // Play the audio if it was paused
+  }
+  for (const a of Object.values(audioFiles)) {
+    a.volume = volume;
+  }
+}
+
 function changeToGuided() {
   window.location.href = "guidedSection.html";
 }
