@@ -161,6 +161,12 @@ h3 {
   font-weight: 300;
   color: rgb(193, 201, 229);
 }
+label {
+  font-family: "Courier Prime", monospace;
+  letter-spacing: 2px; /* Adds breathing space */
+  font-weight: 300;
+  color: rgb(193, 201, 229);
+}
 input {
   width: 100px;
   padding: 5px;
@@ -204,10 +210,11 @@ input {
 }
 
 footer {
+  font-family: "Courier Prime", monospace;
   text-align: center;
   position: fixed;
   width: 100%;
-  color: rgb(141, 157, 218);
+  color: rgb(193, 201, 229);
   bottom: 0;
 }
 
@@ -223,9 +230,80 @@ footer {
   position: fixed;
   top: 20px;
   left: 20px;
-  width: 50px;
   z-index: 1000;
+}
+
+.guided-meditations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px 20px;
+  justify-content: left;
+}
+
+.meditation-card {
+  width: 160px;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.meditation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-content {
+  padding: 12px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-content h3 {
   margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.card-content p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#session-controls {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.session-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.session-controls button {
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
 }
 
 /* The switch - the box around the slider */
@@ -283,6 +361,7 @@ footer {
 }
 
 .sound-row {
+  margin: 10px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -290,8 +369,8 @@ footer {
 }
 
 .slidecontainer {
-  margin: 5px;
-  width: 180px; /* Or 100%, or auto, as needed */
+  margin: 10px;
+  width: 200px; /* Or 100%, or auto, as needed */
   display: flex; /* Let the input fill the container */
   justify-content: flex-end;
   align-items: center;
@@ -320,7 +399,7 @@ input[type="range"]::-webkit-slider-thumb {
   height: 10px;
   cursor: pointer;
   background: rgb(141, 157, 218);
-  box-shadow: -80px 0 0 80px #192232;
+  box-shadow: -100px 0 0 100px #192232;
 }
 /** FF*/
 input[type="range"]::-moz-range-progress {
@@ -348,6 +427,7 @@ input[type="range"]::-ms-fill-upper {
 
 /* Dropdown styling */
 .dropdown-s {
+  font-family: "Courier Prime", monospace;
   background-color: rgb(141, 157, 218);
   outline: none;
   color: rgb(255, 255, 255);
@@ -399,16 +479,14 @@ input:checked + .slider:before {
 }
 
 .btn-guided {
+  font-family: "Courier Prime", monospace;
   background-color: rgb(141, 157, 218);
   color: white;
-  border: none;
   border-radius: 5px;
   cursor: pointer;
   padding: 10px;
-  height: auto;
   font-size: 1.2rem;
   margin-top: 10px;
-  height: auto;
 }
 input:checked + .slider:before {
   background-color: #ffffff; /* Change the circle to white */
