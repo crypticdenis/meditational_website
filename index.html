@@ -42,11 +42,30 @@
       </div>
     </header>
     <div class="guided-section">
-      <button id="btn-guided" class="btn-guided" onclick="changeToGuided()">
-        Guided Sessions
-      </button>
+      <div id="btn-guided" onclick="changeToGuided()">
+        <img
+          src="meditation.png"
+          alt="Tiny Image"
+          class="top-right-image"
+          id="guidedeIcon"
+        />
+        <div style="text-align: center; font-size: 0.75em; margin-top: 4px">
+          Guided
+        </div>
+      </div>
     </div>
-    <div class="sound-menu">
+    <div id="soundToggle" class="sound-toggle">
+      <img
+        src="wave-sound.png"
+        alt="Tiny Image"
+        class="top-right-image"
+        id="soundIcon"
+      />
+      <div style="text-align: center; font-size: 0.75em; margin-top: 4px">
+        Sounds
+      </div>
+    </div>
+    <div class="sound-menu hidden" id="soundMenu">
       <div class="sound-row">
         <select
           class="dropdown-s"

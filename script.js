@@ -59,6 +59,11 @@ function musicOnOffClick() {
   }
 }
 
+document.getElementById("soundToggle").addEventListener("click", () => {
+  const menu = document.getElementById("soundMenu");
+  menu.classList.toggle("show");
+});
+
 function changeVolume() {
   const volumeSlider = document.getElementById("volumeSlider");
   const volume = volumeSlider.value / 100; // Convert to a value between 0 and 1

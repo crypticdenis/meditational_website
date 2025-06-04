@@ -354,15 +354,49 @@ footer {
 
 .sound-menu {
   position: fixed;
-  top: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 16px 16px 0 0;
-  box-sizing: border-box;
+  top: 70px;
+  right: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px) scaleY(0.8);
+  transform-origin: top right;
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
   z-index: 1000;
+}
+.sound-toggle:active {
+  animation: rippleDrop 0.4s ease-out;
+}
+
+@keyframes rippleDrop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sound-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scaleY(1);
+}
+
+/* Optionally fade each element in */
+.sound-menu .sound-row,
+.sound-menu .slidecontainer {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s;
+}
+
+.sound-menu.show .sound-row,
+.sound-menu.show .slidecontainer {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .sound-row {
@@ -520,8 +554,16 @@ footer.scroll {
   color: rgb(141, 157, 218);
   text-decoration: none;
 }
+@media (max-width: 800px) {
+  h1 {
+    font-size: 1.5rem; /* Adjusted for smaller screens */
+  }
+  .quote {
+    visibility: hidden;
+  }
+}
 
-@media (max-width: 900px) {
+@media (max-width: 800px) {
   .settings {
     flex-direction: column;
     align-items: center;
@@ -530,4 +572,11 @@ footer.scroll {
   .input-section {
     width: 90%;
   }
+}
+.sound-toggle {
+  cursor: pointer;
+  padding: 10px;
+  position: fixed;
+  top: 5px;
+  right: 5px;
 }
