@@ -17,6 +17,7 @@ let isPaused;
 let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
 let soundMenuTimeout;
+const GongAudio = new Audio("gong.mp3");
 
 const audioFiles = {
   "river.mp3": new Audio("river.mp3"),
@@ -26,7 +27,7 @@ const audioFiles = {
 
 for (const a of Object.values(audioFiles)) {
   a.loop = true;
-  a.volume = 0.025;
+  a.volume = 1;
 }
 
 let audio = audioFiles[musicSelect.value];
@@ -127,7 +128,6 @@ function playPause() {
 
     // Start interval if not running
     if (!countdowninterval) {
-      playSound(); // Play sound when starting the timer
       countdowninterval = setInterval(updateTimer, 1000);
     }
   } else {
@@ -152,8 +152,8 @@ resetbutton.addEventListener("click", () => {
 });
 
 function playSound() {
-  const audio = new Audio("gong.mp3"); // Replace with your sound file path
-  audio.play();
+  GongAudio.currentTime = 0;
+  GongAudio.play();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
