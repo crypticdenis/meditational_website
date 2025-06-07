@@ -482,15 +482,6 @@ input[type="range"] {
   width: 200px;
 }
 
-/* Responsive for smaller screens */
-@media (max-width: 600px) {
-  .sound-menu {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-    padding: 8px 8px 0 0;
-  }
-}
 .slider:before {
   position: absolute;
   content: "";
@@ -571,6 +562,11 @@ footer.scroll {
 
   .input-section {
     width: 90%;
+  }
+  .sound-menu {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
   }
 }
 .sound-toggle {
