@@ -149,7 +149,11 @@ body.scroll {
   outline: none;
   -webkit-appearance: none; /* Disable native styling */
   -webkit-tap-highlight-color: transparent; /* Remove tap flash */
-  user-select: none;
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
 }
 
 .button button:active,
@@ -330,14 +334,6 @@ footer {
   border-radius: 5px;
   text-align: center;
   box-sizing: border-box;
-}
-
-.session-controls button {
-  padding: 12px 24px;
-  font-size: 18px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
 }
 
 /* The switch - the box around the slider */
