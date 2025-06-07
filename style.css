@@ -146,12 +146,29 @@ body.scroll {
   width: 120px;
   background-color: rgb(141, 157, 218);
   color: white;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  outline: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
 }
 
 .button button:active {
   background-color: rgb(193, 201, 229);
   color: rgb(141, 157, 218);
-  transition: background 0.2s, color 0.2s;
+}
+
+.button button:focus {
+  outline: none;
+  background-color: rgb(193, 201, 229);
+  color: rgb(141, 157, 218);
+}
+
+.button button::-moz-focus-inner {
+  border: 0;
 }
 
 .button button {
