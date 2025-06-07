@@ -143,22 +143,19 @@ body.scroll {
 }
 
 .button button {
-  width: 120px;
-  background-color: rgb(141, 157, 218);
+  background-color: rgb(141, 157, 218); /* Original background */
   color: white;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  outline: none;
   border: none;
-  transition: background 0.2s, color 0.2s;
+  outline: none;
+  -webkit-appearance: none; /* Disable native styling */
+  -webkit-tap-highlight-color: transparent; /* Remove tap flash */
+  user-select: none;
 }
-.button button:focus,
-.button button:active {
-  background-color: rgb(141, 157, 218); /* Your normal color */
-  color: white; /* Reset to original */
+
+.button button:active,
+.button button:focus {
+  background-color: rgb(141, 157, 218); /* Force original BG on press */
+  color: white;
   outline: none;
   box-shadow: none;
 }
