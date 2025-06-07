@@ -548,6 +548,7 @@ footer.scroll {
 @media (max-width: 800px) {
   h1 {
     font-size: 1rem; /* Adjusted for smaller screens */
+    text-align: center; /* Center the h1 */
   }
   .quote {
     visibility: hidden;
@@ -572,7 +573,6 @@ footer.scroll {
     visibility: hidden;
   }
   .container {
-    max-width: 600px;
     width: 100%;
     height: auto;
     border-radius: 5px;
