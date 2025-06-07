@@ -16,6 +16,7 @@ let timeleft = 0;
 let isPaused;
 let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
+let soundMenuTimeout;
 
 const audioFiles = {
   "river.mp3": new Audio("river.mp3"),
@@ -59,9 +60,31 @@ function musicOnOffClick() {
   }
 }
 
+function hideSoundMenu() {
+  const menu = document.getElementById("soundMenu");
+  menu.classList.remove("show");
+}
+
+function resetSoundMenuTimeout() {
+  clearTimeout(soundMenuTimeout);
+  soundMenuTimeout = setTimeout(hideSoundMenu, 4000);
+}
+
 document.getElementById("soundToggle").addEventListener("click", () => {
   const menu = document.getElementById("soundMenu");
   menu.classList.toggle("show");
+  if (menu.classList.contains("show")) {
+    resetSoundMenuTimeout();
+  } else {
+    clearTimeout(soundMenuTimeout);
+  }
+});
+
+// Hide menu after 5s of no interaction
+["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
+  document
+    .getElementById("soundMenu")
+    .addEventListener(event, resetSoundMenuTimeout);
 });
 
 function changeVolume() {
