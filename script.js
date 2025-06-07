@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const minuteInput = document.getElementById("minutes");
-const interval = document.getElementById("intervalInput");
 const playPauseButton = document.getElementById("playPause");
 const resetbutton = document.getElementById("reset");
 const countdowndisplay = document.getElementById("countdown");
@@ -18,7 +17,7 @@ let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
 let soundMenuTimeout;
 const GongAudio = new Audio("gong.mp3");
-GongAudio.volume = 0.5;
+GongAudio.volume = 1;
 
 const audioFiles = {
   "river.mp3": new Audio("river.mp3"),
@@ -127,7 +126,6 @@ function playPause() {
     // Move the countdown up
     countdowndisplay.classList.add("move-up");
 
-    // Start interval if not running
     if (!countdowninterval) {
       countdowninterval = setInterval(updateTimer, 1000);
     }
@@ -147,7 +145,6 @@ resetbutton.addEventListener("click", () => {
   // Reset the countdown position
   countdowndisplay.classList.remove("move-up");
 
-  // Reset interval time
   intervalTime = 0;
   intervalDuration = 0;
 });
@@ -161,17 +158,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("toggleInterval");
   const intervalInput = document.getElementById("interval");
 
-  // Ensure interval duration is valid
   intervalInput.addEventListener("input", () => {
     const maxInterval = parseInt(minuteInput.value, 10) || 0;
     const intervalValue = parseInt(intervalInput.value, 10) || 0;
 
     if (intervalValue > maxInterval) {
-      intervalInput.value = maxInterval; // Restrict interval to timer duration
+      intervalInput.value = maxInterval;
     }
 
     intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0; // Convert to seconds
-    intervalTime = intervalDuration; // Reset interval time
+    intervalTime = intervalDuration;
   });
 
   toggle.addEventListener("change", () => {
@@ -201,7 +197,6 @@ function updateTimer() {
       isPaused = false;
     }
 
-    // Handle interval gong
     if (
       document.getElementById("toggleInterval").checked &&
       intervalDuration > 0
@@ -209,7 +204,7 @@ function updateTimer() {
       intervalTime--;
       if (intervalTime <= 0) {
         playSound(); // Play gong for interval
-        intervalTime = intervalDuration; // Reset interval time
+        intervalTime = intervalDuration;
       }
     }
 
