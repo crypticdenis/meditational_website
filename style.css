@@ -571,6 +571,29 @@ footer.scroll {
   .slidecontainer {
     visibility: hidden;
   }
+  .container {
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    align-items: top; /* <-- THIS centers children */
+  }
+  .session-controls {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    max-width: 600px;
+    width: 90%;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* <-- THIS centers children */
+  }
 }
 .sound-toggle {
   cursor: pointer;
