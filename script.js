@@ -109,7 +109,6 @@ function playPause() {
   if (!countdowninterval || isPaused) {
     // Start or resume timer
     if (timeleft === 0) {
-      playSound(); // Play sound when starting the timer
       const minutes = parseInt(minuteInput.value, 10) || 0;
       timeleft = minutes * 60;
     }
