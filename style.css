@@ -564,9 +564,12 @@ footer.scroll {
     width: 90%;
   }
   .sound-menu {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
+    position: fixed;
+    top: 60px;
+    right: 5px;
+    .slidecontainer {
+      visibility: hidden;
+    }
   }
 }
 .sound-toggle {
