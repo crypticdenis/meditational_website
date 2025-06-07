@@ -18,6 +18,7 @@ let intervalTime = 0; // Time left for the interval
 let intervalDuration = 0; // Duration of the interval
 let soundMenuTimeout;
 const GongAudio = new Audio("gong.mp3");
+GongAudio.volume = 0.5;
 
 const audioFiles = {
   "river.mp3": new Audio("river.mp3"),
