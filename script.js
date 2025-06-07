@@ -112,7 +112,11 @@ function playPause() {
       const minutes = parseInt(minuteInput.value, 10) || 0;
       timeleft = minutes * 60;
     }
-    playPauseButton.textContent = "⏸"; // Pause icon
+    playPauseButton.innerHTML = `
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <rect x="6" y="5" width="4" height="14" rx="1" />
+    <rect x="14" y="5" width="4" height="14" rx="1" />
+  </svg>`;
     isPaused = false;
 
     // Hide settings with a smooth fade-out
