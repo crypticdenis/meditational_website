@@ -566,10 +566,10 @@ footer.scroll {
   .sound-menu {
     position: fixed;
     top: 60px;
-    right: 5px;
-    .slidecontainer {
-      visibility: hidden;
-    }
+    right: 0px;
+  }
+  .slidecontainer {
+    visibility: hidden;
   }
 }
 .sound-toggle {
