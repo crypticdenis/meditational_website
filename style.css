@@ -580,6 +580,22 @@ footer.scroll {
   .slidecontainer {
     visibility: hidden;
   }
+  .session-controls {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    max-width: 600px;
+    width: 90%;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* <-- THIS centers children */
+  }
   .quote {
     visibility: hidden;
   }
@@ -589,14 +605,7 @@ footer.scroll {
     width: 100vw;
     box-sizing: border-box;
   }
-  .session-controls {
-    width: 100vw;
-    max-width: 100vw;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px;
-    box-sizing: border-box;
-  }
+
   .container {
     width: 100%;
     max-width: 100vw;
