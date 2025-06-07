@@ -138,8 +138,8 @@ body.scroll {
 
 .button {
   display: flex;
-  gap: 25px;
-  margin-top: 2rem;
+  gap: 100px; /* Adjust the value for more or less spacing */
+  justify-content: center; /* Optional: center buttons horizontally */
 }
 
 .button button {
@@ -147,21 +147,29 @@ body.scroll {
   color: white;
   border: none;
   outline: none;
+  appearance: none; /* Standard property for compatibility */
   -webkit-appearance: none; /* Disable native styling */
   -webkit-tap-highlight-color: transparent; /* Remove tap flash */
   padding: 12px 24px;
   font-size: 18px;
-  border: none;
   border-radius: 50px;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .button button:active,
 .button button:focus {
-  background-color: rgb(141, 157, 218); /* Force original BG on press */
+  background-color: rgb(141, 157, 218); /* Keep original color */
   color: white;
   outline: none;
   box-shadow: none;
+}
+
+@media (hover: hover) {
+  .button button:hover {
+    background-color: rgb(255, 255, 255);
+    color: rgb(141, 157, 218);
+  }
 }
 
 header {
@@ -233,11 +241,6 @@ input {
   display: block; /* Ensures label is on a new line */
   font-size: 1.2rem; /* Adjust label font size if needed */
   color: rgb(255, 255, 255); /* Matches the text color */
-}
-
-.button button:hover {
-  background-color: rgb(255, 255, 255);
-  color: rgb(141, 157, 218);
 }
 
 footer {
