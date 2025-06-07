@@ -156,29 +156,6 @@ body.scroll {
   transition: background 0.2s, color 0.2s;
 }
 
-.button button:active {
-  background-color: rgb(193, 201, 229);
-  color: rgb(141, 157, 218);
-}
-
-.button button:focus {
-  outline: none;
-  background-color: rgb(193, 201, 229);
-  color: rgb(141, 157, 218);
-}
-
-.button button::-moz-focus-inner {
-  border: 0;
-}
-
-.button button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.button button:focus {
-  outline: none;
-}
-
 header {
   text-align: center;
   margin-bottom: 5px;
