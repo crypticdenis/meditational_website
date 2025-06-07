@@ -556,7 +556,7 @@ footer.scroll {
 }
 @media (max-width: 800px) {
   h1 {
-    font-size: 1.5rem; /* Adjusted for smaller screens */
+    font-size: 1rem; /* Adjusted for smaller screens */
   }
   .quote {
     visibility: hidden;
