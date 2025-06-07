@@ -153,6 +153,8 @@ body.scroll {
   padding: 12px 24px;
   font-size: 18px;
   border-radius: 50px;
+  height: 60px;
+  width: 100px; /* Adjusted width */
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 }
