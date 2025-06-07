@@ -27,7 +27,7 @@ const audioFiles = {
 
 for (const a of Object.values(audioFiles)) {
   a.loop = true;
-  a.volume = 1;
+  a.volume = 0.5;
 }
 
 let audio = audioFiles[musicSelect.value];
