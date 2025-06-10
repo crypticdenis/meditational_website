@@ -14,9 +14,11 @@ let countdowninterval;
 let timeleft = 0;
 let isPaused;
 let intervalTime = 0; // Time left for the interval
-let intervalDuration = 0; // Duration of the interval
+let intervalDuration = 1; // Duration of the interval
 let soundMenuTimeout;
-const GongAudio = new Audio("gong.mp3");
+const GongAudio = new Audio("untitled.mp3");
+const finishedAudio = new Audio("gong.mp3");
+finishedAudio.volume = 1;
 GongAudio.volume = 1;
 
 const audioFiles = {
@@ -149,12 +151,15 @@ resetbutton.addEventListener("click", () => {
   intervalDuration = 0;
 });
 
-function playSound() {
-  GongAudio.currentTime = 0;
-  GongAudio.play();
+function playFinished() {
+  finishedAudio.play();
 }
 
+function playSound() {
+  GongAudio.play();
+}
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 DOM fully loaded and script initialized");
   const toggle = document.getElementById("toggleInterval");
   const intervalInput = document.getElementById("interval");
 
@@ -168,11 +173,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0; // Convert to seconds
     intervalTime = intervalDuration;
+    console.log("Interval duration set to:", intervalDuration, "seconds");
   });
 
   toggle.addEventListener("change", () => {
     if (toggle.checked) {
       intervalInput.classList.remove("hidden");
+      intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0; // Convert to seconds
+      intervalTime = intervalDuration; // Reset interval time
+      console.log("Interval duration set to:", intervalDuration, "seconds");
     } else {
       intervalInput.classList.add("hidden");
     }
@@ -180,10 +189,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function updateTimer() {
+  console.log("updateTimer running", timeleft);
+
   if (!isPaused) {
     timeleft--;
     if (timeleft <= 0) {
-      playSound(); // Play sound when the timer ends
+      playFinished();
       settings.classList.remove("hidden");
       countdowndisplay.classList.remove("move-up");
       clearInterval(countdowninterval);
@@ -202,6 +213,7 @@ function updateTimer() {
       intervalDuration > 0
     ) {
       intervalTime--;
+      console.log("Interval time left:", intervalTime);
       if (intervalTime <= 0) {
         playSound(); // Play gong for interval
         intervalTime = intervalDuration;
