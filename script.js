@@ -16,6 +16,9 @@ let isPaused;
 let intervalTime = 0; // Time left for the interval
 let intervalDuration = 1; // Duration of the interval
 let soundMenuTimeout;
+let audioUnlocked = false;
+let audioCtx; // Web Audio context to keep Safari's audio stack alive
+
 const GongAudio = new Audio("untitled.mp3");
 const finishedAudio = new Audio("gong.mp3");
 finishedAudio.volume = 1;
@@ -63,6 +66,19 @@ function musicOnOffClick() {
   }
 }
 
+function unlockAudio(audio) {
+  const originalVolume = audio.volume;
+  audio.volume = 0;
+  audio
+    .play()
+    .then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = originalVolume;
+    })
+    .catch((e) => console.warn("Audio unlock failed:", e));
+}
+
 function hideSoundMenu() {
   const menu = document.getElementById("soundMenu");
   menu.classList.remove("show");
@@ -108,9 +124,22 @@ function changeToGuided() {
   window.location.href = "guidedSection.html";
 }
 function playPause() {
-  // Unlock audio on first user interaction
-  GongAudio.play().then(() => GongAudio.pause());
-  finishedAudio.play().then(() => finishedAudio.pause());
+  // Unlock audio and keep iOS audio stack alive (only once)
+  if (!audioUnlocked) {
+    unlockAudio(GongAudio);
+    unlockAudio(finishedAudio);
+    audioUnlocked = true;
+
+    // 🔊 Create silent audio context to keep Safari awake
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const buffer = audioCtx.createBuffer(1, 1, 22050);
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioCtx.destination);
+      source.start(0);
+    }
+  }
 
   // Check if the timer is already running
   if (!countdowninterval || isPaused) {
