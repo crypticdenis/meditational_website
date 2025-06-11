@@ -108,6 +108,10 @@ function changeToGuided() {
   window.location.href = "guidedSection.html";
 }
 function playPause() {
+  // Unlock audio on first user interaction
+  GongAudio.play().then(() => GongAudio.pause());
+  finishedAudio.play().then(() => finishedAudio.pause());
+
   // Check if the timer is already running
   if (!countdowninterval || isPaused) {
     // Start or resume timer
@@ -151,13 +155,13 @@ resetbutton.addEventListener("click", () => {
   intervalDuration = 0;
 });
 
+function playSound() {
+  GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
+}
 function playFinished() {
-  finishedAudio.play();
+  finishedAudio.play().catch((e) => console.warn("FinishedAudio failed:", e));
 }
 
-function playSound() {
-  GongAudio.play();
-}
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 DOM fully loaded and script initialized");
   const toggle = document.getElementById("toggleInterval");
