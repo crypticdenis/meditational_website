@@ -21,6 +21,8 @@ let audioCtx; // Web Audio context to keep Safari's audio stack alive
 
 const GongAudio = new Audio("untitled.mp3");
 const finishedAudio = new Audio("gong.mp3");
+const silentAudio = new Audio("silent.mp3");
+
 finishedAudio.volume = 1;
 GongAudio.volume = 1;
 
@@ -66,17 +68,23 @@ function musicOnOffClick() {
   }
 }
 
-function unlockAudio(audio) {
-  const originalVolume = audio.volume;
-  audio.volume = 0;
-  audio
-    .play()
-    .then(() => {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.volume = originalVolume;
-    })
-    .catch((e) => console.warn("Audio unlock failed:", e));
+function unlockAllAudioOnce() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  // Create dummy Web Audio context (Safari trick)
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const buffer = audioCtx.createBuffer(1, 1, 22050);
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    source.start(0);
+  }
+
+  // Play a truly silent audio to unlock system — avoids pops or accidental bell playback
+  silentAudio.volume = 0;
+  silentAudio.play().catch((e) => console.warn("Silent unlock failed:", e));
 }
 
 function hideSoundMenu() {
@@ -126,11 +134,9 @@ function changeToGuided() {
 function playPause() {
   // Unlock audio and keep iOS audio stack alive (only once)
   if (!audioUnlocked) {
-    unlockAudio(GongAudio);
-    unlockAudio(finishedAudio);
     audioUnlocked = true;
 
-    // 🔊 Create silent audio context to keep Safari awake
+    // Create dummy Web Audio context to keep Safari's audio stack active
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const buffer = audioCtx.createBuffer(1, 1, 22050);
@@ -139,6 +145,10 @@ function playPause() {
       source.connect(audioCtx.destination);
       source.start(0);
     }
+
+    // Use silent dummy audio to "unlock" without leaks
+    silentAudio.volume = 0;
+    silentAudio.play().catch((e) => console.warn("Silent unlock failed:", e));
   }
 
   // Check if the timer is already running
