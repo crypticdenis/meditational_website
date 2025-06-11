@@ -323,6 +323,39 @@ footer {
   margin: 20px 0;
 }
 
+.nl {
+  text-align: center;
+  padding: 20px;
+}
+.nl input {
+  text-align: center;
+  width: 60%;
+  color: #ffffff;
+}
+
+.nl input::placeholder {
+  color: white;
+  opacity: 0.4; /* Ensure it's fully visible in all browsers */
+}
+
+.nl h2 {
+  font-family: "Courier Prime", monospace;
+  color: rgb(193, 201, 229);
+  margin-bottom: 20px;
+  margin-top: 30%;
+}
+
+.nl button {
+  background-color: rgb(141, 157, 218);
+  color: white;
+  border: none;
+  width: 15%;
+  height: 40px;
+  margin: 30px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
 .session-controls {
   display: flex;
   justify-content: center;
