@@ -75,6 +75,10 @@ function unlockAllAudioOnce() {
   // Create dummy Web Audio context (Safari trick)
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx
+      .resume()
+      .catch((e) => console.warn("AudioContext resume failed:", e)); // ← CRITICAL
+
     const buffer = audioCtx.createBuffer(1, 1, 22050);
     const source = audioCtx.createBufferSource();
     source.buffer = buffer;
