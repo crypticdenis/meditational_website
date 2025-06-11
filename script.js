@@ -1,5 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("pulsate");
+
+  const toggle = document.getElementById("toggleInterval");
+  const intervalInput = document.getElementById("interval");
+
+  intervalInput.addEventListener("input", () => {
+    const maxInterval = parseInt(minuteInput.value, 10) || 0;
+    const intervalValue = parseInt(intervalInput.value, 10) || 0;
+    if (intervalValue > maxInterval) {
+      intervalInput.value = maxInterval;
+    }
+    intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0;
+    intervalTime = intervalDuration;
+    console.log("Interval duration set to:", intervalDuration, "seconds");
+  });
+
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      intervalInput.classList.remove("hidden");
+      intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0;
+      intervalTime = intervalDuration;
+    } else {
+      intervalInput.classList.add("hidden");
+    }
+  });
 });
 
 const minuteInput = document.getElementById("minutes");
@@ -8,16 +32,17 @@ const resetbutton = document.getElementById("reset");
 const countdowndisplay = document.getElementById("countdown");
 const settings = document.getElementById("settings");
 const musicOnOff = document.getElementById("musicOn");
-const musicSelect = document.getElementById("musicSelect"); // >>> ADDED
+const musicSelect = document.getElementById("musicSelect");
 
 let countdowninterval;
 let timeleft = 0;
 let isPaused;
-let intervalTime = 0; // Time left for the interval
-let intervalDuration = 1; // Duration of the interval
+let intervalTime = 0;
+let intervalDuration = 1;
 let soundMenuTimeout;
 let audioUnlocked = false;
-let audioCtx; // Web Audio context to keep Safari's audio stack alive
+let audioCtx;
+let hasPlayedStartBell = false;
 
 const GongAudio = new Audio("untitled.mp3");
 const finishedAudio = new Audio("gong.mp3");
@@ -43,7 +68,6 @@ playPauseButton.addEventListener("click", playPause);
 minuteInput.addEventListener("input", updateDisplayFromInput);
 musicOnOff.addEventListener("click", musicOnOffClick);
 
-// >>> ADDED: handle music selection change
 musicSelect.addEventListener("change", function () {
   const wasPlaying = !audio.paused;
   audio.pause();
@@ -56,44 +80,35 @@ musicSelect.addEventListener("change", function () {
 
 function musicOnOffClick() {
   const musicIcon = document.getElementById("musicOn");
-
   if (musicIcon.src.includes("volume.png")) {
-    // Switch to music-off image
     musicIcon.src = "volume-mute.png";
-    audio.pause(); // Stop the music
+    audio.pause();
   } else {
-    // Switch to music-on image
     musicIcon.src = "volume.png";
-    audio.play(); // Play and loop the music
+    audio.play();
   }
 }
 
 function unlockAllAudioOnce() {
   if (audioUnlocked) return;
   audioUnlocked = true;
-
-  // Create dummy Web Audio context (Safari trick)
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     audioCtx
       .resume()
-      .catch((e) => console.warn("AudioContext resume failed:", e)); // ← CRITICAL
-
+      .catch((e) => console.warn("AudioContext resume failed:", e));
     const buffer = audioCtx.createBuffer(1, 1, 22050);
     const source = audioCtx.createBufferSource();
     source.buffer = buffer;
     source.connect(audioCtx.destination);
     source.start(0);
   }
-
-  // Play a truly silent audio to unlock system — avoids pops or accidental bell playback
   silentAudio.volume = 0;
   silentAudio.play().catch((e) => console.warn("Silent unlock failed:", e));
 }
 
 function hideSoundMenu() {
-  const menu = document.getElementById("soundMenu");
-  menu.classList.remove("show");
+  document.getElementById("soundMenu").classList.remove("show");
 }
 
 function resetSoundMenuTimeout() {
@@ -111,7 +126,6 @@ document.getElementById("soundToggle").addEventListener("click", () => {
   }
 });
 
-// Hide menu after 5s of no interaction
 ["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
   document
     .getElementById("soundMenu")
@@ -119,28 +133,19 @@ document.getElementById("soundToggle").addEventListener("click", () => {
 });
 
 function changeVolume() {
-  const volumeSlider = document.getElementById("volumeSlider");
-  const volume = volumeSlider.value / 100; // Convert to a value between 0 and 1
-  if (volume === 0) {
-    musicOnOff.src = "volume-mute.png"; // Change icon to mute
-  } else {
-    musicOnOff.src = "volume.png"; // Change icon to volume
-    audio.play(); // Play the audio if it was paused
-  }
-  for (const a of Object.values(audioFiles)) {
-    a.volume = volume;
-  }
+  const volume = document.getElementById("volumeSlider").value / 100;
+  musicOnOff.src = volume === 0 ? "volume-mute.png" : "volume.png";
+  if (volume > 0) audio.play();
+  for (const a of Object.values(audioFiles)) a.volume = volume;
 }
 
 function changeToGuided() {
   window.location.href = "guidedSection.html";
 }
+
 function playPause() {
-  // Unlock audio and keep iOS audio stack alive (only once)
   if (!audioUnlocked) {
     audioUnlocked = true;
-
-    // Create dummy Web Audio context to keep Safari's audio stack active
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const buffer = audioCtx.createBuffer(1, 1, 22050);
@@ -149,95 +154,55 @@ function playPause() {
       source.connect(audioCtx.destination);
       source.start(0);
     }
-
-    // Use silent dummy audio to "unlock" without leaks
     silentAudio.volume = 0;
     silentAudio.play().catch((e) => console.warn("Silent unlock failed:", e));
   }
 
-  // Check if the timer is already running
   if (!countdowninterval || isPaused) {
-    // Start or resume timer
     if (timeleft === 0) {
       const minutes = parseInt(minuteInput.value, 10) || 0;
       timeleft = minutes * 60;
     }
     playPauseButton.innerHTML = `
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-    <rect x="6" y="5" width="4" height="14" rx="1" />
-    <rect x="14" y="5" width="4" height="14" rx="1" />
-  </svg>`;
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="5" width="4" height="14" rx="1" />
+        <rect x="14" y="5" width="4" height="14" rx="1" />
+      </svg>`;
     isPaused = false;
-
-    // Hide settings with a smooth fade-out
     settings.classList.add("hidden");
-
-    // Move the countdown up
     countdowndisplay.classList.add("move-up");
-
+    if (!hasPlayedStartBell) {
+      playSound();
+      hasPlayedStartBell = true;
+    }
     if (!countdowninterval) {
       countdowninterval = setInterval(updateTimer, 1000);
     }
   } else {
-    // Pause timer
-    playPauseButton.textContent = "▶"; // Play icon
+    playPauseButton.textContent = "▶";
     isPaused = true;
   }
 }
 
 resetbutton.addEventListener("click", () => {
   resetTimer();
-
-  // Show settings with a smooth fade-in
   settings.classList.remove("hidden");
-
-  // Reset the countdown position
   countdowndisplay.classList.remove("move-up");
-
   intervalTime = 0;
   intervalDuration = 0;
+  hasPlayedStartBell = false;
 });
 
 function playSound() {
   GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
 }
+
 function playFinished() {
   finishedAudio.play().catch((e) => console.warn("FinishedAudio failed:", e));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 DOM fully loaded and script initialized");
-  const toggle = document.getElementById("toggleInterval");
-  const intervalInput = document.getElementById("interval");
-
-  intervalInput.addEventListener("input", () => {
-    const maxInterval = parseInt(minuteInput.value, 10) || 0;
-    const intervalValue = parseInt(intervalInput.value, 10) || 0;
-
-    if (intervalValue > maxInterval) {
-      intervalInput.value = maxInterval;
-    }
-
-    intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0; // Convert to seconds
-    intervalTime = intervalDuration;
-    console.log("Interval duration set to:", intervalDuration, "seconds");
-  });
-
-  toggle.addEventListener("change", () => {
-    if (toggle.checked) {
-      intervalInput.classList.remove("hidden");
-      intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0; // Convert to seconds
-      intervalTime = intervalDuration; // Reset interval time
-      console.log("Interval duration set to:", intervalDuration, "seconds");
-    } else {
-      intervalInput.classList.add("hidden");
-    }
-  });
-});
-
 function updateTimer() {
   console.log("updateTimer running", timeleft);
-
   if (!isPaused) {
     timeleft--;
     if (timeleft <= 0) {
@@ -246,15 +211,13 @@ function updateTimer() {
       countdowndisplay.classList.remove("move-up");
       clearInterval(countdowninterval);
       countdowninterval = null;
-
       const minutes = parseInt(minuteInput.value, 10) || 0;
-      timeleft = minutes * 60; // Reset timeleft
-      displayTime(); // Update the display
-
-      playPauseButton.textContent = "▶"; // Reset play button to play icon
+      timeleft = minutes * 60;
+      displayTime();
+      playPauseButton.textContent = "▶";
       isPaused = false;
+      hasPlayedStartBell = false;
     }
-
     if (
       document.getElementById("toggleInterval").checked &&
       intervalDuration > 0
@@ -262,11 +225,10 @@ function updateTimer() {
       intervalTime--;
       console.log("Interval time left:", intervalTime);
       if (intervalTime <= 0) {
-        playSound(); // Play gong for interval
+        playSound();
         intervalTime = intervalDuration;
       }
     }
-
     displayTime();
   }
 }
@@ -286,7 +248,7 @@ function resetTimer() {
   const minutes = parseInt(minuteInput.value, 10) || 0;
   timeleft = minutes * 60;
   isPaused = false;
-  playPauseButton.textContent = "▶"; // Play icon
+  playPauseButton.textContent = "▶";
   displayTime();
   settings.style.visibility = "visible";
   settings.classList.remove("hidden");
@@ -295,11 +257,8 @@ function resetTimer() {
 function updateDisplayFromInput() {
   const minutes = parseInt(minuteInput.value, 10) || 0;
   timeleft = minutes * 60;
-
-  // Update the display without starting timer
   const displayMinutes = Math.floor(timeleft / 60);
   const displaySeconds = timeleft % 60;
-
   countdowndisplay.innerText = `${displayMinutes}:${
     displaySeconds < 10 ? "0" : ""
   }${displaySeconds}`;
