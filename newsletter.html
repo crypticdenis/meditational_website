@@ -18,15 +18,48 @@
     <main>
       <div class="nl">
         <h2>Subscribe to our free newsletter</h2>
-        <form action="newsletter.php" method="POST">
-          <input type="text" id="email" placeholder="Enter your email" />
+        <form
+          id="newsletterForm"
+          action="https://formspree.io/f/xpwrdjyn"
+          method="POST"
+        >
+          <input type="email" id="email" placeholder="Enter your email" />
           <button type="submit" id="subscribeButton">Subscribe</button>
         </form>
+        <p id="thanksMSG" style="display: none">
+          Thanks so much for Subscribing
+        </p>
       </div>
     </main>
     <footer>
       <p><a class="link" href="/">Back to Timer</a></p>
       <p>© 2025 Meditational.space</p>
     </footer>
+    <script>
+      document
+        .getElementById("newsletterForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const emailInput = document.getElementById("email");
+          const email = emailInput.value;
+
+          const response = await fetch("https://formspree.io/f/YOUR-FORM-ID", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ email: email }),
+          });
+
+          if (response.ok) {
+            document.getElementById("successMessage").style.display = "block";
+            emailInput.value = "";
+          } else {
+            alert("Something went wrong. Try again later.");
+          }
+        });
+    </script>
   </body>
 </html>

@@ -44,17 +44,17 @@ let audioUnlocked = false;
 let audioCtx;
 let hasPlayedStartBell = false;
 
-const GongAudio = new Audio("untitled.mp3");
-const finishedAudio = new Audio("gong.mp3");
-const silentAudio = new Audio("silent.mp3");
+const GongAudio = new Audio("sounds/untitled.mp3");
+const finishedAudio = new Audio("sounds/gong.mp3");
+const silentAudio = new Audio("sounds/silent.mp3");
 
 finishedAudio.volume = 1;
 GongAudio.volume = 1;
 
 const audioFiles = {
-  "river.mp3": new Audio("river.mp3"),
-  "woods.mp3": new Audio("woods.mp3"),
-  "white_noise.mp3": new Audio("white_noise.mp3"),
+  "river.mp3": new Audio("sounds/river.mp3"),
+  "woods.mp3": new Audio("sounds/woods.mp3"),
+  "white_noise.mp3": new Audio("sounds/white_noise.mp3"),
 };
 
 for (const a of Object.values(audioFiles)) {
