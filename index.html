@@ -42,8 +42,7 @@
         <p>“The mind is everything. What you think you become.”</p>
       </div>
     </header>
-    <main>
-    <div class="guided-section">
+    <section class="guided-section">
       <div id="btn-guided" onclick="changeToGuided()">
         <img
           src="img/meditation.png"
@@ -53,84 +52,89 @@
         />
         <div style="text-align: center; font-size: 0.75em; margin-top: 4px">
           Guided
-        </div> 
+        </div>
       </div>
-    </div>
-    <div id="soundToggle" class="sound-toggle">
-      <img
-        src="img/wave-sound.png"
-        alt="Tiny Image"
-        class="top-right-image"
-        id="soundIcon"
-      />
-      <div style="text-align: center; font-size: 0.75em; margin-top: 4px">
-        Sounds
-      </div>
-    </div>
-    <div class="sound-menu hidden" id="soundMenu">
-      <div class="sound-row">
-        <select
-          class="dropdown-s"
-          name="musicSelect"
-          id="musicSelect"
-          onchange="changeSound()"
-        >
-          <option value="river.mp3">river</option>
-          <option value="woods.mp3">woods</option>
-          <option value="white_noise.mp3">white noise</option>
-        </select>
-        <a href="#" id="musicToggle">
-          <img
-            src="img/volume-mute.png"
-            alt="Tiny Image"
-            class="top-right-image"
-            id="musicOn"
-          />
-        </a>
-      </div>
-      <div class="slidecontainer">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value="50"
-          class="sound-slider"
-          id="volumeSlider"
-          style="padding: 0"
-          onchange="changeVolume()"
+    </section>
+    <section id="sound-section">
+      <div id="soundToggle" class="sound-toggle">
+        <img
+          src="img/wave-sound.png"
+          alt="Tiny Image"
+          class="top-right-image"
+          id="soundIcon"
         />
+        <div style="text-align: center; font-size: 0.75em; margin-top: 4px">
+          Sounds
+        </div>
       </div>
-    </div>
-    <div class="container">
-      <div class="settings" id="settings">
-        <div class="input-section" id="timerInput">
-          <label for="minutes">Timer</label>
-          <input type="number" id="minutes" min="1" value="10" />
+      <div class="sound-menu hidden" id="soundMenu">
+        <div class="sound-row">
+          <select
+            class="dropdown-s"
+            name="musicSelect"
+            id="musicSelect"
+            onchange="changeSound()"
+          >
+            <option value="river.mp3">river</option>
+            <option value="woods.mp3">woods</option>
+            <option value="white_noise.mp3">white noise</option>
+          </select>
+          <a href="#" id="musicToggle">
+            <img
+              src="img/volume-mute.png"
+              alt="Tiny Image"
+              class="top-right-image"
+              id="musicOn"
+            />
+          </a>
         </div>
-        <div class="fullwidth-hr">
-          <hr class="animated-hr" />
+        <div class="slidecontainer">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            class="sound-slider"
+            id="volumeSlider"
+            style="padding: 0"
+            onchange="changeVolume()"
+          />
         </div>
+      </div>
+    </section>
+    <main>
+      <section class="container-section">
+        <div class="container">
+          <div class="settings" id="settings">
+            <div class="input-section" id="timerInput">
+              <label for="minutes">Timer</label>
+              <input type="number" id="minutes" min="1" value="10" />
+            </div>
+            <div class="fullwidth-hr">
+              <hr class="animated-hr" />
+            </div>
 
-        <div class="input-section" id="intervalInput">
-          <label for="interval">Interval</label>
-          <label class="switch">
-            <input type="checkbox" id="toggleInterval" />
-            <span class="slider round"></span>
-          </label>
-          <input type="number" id="interval" min="1" value="1" class="hidden" />
+            <div class="input-section" id="intervalInput">
+              <label for="interval">Interval</label>
+              <label class="switch">
+                <input type="checkbox" id="toggleInterval" />
+                <span class="slider round"></span>
+              </label>
+              <input type="number" id="interval" min="1" value="1" class="hidden" />
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="session-controls">
-      <div id="countdown">
-        <p>10:00</p>
-      </div>
-      <div class="button">
-        <button id="playPause">▶</button>
-        <button id="reset">✕</button>
-      </div>
-    </div>
-  </main>
+        <div class="session-controls">
+          <div id="countdown">
+            <p>10:00</p>
+          </div>
+          <div class="button">
+            <button id="playPause">▶</button>
+            <button id="reset">✕</button>
+          </div>
+        </div>
+      </section>
+    </main>
     <footer>
       <p>
         <a class="link" href="/newsletter">Newsletter</a
