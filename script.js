@@ -81,10 +81,10 @@ musicSelect.addEventListener("change", function () {
 function musicOnOffClick() {
   const musicIcon = document.getElementById("musicOn");
   if (musicIcon.src.includes("volume.png")) {
-    musicIcon.src = "volume-mute.png";
+    musicIcon.src = "img/volume-mute.png";
     audio.pause();
   } else {
-    musicIcon.src = "volume.png";
+    musicIcon.src = "img/volume.png";
     audio.play();
   }
 }
@@ -206,7 +206,7 @@ function updateTimer() {
   if (!isPaused) {
     timeleft--;
     if (timeleft <= 0) {
-      playFinished();
+      playSound();
       settings.classList.remove("hidden");
       countdowndisplay.classList.remove("move-up");
       clearInterval(countdowninterval);
@@ -217,6 +217,8 @@ function updateTimer() {
       playPauseButton.textContent = "▶";
       isPaused = false;
       hasPlayedStartBell = false;
+      playFinished();
+      playSound();
     }
     if (
       document.getElementById("toggleInterval").checked &&
