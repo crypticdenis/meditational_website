@@ -18,10 +18,10 @@ body {
   background: rgb(2, 0, 20);
   background: radial-gradient(circle, rgb(40, 50, 70) 0%, rgb(0, 8, 16) 200%);
   color: rgb(255, 255, 255);
-}
-
-body.no-scroll {
-  overflow: hidden; /* Prevents scrolling */
+  overflow-x: hidden;
+  overflow-y: auto; /* or scroll */
+  display: flex;
+  flex-direction: column;
 }
 
 body.scroll {
@@ -96,38 +96,32 @@ body.scroll {
   box-sizing: border-box;
 }
 
-.session-controls {
-  position: fixed;
-  bottom: 150px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2000;
-  max-width: 600px;
+.top-right-qanda {
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  position: fixed; /* No absolute positioning */
+  cursor: pointer;
+  top: 14px;
+  right: 70px;
+  z-index: 1000;
+}
+.qanda-icon {
   width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  text-align: center;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* <-- THIS centers children */
-  box-sizing: border-box;
+  height: 100%;
+  display: block;
 }
 
 #countdown {
-  display: flex;
-  justify-content: center;
   align-items: center;
   font-family: monospace;
   font-size: 5rem;
-  margin-top: 2rem;
   width: 100%;
   text-align: center;
 }
 
 #countdown p {
   margin: 0;
-  text-align: center;
   width: 100%;
 }
 
@@ -151,6 +145,7 @@ body.scroll {
   -webkit-appearance: none; /* Disable native styling */
   -webkit-tap-highlight-color: transparent; /* Remove tap flash */
   padding: 12px 24px;
+  margin: 20px;
   font-size: 18px;
   border-radius: 50px;
   height: 60px;
@@ -248,10 +243,19 @@ input {
 footer {
   font-family: "Courier Prime", monospace;
   text-align: center;
-  position: fixed;
   width: 100%;
   color: rgb(193, 201, 229);
+  background: transparent;
+  position: static;
+  left: 0;
   bottom: 0;
+  z-index: 100;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  padding-bottom: 60px; /* Prevents content from being hidden behind the fixed footer */
 }
 
 .guided-sessions {
@@ -318,11 +322,6 @@ footer {
   color: #666;
 }
 
-#session-controls {
-  text-align: center;
-  margin: 20px 0;
-}
-
 .nl {
   text-align: center;
   padding: 20px;
@@ -355,23 +354,6 @@ footer {
   font-size: 1rem;
   border-radius: 5px;
   cursor: pointer;
-}
-.session-controls {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2000;
-  max-width: 600px;
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  text-align: center;
-  box-sizing: border-box;
 }
 
 /* The switch - the box around the slider */
@@ -613,6 +595,10 @@ footer.scroll {
   .settings {
     flex-direction: column;
     align-items: center;
+  }
+
+  footer {
+    display: none;
   }
 
   .input-section {
