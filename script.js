@@ -30,7 +30,7 @@ const minuteInput = document.getElementById("minutes");
 const playPauseButton = document.getElementById("playPause");
 const resetbutton = document.getElementById("reset");
 const countdowndisplay = document.getElementById("countdown");
-const settings = document.getElementById("settings");
+const settings = document.getElementById("timerContainer");
 const musicOnOff = document.getElementById("musicOn");
 const musicSelect = document.getElementById("musicSelect");
 

@@ -83,17 +83,16 @@ body.scroll {
 }
 
 .container {
-  max-width: 600px;
-  width: 100%;
-  margin: 50px auto;
+  max-width: 800px;
+  margin: 25px auto;
   padding: 10px;
   border-radius: 5px;
   text-align: center;
-
   display: flex;
   flex-direction: column;
   align-items: center; /* <-- THIS centers children */
-  box-sizing: border-box;
+  justify-content: center; /* Optional: centers content vertically */
+  visibility: visible;
 }
 
 .top-right-qanda {
@@ -217,21 +216,6 @@ input {
   box-sizing: border-box;
   outline: none;
   transition: all 1s ease-in-out;
-}
-
-.input-section {
-  margin-right: auto;
-}
-
-/* Smooth transition for hiding settings */
-.settings {
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out; /* Smooth fade-out effect */
-}
-
-.settings.hidden {
-  opacity: 0;
-  pointer-events: none; /* Prevent interaction when hidden */
 }
 
 .input-section label {

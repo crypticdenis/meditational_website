@@ -104,33 +104,28 @@
     </section>
     <main>
       <section class="container-section">
-        <div class="container">
-          <div class="settings" id="settings">
-            <div class="input-section" id="timerInput">
-              <label for="minutes">Timer</label>
-              <input type="number" id="minutes" min="1" value="10" />
-            </div>
-            <div class="fullwidth-hr">
-              <hr class="animated-hr" />
-            </div>
-
-            <div class="input-section" id="intervalInput">
-              <label for="interval">Interval</label>
-              <label class="switch">
-                <input type="checkbox" id="toggleInterval" />
-                <span class="slider round"></span>
-              </label>
-              <input
-                type="number"
-                id="interval"
-                min="1"
-                value="1"
-                class="hidden"
-              />
-            </div>
+        <div class="container" id="timerContainer">
+          <div class="input-section" id="timerInput">
+            <label for="minutes">Timer</label>
+            <input type="number" id="minutes" min="1" value="10" />
+          </div>
+          <hr class="animated-hr" />
+          <div class="input-section" id="intervalInput">
+            <label for="interval">Interval</label>
+            <label class="switch">
+              <input type="checkbox" id="toggleInterval" />
+              <span class="slider round"></span>
+            </label>
+            <input
+              type="number"
+              id="interval"
+              min="1"
+              value="1"
+              class="hidden"
+            />
           </div>
         </div>
-        <div class="session-controls">
+        <div class="container">
           <div id="countdown">
             <p>10:00</p>
           </div>
