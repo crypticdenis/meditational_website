@@ -134,7 +134,7 @@ document.getElementById("soundToggle").addEventListener("click", () => {
 
 function changeVolume() {
   const volume = document.getElementById("volumeSlider").value / 100;
-  musicOnOff.src = volume === 0 ? "volume-mute.png" : "volume.png";
+  musicOnOff.src = volume === 0 ? "img/volume-mute.png" : "img/volume.png";
   if (volume > 0) audio.play();
   for (const a of Object.values(audioFiles)) a.volume = volume;
 }
@@ -198,6 +198,7 @@ function playSound() {
 }
 
 function playFinished() {
+  finishedAudio.play().catch((e) => console.warn("FinishedAudio failed:", e));
   finishedAudio.play().catch((e) => console.warn("FinishedAudio failed:", e));
 }
 
