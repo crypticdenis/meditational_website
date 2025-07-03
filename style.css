@@ -576,6 +576,12 @@ footer.scroll {
 }
 
 @media (max-width: 800px) {
+  .button {
+    position: fixed;
+    bottom: 10px;
+    gap: 100px; /* Adjust the value for more or less spacing */
+    justify-content: center; /* Optional: center buttons horizontally */
+  }
   .settings {
     flex-direction: column;
     align-items: center;
