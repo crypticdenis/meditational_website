@@ -199,7 +199,6 @@ function playSound() {
 
 function playFinished() {
   finishedAudio.play().catch((e) => console.warn("FinishedAudio failed:", e));
-  finishedAudio.play().catch((e) => console.warn("FinishedAudio failed:", e));
 }
 
 function updateTimer() {
@@ -219,7 +218,6 @@ function updateTimer() {
       isPaused = false;
       hasPlayedStartBell = false;
       playFinished();
-      playSound();
     }
     if (
       document.getElementById("toggleInterval").checked &&
