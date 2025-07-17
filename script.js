@@ -206,7 +206,6 @@ function updateTimer() {
   if (!isPaused) {
     timeleft--;
     if (timeleft <= 0) {
-      playSound();
       settings.classList.remove("hidden");
       countdowndisplay.classList.remove("move-up");
       clearInterval(countdowninterval);
