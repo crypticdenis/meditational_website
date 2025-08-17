@@ -234,7 +234,8 @@ class TimerApp {
       }
       if (this.toggleInterval.checked && this.intervalDuration > 0) {
         this.intervalTime--;
-        if (this.intervalTime <= 0 && this.timeLeft > 0) {
+        // Only play interval bell if timer is not ending
+        if (this.intervalTime <= 0 && this.timeLeft > 1) {
           this.playSound();
           this.intervalTime = this.intervalDuration;
         }
