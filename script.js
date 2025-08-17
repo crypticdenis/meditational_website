@@ -1,265 +1,270 @@
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("pulsate");
+});
 
-  const toggle = document.getElementById("toggleInterval");
-  const intervalInput = document.getElementById("interval");
+// TimerApp encapsulates all timer logic and UI interactions
+class TimerApp {
+  constructor() {
+    // DOM Elements
+    this.minuteInput = document.getElementById("minutes");
+    this.playPauseButton = document.getElementById("playPause");
+    this.resetButton = document.getElementById("reset");
+    this.countdownDisplay = document.getElementById("countdown");
+    this.settings = document.getElementById("timerContainer");
+    this.musicOnOff = document.getElementById("musicOn");
+    this.musicSelect = document.getElementById("musicSelect");
+    this.toggleInterval = document.getElementById("toggleInterval");
+    this.intervalInput = document.getElementById("interval");
+    this.soundMenu = document.getElementById("soundMenu");
+    this.soundToggle = document.getElementById("soundToggle");
+    this.volumeSlider = document.getElementById("volumeSlider");
 
-  intervalInput.addEventListener("input", () => {
-    const maxInterval = parseInt(minuteInput.value, 10) || 0;
-    const intervalValue = parseInt(intervalInput.value, 10) || 0;
+    // Timer State
+    this.countdownInterval = null;
+    this.timeLeft = 0;
+    this.isPaused = false;
+    this.intervalTime = 0;
+    this.intervalDuration = 1;
+    this.hasPlayedStartBell = false;
+
+    // Audio State
+    this.audioUnlocked = false;
+    this.audioCtx = null;
+    this.GongAudio = new Audio("sounds/untitled.mp3");
+    this.finishedAudio = new Audio("sounds/gong.mp3");
+    this.silentAudio = new Audio("sounds/silent.mp3");
+    this.finishedAudio.volume = 1;
+    this.GongAudio.volume = 1;
+    this.audioFiles = {
+      "river.mp3": new Audio("sounds/river.mp3"),
+      "woods.mp3": new Audio("sounds/woods.mp3"),
+      "white_noise.mp3": new Audio("sounds/white_noise.mp3"),
+    };
+    for (const a of Object.values(this.audioFiles)) {
+      a.loop = true;
+      a.volume = 0.5;
+    }
+    this.audio = this.audioFiles[this.musicSelect.value];
+
+    // Sound menu state
+    this.soundMenuTimeout = null;
+
+    // Bind event listeners
+    this.bindEvents();
+    this.updateDisplayFromInput();
+  }
+
+  bindEvents() {
+    this.playPauseButton.addEventListener("click", () => this.playPause());
+    this.resetButton.addEventListener("click", () => this.resetTimer());
+    this.minuteInput.addEventListener("input", () =>
+      this.updateDisplayFromInput()
+    );
+    this.musicOnOff.addEventListener("click", () => this.musicOnOffClick());
+    this.musicSelect.addEventListener("change", () => this.changeMusic());
+    this.toggleInterval.addEventListener("change", () =>
+      this.toggleIntervalInput()
+    );
+    this.intervalInput.addEventListener("input", () =>
+      this.updateIntervalSettings()
+    );
+    this.soundToggle.addEventListener("click", () => this.toggleSoundMenu());
+    this.volumeSlider.addEventListener("input", () => this.changeVolume());
+    ["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
+      this.soundMenu.addEventListener(event, () =>
+        this.resetSoundMenuTimeout()
+      );
+    });
+  }
+
+  updateIntervalSettings() {
+    const maxInterval = parseInt(this.minuteInput.value, 10) || 0;
+    let intervalValue = parseInt(this.intervalInput.value, 10) || 0;
     if (intervalValue > maxInterval) {
-      intervalInput.value = maxInterval;
+      intervalValue = maxInterval;
+      this.intervalInput.value = maxInterval;
     }
-    intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0;
-    intervalTime = intervalDuration;
-    console.log("Interval duration set to:", intervalDuration, "seconds");
-  });
+    this.intervalDuration = intervalValue * 60 || 0;
+    this.intervalTime = this.intervalDuration;
+  }
 
-  toggle.addEventListener("change", () => {
-    if (toggle.checked) {
-      intervalInput.classList.remove("hidden");
-      intervalDuration = parseInt(intervalInput.value, 10) * 60 || 0;
-      intervalTime = intervalDuration;
+  toggleIntervalInput() {
+    if (this.toggleInterval.checked) {
+      this.intervalInput.classList.remove("hidden");
+      this.updateIntervalSettings();
     } else {
-      intervalInput.classList.add("hidden");
+      this.intervalInput.classList.add("hidden");
     }
-  });
-});
-
-const minuteInput = document.getElementById("minutes");
-const playPauseButton = document.getElementById("playPause");
-const resetbutton = document.getElementById("reset");
-const countdowndisplay = document.getElementById("countdown");
-const settings = document.getElementById("timerContainer");
-const musicOnOff = document.getElementById("musicOn");
-const musicSelect = document.getElementById("musicSelect");
-
-let countdowninterval;
-let timeleft = 0;
-let isPaused;
-let intervalTime = 0;
-let intervalDuration = 1;
-let soundMenuTimeout;
-let audioUnlocked = false;
-let audioCtx;
-let hasPlayedStartBell = false;
-
-const GongAudio = new Audio("sounds/untitled.mp3");
-const finishedAudio = new Audio("sounds/gong.mp3");
-const silentAudio = new Audio("sounds/silent.mp3");
-
-finishedAudio.volume = 1;
-GongAudio.volume = 1;
-
-const audioFiles = {
-  "river.mp3": new Audio("sounds/river.mp3"),
-  "woods.mp3": new Audio("sounds/woods.mp3"),
-  "white_noise.mp3": new Audio("sounds/white_noise.mp3"),
-};
-
-for (const a of Object.values(audioFiles)) {
-  a.loop = true;
-  a.volume = 0.5;
-}
-
-let audio = audioFiles[musicSelect.value];
-
-playPauseButton.addEventListener("click", playPause);
-minuteInput.addEventListener("input", updateDisplayFromInput);
-musicOnOff.addEventListener("click", musicOnOffClick);
-
-musicSelect.addEventListener("change", function () {
-  const wasPlaying = !audio.paused;
-  audio.pause();
-  audio.currentTime = 0;
-  audio = audioFiles[this.value];
-  if (musicOnOff.src.includes("volume.png") && wasPlaying) {
-    audio.play();
   }
-});
 
-function musicOnOffClick() {
-  const musicIcon = document.getElementById("musicOn");
-  if (musicIcon.src.includes("volume.png")) {
-    musicIcon.src = "img/volume-mute.png";
-    audio.pause();
-  } else {
-    musicIcon.src = "img/volume.png";
-    audio.play();
+  changeMusic() {
+    const wasPlaying = !this.audio.paused;
+    this.audio.pause();
+    this.audio.currentTime = 0;
+    this.audio = this.audioFiles[this.musicSelect.value];
+    if (this.musicOnOff.src.includes("volume.png") && wasPlaying) {
+      this.audio.play();
+    }
   }
-}
 
-function unlockAllAudioOnce() {
-  if (audioUnlocked) return;
-  audioUnlocked = true;
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    audioCtx
-      .resume()
-      .catch((e) => console.warn("AudioContext resume failed:", e));
-    const buffer = audioCtx.createBuffer(1, 1, 22050);
-    const source = audioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(audioCtx.destination);
-    source.start(0);
+  musicOnOffClick() {
+    if (this.musicOnOff.src.includes("volume.png")) {
+      this.musicOnOff.src = "img/volume-mute.png";
+      this.audio.pause();
+    } else {
+      this.musicOnOff.src = "img/volume.png";
+      this.audio.play();
+    }
   }
-  silentAudio.volume = 0;
-  silentAudio.play().catch((e) => console.warn("Silent unlock failed:", e));
-}
 
-function hideSoundMenu() {
-  document.getElementById("soundMenu").classList.remove("show");
-}
-
-function resetSoundMenuTimeout() {
-  clearTimeout(soundMenuTimeout);
-  soundMenuTimeout = setTimeout(hideSoundMenu, 4000);
-}
-
-document.getElementById("soundToggle").addEventListener("click", () => {
-  const menu = document.getElementById("soundMenu");
-  menu.classList.toggle("show");
-  if (menu.classList.contains("show")) {
-    resetSoundMenuTimeout();
-  } else {
-    clearTimeout(soundMenuTimeout);
+  changeVolume() {
+    const volume = this.volumeSlider.value / 100;
+    this.musicOnOff.src =
+      volume === 0 ? "img/volume-mute.png" : "img/volume.png";
+    if (volume > 0) this.audio.play();
+    for (const a of Object.values(this.audioFiles)) a.volume = volume;
   }
-});
 
-["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
-  document
-    .getElementById("soundMenu")
-    .addEventListener(event, resetSoundMenuTimeout);
-});
-
-function changeVolume() {
-  const volume = document.getElementById("volumeSlider").value / 100;
-  musicOnOff.src = volume === 0 ? "img/volume-mute.png" : "img/volume.png";
-  if (volume > 0) audio.play();
-  for (const a of Object.values(audioFiles)) a.volume = volume;
-}
-
-function changeToGuided() {
-  window.location.href = "guidedSection.html";
-}
-
-function playPause() {
-  if (!audioUnlocked) {
-    audioUnlocked = true;
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const buffer = audioCtx.createBuffer(1, 1, 22050);
-      const source = audioCtx.createBufferSource();
+  unlockAllAudioOnce() {
+    if (this.audioUnlocked) return;
+    this.audioUnlocked = true;
+    if (!this.audioCtx) {
+      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.audioCtx
+        .resume()
+        .catch((e) => console.warn("AudioContext resume failed:", e));
+      const buffer = this.audioCtx.createBuffer(1, 1, 22050);
+      const source = this.audioCtx.createBufferSource();
       source.buffer = buffer;
-      source.connect(audioCtx.destination);
+      source.connect(this.audioCtx.destination);
       source.start(0);
     }
-    silentAudio.volume = 0;
-    silentAudio.play().catch((e) => console.warn("Silent unlock failed:", e));
+    this.silentAudio.volume = 0;
+    this.silentAudio
+      .play()
+      .catch((e) => console.warn("Silent unlock failed:", e));
   }
 
-  if (!countdowninterval || isPaused) {
-    if (timeleft === 0) {
-      const minutes = parseInt(minuteInput.value, 10) || 0;
-      timeleft = minutes * 60;
+  toggleSoundMenu() {
+    this.soundMenu.classList.toggle("show");
+    if (this.soundMenu.classList.contains("show")) {
+      this.resetSoundMenuTimeout();
+    } else {
+      clearTimeout(this.soundMenuTimeout);
     }
-    playPauseButton.innerHTML = `
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-        <rect x="6" y="5" width="4" height="14" rx="1" />
-        <rect x="14" y="5" width="4" height="14" rx="1" />
-      </svg>`;
-    isPaused = false;
-    settings.classList.add("hidden");
-    countdowndisplay.classList.add("move-up");
-    if (!hasPlayedStartBell) {
-      playSound();
-      hasPlayedStartBell = true;
-    }
-    if (!countdowninterval) {
-      countdowninterval = setInterval(updateTimer, 1000);
-    }
-  } else {
-    playPauseButton.textContent = "▶";
-    isPaused = true;
   }
-}
 
-resetbutton.addEventListener("click", () => {
-  resetTimer();
-  settings.classList.remove("hidden");
-  countdowndisplay.classList.remove("move-up");
-  intervalTime = 0;
-  intervalDuration = 0;
-  hasPlayedStartBell = false;
-});
+  hideSoundMenu() {
+    this.soundMenu.classList.remove("show");
+  }
 
-function playSound() {
-  GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
-}
+  resetSoundMenuTimeout() {
+    clearTimeout(this.soundMenuTimeout);
+    this.soundMenuTimeout = setTimeout(() => this.hideSoundMenu(), 4000);
+  }
 
-function playFinished() {
-  finishedAudio.play().catch((e) => console.warn("FinishedAudio failed:", e));
-}
-
-function updateTimer() {
-  console.log("updateTimer running", timeleft);
-  if (!isPaused) {
-    timeleft--;
-    if (timeleft <= 0) {
-      settings.classList.remove("hidden");
-      countdowndisplay.classList.remove("move-up");
-      clearInterval(countdowninterval);
-      countdowninterval = null;
-      const minutes = parseInt(minuteInput.value, 10) || 0;
-      timeleft = minutes * 60;
-      displayTime();
-      playPauseButton.textContent = "▶";
-      isPaused = false;
-      hasPlayedStartBell = false;
-      playFinished();
-    }
-    if (
-      document.getElementById("toggleInterval").checked &&
-      intervalDuration > 0
-    ) {
-      intervalTime--;
-      console.log("Interval time left:", intervalTime);
-      if (intervalTime <= 0) {
-        playSound();
-        intervalTime = intervalDuration;
+  playPause() {
+    this.unlockAllAudioOnce();
+    if (!this.countdownInterval || this.isPaused) {
+      if (this.timeLeft === 0) {
+        const minutes = parseInt(this.minuteInput.value, 10) || 0;
+        this.timeLeft = minutes * 60;
       }
+      this.playPauseButton.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="5" width="4" height="14" rx="1" />
+          <rect x="14" y="5" width="4" height="14" rx="1" />
+        </svg>`;
+      this.isPaused = false;
+      this.settings.classList.add("hidden");
+      this.countdownDisplay.classList.add("move-up");
+      if (!this.hasPlayedStartBell) {
+        this.hasPlayedStartBell = true;
+      }
+      if (!this.countdownInterval) {
+        this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
+      }
+    } else {
+      this.playPauseButton.textContent = "▶";
+      this.isPaused = true;
     }
-    displayTime();
+  }
+
+  resetTimer() {
+    clearInterval(this.countdownInterval);
+    this.countdownInterval = null;
+    const minutes = parseInt(this.minuteInput.value, 10) || 0;
+    this.timeLeft = minutes * 60;
+    this.isPaused = false;
+    this.playPauseButton.textContent = "▶";
+    this.displayTime();
+    this.settings.style.visibility = "visible";
+    this.settings.classList.remove("hidden");
+    this.countdownDisplay.classList.remove("move-up");
+    this.intervalTime = 0;
+    this.intervalDuration = 0;
+    this.hasPlayedStartBell = false;
+  }
+
+  playSound() {
+    this.GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
+  }
+
+  playFinished() {
+    this.finishedAudio
+      .play()
+      .catch((e) => console.warn("FinishedAudio failed:", e));
+  }
+
+  updateTimer() {
+    if (!this.isPaused) {
+      this.timeLeft--;
+      if (this.timeLeft <= 0) {
+        this.settings.classList.remove("hidden");
+        this.countdownDisplay.classList.remove("move-up");
+        clearInterval(this.countdownInterval);
+        this.countdownInterval = null;
+        const minutes = parseInt(this.minuteInput.value, 10) || 0;
+        this.timeLeft = minutes * 60;
+        this.displayTime();
+        this.playPauseButton.textContent = "▶";
+        this.isPaused = false;
+        this.hasPlayedStartBell = false;
+        this.playFinished();
+      }
+      if (this.toggleInterval.checked && this.intervalDuration > 0) {
+        this.intervalTime--;
+        if (this.intervalTime <= 0 && this.timeLeft > 0) {
+          this.playSound();
+          this.intervalTime = this.intervalDuration;
+        }
+      }
+      this.displayTime();
+    }
+  }
+
+  displayTime() {
+    const minutes = Math.floor(this.timeLeft / 60);
+    const seconds = this.timeLeft % 60;
+    this.countdownDisplay.innerHTML = `<p>${minutes}:${String(seconds).padStart(
+      2,
+      "0"
+    )}</p>`;
+  }
+
+  updateDisplayFromInput() {
+    const minutes = parseInt(this.minuteInput.value, 10) || 0;
+    this.timeLeft = minutes * 60;
+    const displayMinutes = Math.floor(this.timeLeft / 60);
+    const displaySeconds = this.timeLeft % 60;
+    this.countdownDisplay.innerText = `${displayMinutes}:${
+      displaySeconds < 10 ? "0" : ""
+    }${displaySeconds}`;
   }
 }
 
-function displayTime() {
-  const minutes = Math.floor(timeleft / 60);
-  const seconds = timeleft % 60;
-  countdowndisplay.innerHTML = `<p>${minutes}:${String(seconds).padStart(
-    2,
-    "0"
-  )}</p>`;
-}
-
-function resetTimer() {
-  clearInterval(countdowninterval);
-  countdowninterval = null;
-  const minutes = parseInt(minuteInput.value, 10) || 0;
-  timeleft = minutes * 60;
-  isPaused = false;
-  playPauseButton.textContent = "▶";
-  displayTime();
-  settings.style.visibility = "visible";
-  settings.classList.remove("hidden");
-}
-
-function updateDisplayFromInput() {
-  const minutes = parseInt(minuteInput.value, 10) || 0;
-  timeleft = minutes * 60;
-  const displayMinutes = Math.floor(timeleft / 60);
-  const displaySeconds = timeleft % 60;
-  countdowndisplay.innerText = `${displayMinutes}:${
-    displaySeconds < 10 ? "0" : ""
-  }${displaySeconds}`;
-}
+// Initialize the app
+window.addEventListener("DOMContentLoaded", () => {
+  document.body.classList.add("pulsate");
+  new TimerApp();
+});
