@@ -88,7 +88,7 @@ class TimerApp {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
     this.audioCtx.resume().catch(console.warn);
-    this.playBell("start"); // Play start bell on unlock
+    // Do not play any bell on unlock; only unlock/resume AudioContext
   }
 
   bindEvents() {
