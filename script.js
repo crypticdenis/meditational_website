@@ -139,33 +139,10 @@ class TimerApp {
       source.connect(this.audioCtx.destination);
       source.start(0);
     }
-    // Only unlock the gongs and silent audio, not background music
-    const unlock = (audio) => {
-      const prevVolume = audio.volume;
-      audio.volume = 0;
-      try {
-        const p = audio.play();
-        if (p && typeof p.then === "function") {
-          p.then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.volume = prevVolume;
-          });
-        } else {
-          audio.pause();
-          audio.currentTime = 0;
-          audio.volume = prevVolume;
-        }
-      } catch (e) {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.volume = prevVolume;
-      }
-    };
-    unlock(this.silentAudio);
-    unlock(this.GongAudio);
-    unlock(this.finishedAudio);
-    // Do NOT unlock background music here to avoid random playback
+    this.silentAudio.volume = 0;
+    this.silentAudio
+      .play()
+      .catch((e) => console.warn("Silent unlock failed:", e));
   }
 
   toggleSoundMenu() {
