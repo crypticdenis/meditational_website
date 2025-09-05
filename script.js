@@ -17,12 +17,8 @@ class TimerApp {
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
-    document.getElementById("btn-guided").addEventListener("click", () => {
-      this.changeToGuided();
-    });
-
     // Timer State
-    this.countdownInterval = null;
+    this.this.countdownInterval = null;
     this.timeLeft = 0;
     this.isPaused = false;
     this.intervalTime = 0;
@@ -110,13 +106,7 @@ class TimerApp {
   }
 
   changeToGuided() {
-    // Optionally pause/stop the timer first
-    this.isPaused = true;
-    clearInterval(this.countdownInterval);
-    this.countdownInterval = null;
-
-    // Navigate to guided screen page
-    window.location.href = "guidedSection.html"; // put your guided page filename here
+    
   }
 
   updateIntervalSettings() {
@@ -188,11 +178,11 @@ class TimerApp {
       if (this.timeLeft === 0)
         this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
 
-      this.playPauseButton.innerHTML = `
+      this.playPauseButton.innerHTML = 
         <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
           <rect x="6" y="5" width="4" height="14" rx="1" />
           <rect x="14" y="5" width="4" height="14" rx="1" />
-        </svg>`;
+        </svg>;
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
@@ -259,21 +249,21 @@ class TimerApp {
   displayTime() {
     const minutes = Math.floor(this.timeLeft / 60);
     const seconds = this.timeLeft % 60;
-    this.countdownDisplay.innerHTML = `<p>${minutes}:${String(seconds).padStart(
+    this.countdownDisplay.innerHTML = <p>${minutes}:${String(seconds).padStart(
       2,
       "0"
-    )}</p>`;
+    )}</p>;
   }
 
   updateDisplayFromInput() {
     this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
     const displayMinutes = Math.floor(this.timeLeft / 60);
     const displaySeconds = this.timeLeft % 60;
-    this.countdownDisplay.innerText = `${displayMinutes}:${
+    this.countdownDisplay.innerText = ${displayMinutes}:${
       displaySeconds < 10 ? "0" : ""
-    }${displaySeconds}`;
+    }${displaySeconds};
   }
 }
 
 // Initialize
-window.addEventListener("DOMContentLoaded", () => new TimerApp());
+window.addEventListener("DOMContentLoaded", () => new TimerApp());  
