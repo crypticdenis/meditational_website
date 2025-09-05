@@ -76,12 +76,11 @@ class TimerApp {
     source.connect(this.audioCtx.destination);
     source.start();
   }
-
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
     this.audioCtx.resume().catch(console.warn);
-    this.playBell("start"); // Play start bell on unlock
+    this.playBell("start"); // small bell on first click
   }
 
   bindEvents() {
