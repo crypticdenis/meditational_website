@@ -235,36 +235,53 @@ class TimerApp {
   }
 
   updateTimer() {
-    if (!this.isPaused) {
-      this.timeLeft--;
+    if (this.isPaused) return;
 
-      if (this.timeLeft <= 0) {
-        // Timer finished – ONLY play finished bell
-        this.settings.classList.remove("hidden");
-        this.countdownDisplay.classList.remove("move-up");
-        clearInterval(this.countdownInterval);
-        this.countdownInterval = null;
-        const minutes = parseInt(this.minuteInput.value, 10) || 0;
-        this.timeLeft = minutes * 60;
-        this.displayTime();
-        this.playPauseButton.textContent = "▶";
-        this.isPaused = false;
-        this.hasPlayedStartBell = false;
-        this.playFinished();
-        return; // ⬅️ prevent interval bell check
-      }
+    const now = Date.now();
 
-      // Interval bell only if timer still running
-      if (this.toggleInterval.checked && this.intervalDuration > 0) {
-        this.intervalTime--;
-        if (this.intervalTime <= 0 && this.timeLeft > 1) {
-          this.playSound();
-          this.intervalTime = this.intervalDuration;
-        }
-      }
-
-      this.displayTime();
+    if (!this.lastTick) {
+      this.lastTick = now;
+      return;
     }
+
+    const delta = Math.floor((now - this.lastTick) / 1000);
+    if (delta <= 0) return;
+
+    this.lastTick = now;
+
+    // Subtract delta seconds from timeLeft
+    this.timeLeft -= delta;
+    if (this.timeLeft <= 0) {
+      this.timeLeft = 0;
+      this.displayTime();
+      this.handleFinish();
+      return;
+    }
+
+    // Handle interval bell
+    if (this.toggleInterval.checked && this.intervalDuration > 0) {
+      this.intervalTime -= delta;
+      if (this.intervalTime <= 0 && this.timeLeft > 1) {
+        this.playSound();
+        // Keep remainder to prevent drift
+        this.intervalTime += this.intervalDuration;
+      }
+    }
+
+    this.displayTime();
+  }
+
+  handleFinish() {
+    this.settings.classList.remove("hidden");
+    this.countdownDisplay.classList.remove("move-up");
+    clearInterval(this.countdownInterval);
+    this.countdownInterval = null;
+    this.playPauseButton.textContent = "▶";
+    this.isPaused = false;
+    this.hasPlayedStartBell = false;
+    this.playFinished();
+    this.lastTick = null;
+    this.intervalTime = this.intervalDuration; // reset for next run
   }
 
   displayTime() {
