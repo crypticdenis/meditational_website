@@ -128,25 +128,21 @@ class TimerApp {
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
-
-    // This is the key: play a tiny silent sound on a direct user action
-    // to unlock the Web Audio API for later use.
-    const silentBuffer = this.audioCtx.createBuffer(1, 1, 22050);
-    const source = this.audioCtx.createBufferSource();
-    source.buffer = silentBuffer;
-    source.connect(this.audioCtx.destination);
-    source.start(0);
-
-    // Also, try to play and pause all your sounds
-    this.finishedAudio.play().then(() => {
-      this.finishedAudio.pause();
-      this.finishedAudio.currentTime = 0;
-    });
-
-    this.GongAudio.play().then(() => {
-      this.GongAudio.pause();
-      this.GongAudio.currentTime = 0;
-    });
+    if (!this.audioCtx) {
+      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.audioCtx
+        .resume()
+        .catch((e) => console.warn("AudioContext resume failed:", e));
+      const buffer = this.audioCtx.createBuffer(1, 1, 22050);
+      const source = this.audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(this.audioCtx.destination);
+      source.start(0);
+    }
+    this.silentAudio.volume = 0;
+    this.silentAudio
+      .play()
+      .catch((e) => console.warn("Silent unlock failed:", e));
   }
 
   toggleSoundMenu() {
