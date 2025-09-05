@@ -17,9 +17,8 @@ class TimerApp {
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
-
     // Timer State
-    this.countdownInterval = null;
+    this.this.countdownInterval = null;
     this.timeLeft = 0;
     this.isPaused = false;
     this.intervalTime = 0;
@@ -104,6 +103,16 @@ class TimerApp {
         this.resetSoundMenuTimeout()
       );
     });
+  }
+
+  changeToGuided() {
+    // Optionally pause/stop the timer first
+    this.isPaused = true;
+    clearInterval(this.countdownInterval);
+    this.countdownInterval = null;
+
+    // Navigate to guided screen page
+    window.location.href = "guided.html"; // put your guided page filename here
   }
 
   updateIntervalSettings() {
