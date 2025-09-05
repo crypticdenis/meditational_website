@@ -17,8 +17,9 @@ class TimerApp {
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
+
     // Timer State
-    this.this.countdownInterval = null;
+    this.countdownInterval = null;
     this.timeLeft = 0;
     this.isPaused = false;
     this.intervalTime = 0;
@@ -75,11 +76,12 @@ class TimerApp {
     source.connect(this.audioCtx.destination);
     source.start();
   }
+
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
     this.audioCtx.resume().catch(console.warn);
-    // Do not play any bell on first click; only unlock/resume AudioContext
+    this.playBell("start"); // Play start bell on unlock
   }
 
   bindEvents() {
@@ -105,21 +107,12 @@ class TimerApp {
     });
   }
 
-  changeToGuided() {
-    
-  }
-
   updateIntervalSettings() {
     const maxInterval = parseInt(this.minuteInput.value, 10) || 0;
     let intervalValue = parseInt(this.intervalInput.value, 10) || 0;
     if (intervalValue > maxInterval) intervalValue = maxInterval;
-
     this.intervalDuration = intervalValue * 60 || 0;
-
-    // Only set intervalTime if intervalDuration > 0
-    if (this.intervalDuration > 0) {
-      this.intervalTime = this.intervalDuration;
-    }
+    this.intervalTime = this.intervalDuration;
   }
 
   toggleIntervalInput() {
@@ -178,11 +171,11 @@ class TimerApp {
       if (this.timeLeft === 0)
         this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
 
-      this.playPauseButton.innerHTML = 
+      this.playPauseButton.innerHTML = `
         <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
           <rect x="6" y="5" width="4" height="14" rx="1" />
           <rect x="14" y="5" width="4" height="14" rx="1" />
-        </svg>;
+        </svg>`;
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
@@ -249,21 +242,21 @@ class TimerApp {
   displayTime() {
     const minutes = Math.floor(this.timeLeft / 60);
     const seconds = this.timeLeft % 60;
-    this.countdownDisplay.innerHTML = <p>${minutes}:${String(seconds).padStart(
+    this.countdownDisplay.innerHTML = `<p>${minutes}:${String(seconds).padStart(
       2,
       "0"
-    )}</p>;
+    )}</p>`;
   }
 
   updateDisplayFromInput() {
     this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
     const displayMinutes = Math.floor(this.timeLeft / 60);
     const displaySeconds = this.timeLeft % 60;
-    this.countdownDisplay.innerText = ${displayMinutes}:${
+    this.countdownDisplay.innerText = `${displayMinutes}:${
       displaySeconds < 10 ? "0" : ""
-    }${displaySeconds};
+    }${displaySeconds}`;
   }
 }
 
 // Initialize
-window.addEventListener("DOMContentLoaded", () => new TimerApp());  
+window.addEventListener("DOMContentLoaded", () => new TimerApp());
