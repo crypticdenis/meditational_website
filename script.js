@@ -219,7 +219,9 @@ class TimerApp {
   updateTimer() {
     if (!this.isPaused) {
       this.timeLeft--;
+
       if (this.timeLeft <= 0) {
+        // Timer finished – ONLY play finished bell
         this.settings.classList.remove("hidden");
         this.countdownDisplay.classList.remove("move-up");
         clearInterval(this.countdownInterval);
@@ -231,15 +233,18 @@ class TimerApp {
         this.isPaused = false;
         this.hasPlayedStartBell = false;
         this.playFinished();
+        return; // ⬅️ prevent interval bell check
       }
+
+      // Interval bell only if timer still running
       if (this.toggleInterval.checked && this.intervalDuration > 0) {
         this.intervalTime--;
-        // Only play interval bell if timer is not ending
         if (this.intervalTime <= 0 && this.timeLeft > 1) {
           this.playSound();
           this.intervalTime = this.intervalDuration;
         }
       }
+
       this.displayTime();
     }
   }
