@@ -139,27 +139,33 @@ class TimerApp {
       source.connect(this.audioCtx.destination);
       source.start(0);
     }
-    // Unlock all audio elements by playing and pausing them silently
-    const unlock = (audio) => {
+    // Only unlock the gongs and silent audio, not background music
+    const unlock = (audio, originalVolume = 1) => {
+      const prevVolume = audio.volume;
+      audio.volume = 0;
       try {
-        audio.volume = 0;
-        audio.play().then(() => {
+        const p = audio.play();
+        if (p && typeof p.then === "function") {
+          p.then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = prevVolume;
+          });
+        } else {
           audio.pause();
           audio.currentTime = 0;
-        });
+          audio.volume = prevVolume;
+        }
       } catch (e) {
-        // fallback for browsers that don't return a promise
-        audio.play();
         audio.pause();
         audio.currentTime = 0;
+        audio.volume = prevVolume;
       }
     };
-    unlock(this.silentAudio);
-    unlock(this.GongAudio);
-    unlock(this.finishedAudio);
-    for (const a of Object.values(this.audioFiles)) {
-      unlock(a);
-    }
+    unlock(this.silentAudio, 0);
+    unlock(this.GongAudio, 1);
+    unlock(this.finishedAudio, 1);
+    // Do NOT unlock background music here to avoid random playback
   }
 
   toggleSoundMenu() {
