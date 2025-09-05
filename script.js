@@ -1,19 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("pulsate");
-
-  // Detect iOS
-  const isIOS =
-    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-  // Show iOS notice if needed
-  if (isIOS) {
-    const notice = document.createElement("div");
-    notice.className = "ios-notice";
-    notice.innerHTML =
-      "For best experience on iOS, keep your device unlocked and not on silent mode.";
-    document.querySelector(".container").appendChild(notice);
-    notice.style.display = "block";
-  }
 });
 
 // TimerApp encapsulates all timer logic and UI interactions
@@ -41,20 +27,24 @@ class TimerApp {
     this.intervalDuration = 1;
     this.hasPlayedStartBell = false;
 
-    // Audio State - iOS compatible approach
+    // Audio State
     this.audioUnlocked = false;
-    this.audioContext = null;
-    this.GongAudio = null;
-    this.finishedAudio = null;
-    this.audioFiles = {};
-    this.audio = null;
-
-    // iOS detection
-    this.isIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-    // Initialize audio in a way that works with iOS
-    this.initAudio();
+    this.audioCtx = null;
+    this.GongAudio = new Audio("sounds/untitled.mp3");
+    this.finishedAudio = new Audio("sounds/gong.mp3");
+    this.silentAudio = new Audio("sounds/silent.mp3");
+    this.finishedAudio.volume = 1;
+    this.GongAudio.volume = 1;
+    this.audioFiles = {
+      "river.mp3": new Audio("sounds/river.mp3"),
+      "woods.mp3": new Audio("sounds/woods.mp3"),
+      "white_noise.mp3": new Audio("sounds/white_noise.mp3"),
+    };
+    for (const a of Object.values(this.audioFiles)) {
+      a.loop = true;
+      a.volume = 0.5;
+    }
+    this.audio = this.audioFiles[this.musicSelect.value];
 
     // Sound menu state
     this.soundMenuTimeout = null;
@@ -62,55 +52,6 @@ class TimerApp {
     // Bind event listeners
     this.bindEvents();
     this.updateDisplayFromInput();
-  }
-
-  initAudio() {
-    // Create audio elements with proper attributes for iOS
-    this.GongAudio = new Audio();
-    this.GongAudio.preload = "auto";
-
-    this.finishedAudio = new Audio();
-    this.finishedAudio.preload = "auto";
-
-    // Background audio files
-    const audioSources = {
-      "river.mp3": "sounds/river.mp3",
-      "woods.mp3": "sounds/woods.mp3",
-      "white_noise.mp3": "sounds/white_noise.mp3",
-    };
-
-    // Create audio elements for each background sound
-    for (const [name, src] of Object.entries(audioSources)) {
-      const audio = new Audio();
-      audio.src = src;
-      audio.preload = "metadata";
-      audio.loop = true;
-      audio.volume = 0.5;
-      this.audioFiles[name] = audio;
-    }
-
-    // Set default audio
-    this.audio = this.audioFiles[this.musicSelect.value];
-
-    // iOS requires direct user interaction to play audio
-    if (this.isIOS) {
-      // Add a one-time unlock button for iOS
-      const unlockButton = document.createElement("button");
-      unlockButton.textContent = "Tap to enable sound";
-      unlockButton.style.marginTop = "10px";
-      unlockButton.style.padding = "10px";
-      unlockButton.style.borderRadius = "5px";
-      unlockButton.style.backgroundColor = "rgba(255,255,255,0.2)";
-      unlockButton.style.color = "white";
-      unlockButton.style.border = "none";
-
-      unlockButton.addEventListener("click", () => {
-        this.unlockAllAudioOnce();
-        unlockButton.style.display = "none";
-      });
-
-      document.querySelector(".sound-controls").appendChild(unlockButton);
-    }
   }
 
   bindEvents() {
@@ -129,39 +70,11 @@ class TimerApp {
     );
     this.soundToggle.addEventListener("click", () => this.toggleSoundMenu());
     this.volumeSlider.addEventListener("input", () => this.changeVolume());
-
-    // Add touch events for mobile
     ["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
       this.soundMenu.addEventListener(event, () =>
         this.resetSoundMenuTimeout()
       );
     });
-
-    // Preload sounds on iOS after user interaction
-    if (this.isIOS) {
-      document.addEventListener(
-        "touchstart",
-        () => {
-          this.preloadAudio();
-        },
-        { once: true }
-      );
-    }
-  }
-
-  preloadAudio() {
-    // Preload audio files for iOS
-    this.GongAudio.src = "sounds/untitled.mp3";
-    this.finishedAudio.src = "sounds/gong.mp3";
-
-    // Load but don't play
-    this.GongAudio.load();
-    this.finishedAudio.load();
-
-    // Preload background sounds
-    for (const audio of Object.values(this.audioFiles)) {
-      audio.load();
-    }
   }
 
   updateIntervalSettings() {
@@ -190,7 +103,7 @@ class TimerApp {
     this.audio.currentTime = 0;
     this.audio = this.audioFiles[this.musicSelect.value];
     if (this.musicOnOff.src.includes("volume.png") && wasPlaying) {
-      this.audio.play().catch((e) => console.log("Audio play failed:", e));
+      this.audio.play();
     }
   }
 
@@ -200,7 +113,7 @@ class TimerApp {
       this.audio.pause();
     } else {
       this.musicOnOff.src = "img/volume.png";
-      this.audio.play().catch((e) => console.log("Audio play failed:", e));
+      this.audio.play();
     }
   }
 
@@ -208,40 +121,28 @@ class TimerApp {
     const volume = this.volumeSlider.value / 100;
     this.musicOnOff.src =
       volume === 0 ? "img/volume-mute.png" : "img/volume.png";
-    if (volume > 0 && !this.audio.paused)
-      this.audio.play().catch((e) => console.log("Audio play failed:", e));
+    if (volume > 0) this.audio.play();
     for (const a of Object.values(this.audioFiles)) a.volume = volume;
   }
 
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
-
-    // iOS requires creating and playing a sound to unlock audio
-    if (this.isIOS) {
-      // Create a silent audio context
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        this.audioContext = new AudioContext();
-
-        // Create a tiny silent sound to unlock audio
-        const buffer = this.audioContext.createBuffer(1, 1, 22050);
-        const source = this.audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.connect(this.audioContext.destination);
-        source.start(0);
-
-        // Resume the audio context
-        if (this.audioContext.state === "suspended") {
-          this.audioContext.resume();
-        }
-      } catch (e) {
-        console.warn("AudioContext failed:", e);
-      }
+    if (!this.audioCtx) {
+      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.audioCtx
+        .resume()
+        .catch((e) => console.warn("AudioContext resume failed:", e));
+      const buffer = this.audioCtx.createBuffer(1, 1, 22050);
+      const source = this.audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(this.audioCtx.destination);
+      source.start(0);
     }
-
-    // Preload all audio files
-    this.preloadAudio();
+    this.silentAudio.volume = 0;
+    this.silentAudio
+      .play()
+      .catch((e) => console.warn("Silent unlock failed:", e));
   }
 
   toggleSoundMenu() {
@@ -284,7 +185,7 @@ class TimerApp {
         this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
       }
     } else {
-      this.playPauseButton.innerHTML = "▶";
+      this.playPauseButton.textContent = "▶";
       this.isPaused = true;
     }
   }
@@ -295,7 +196,7 @@ class TimerApp {
     const minutes = parseInt(this.minuteInput.value, 10) || 0;
     this.timeLeft = minutes * 60;
     this.isPaused = false;
-    this.playPauseButton.innerHTML = "▶";
+    this.playPauseButton.textContent = "▶";
     this.displayTime();
     this.settings.style.visibility = "visible";
     this.settings.classList.remove("hidden");
@@ -306,31 +207,13 @@ class TimerApp {
   }
 
   playSound() {
-    if (!this.audioUnlocked) return;
-
-    // Reset the audio to start from beginning
-    this.GongAudio.currentTime = 0;
-
-    // Play the sound
-    this.GongAudio.play().catch((e) => {
-      console.log("GongAudio failed:", e);
-      // Try to unlock audio again if it failed
-      this.unlockAllAudioOnce();
-    });
+    this.GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
   }
 
   playFinished() {
-    if (!this.audioUnlocked) return;
-
-    // Reset the audio to start from beginning
-    this.finishedAudio.currentTime = 0;
-
-    // Play the sound
-    this.finishedAudio.play().catch((e) => {
-      console.log("FinishedAudio failed:", e);
-      // Try to unlock audio again if it failed
-      this.unlockAllAudioOnce();
-    });
+    this.finishedAudio
+      .play()
+      .catch((e) => console.warn("FinishedAudio failed:", e));
   }
 
   updateTimer() {
@@ -344,7 +227,7 @@ class TimerApp {
         const minutes = parseInt(this.minuteInput.value, 10) || 0;
         this.timeLeft = minutes * 60;
         this.displayTime();
-        this.playPauseButton.innerHTML = "▶";
+        this.playPauseButton.textContent = "▶";
         this.isPaused = false;
         this.hasPlayedStartBell = false;
         this.playFinished();
