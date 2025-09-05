@@ -128,21 +128,23 @@ class TimerApp {
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
-    if (!this.audioCtx) {
-      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      this.audioCtx
-        .resume()
-        .catch((e) => console.warn("AudioContext resume failed:", e));
-      const buffer = this.audioCtx.createBuffer(1, 1, 22050);
-      const source = this.audioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(this.audioCtx.destination);
-      source.start(0);
-    }
-    this.silentAudio.volume = 0;
-    this.silentAudio
+
+    try {
+      if (!this.audioCtx) {
+        this.audioCtx = new (window.AudioContext ||
+          window.webkitAudioContext)();
+      }
+      if (this.audioCtx.state === "suspended") {
+        this.audioCtx.resume().catch(() => {});
+      }
+    } catch (e) {}
+
+    // play silent audio in user gesture to unlock
+    const silent = this.silentAudio.cloneNode();
+    silent.volume = 0;
+    silent
       .play()
-      .catch((e) => console.warn("Silent unlock failed:", e));
+      .catch(() => setTimeout(() => silent.play().catch(() => {}), 200));
   }
 
   toggleSoundMenu() {
@@ -207,13 +209,22 @@ class TimerApp {
   }
 
   playSound() {
-    this.GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
+    const gong = this.GongAudio.cloneNode(true); // clone for iOS
+    gong.volume = this.GongAudio.volume;
+    gong.currentTime = 0;
+    gong.play().catch(() => {
+      // retry if blocked
+      setTimeout(() => gong.play().catch(() => {}), 200);
+    });
   }
 
   playFinished() {
-    this.finishedAudio
-      .play()
-      .catch((e) => console.warn("FinishedAudio failed:", e));
+    const gong = this.finishedAudio.cloneNode(true);
+    gong.volume = this.finishedAudio.volume;
+    gong.currentTime = 0;
+    gong.play().catch(() => {
+      setTimeout(() => gong.play().catch(() => {}), 200);
+    });
   }
 
   updateTimer() {
