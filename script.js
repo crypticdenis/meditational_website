@@ -17,6 +17,10 @@ class TimerApp {
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
+    document.getElementById("btn-guided").addEventListener("click", () => {
+      this.changeToGuided();
+    });
+
     // Timer State
     this.this.countdownInterval = null;
     this.timeLeft = 0;
