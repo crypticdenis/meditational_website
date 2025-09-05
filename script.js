@@ -125,35 +125,6 @@ class TimerApp {
     for (const a of Object.values(this.audioFiles)) a.volume = volume;
   }
 
-  unlockAllAudioOnce() {
-    if (this.audioUnlocked) return;
-    this.audioUnlocked = true;
-    if (!this.audioCtx) {
-      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      this.audioCtx
-        .resume()
-        .catch((e) => console.warn("AudioContext resume failed:", e));
-      const buffer = this.audioCtx.createBuffer(1, 1, 22050);
-      const source = this.audioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(this.audioCtx.destination);
-      source.start(0);
-    }
-    this.silentAudio.volume = 0;
-    this.silentAudio
-      .play()
-      .catch((e) => console.warn("Silent unlock failed:", e));
-  }
-
-  toggleSoundMenu() {
-    this.soundMenu.classList.toggle("show");
-    if (this.soundMenu.classList.contains("show")) {
-      this.resetSoundMenuTimeout();
-    } else {
-      clearTimeout(this.soundMenuTimeout);
-    }
-  }
-
   hideSoundMenu() {
     this.soundMenu.classList.remove("show");
   }
@@ -163,18 +134,55 @@ class TimerApp {
     this.soundMenuTimeout = setTimeout(() => this.hideSoundMenu(), 4000);
   }
 
+  unlockAllAudioOnce() {
+    if (this.audioUnlocked) return;
+    this.audioUnlocked = true;
+
+    try {
+      if (!this.audioCtx) {
+        this.audioCtx = new (window.AudioContext ||
+          window.webkitAudioContext)();
+      }
+      if (this.audioCtx.state === "suspended") {
+        this.audioCtx
+          .resume()
+          .catch((e) => console.warn("AudioContext resume failed:", e));
+      }
+    } catch (e) {
+      console.warn("AudioContext init failed:", e);
+    }
+
+    // Preload everything
+    this.silentAudio.load();
+    this.GongAudio.load();
+    this.finishedAudio.load();
+    for (const a of Object.values(this.audioFiles)) a.load();
+
+    // Play silent unlock – must be in user gesture context
+    this.silentAudio.volume = 0;
+    this.silentAudio.play().catch((e) => {
+      console.warn("Silent unlock failed:", e);
+      // Retry after small delay if blocked
+      setTimeout(() => {
+        this.silentAudio.play().catch(() => {});
+      }, 200);
+    });
+  }
+
   playPause() {
+    // Unlock audio first (Safari requirement)
     this.unlockAllAudioOnce();
+
     if (!this.countdownInterval || this.isPaused) {
       if (this.timeLeft === 0) {
         const minutes = parseInt(this.minuteInput.value, 10) || 0;
         this.timeLeft = minutes * 60;
       }
       this.playPauseButton.innerHTML = `
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <rect x="6" y="5" width="4" height="14" rx="1" />
-          <rect x="14" y="5" width="4" height="14" rx="1" />
-        </svg>`;
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="5" width="4" height="14" rx="1" />
+        <rect x="14" y="5" width="4" height="14" rx="1" />
+      </svg>`;
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
@@ -188,6 +196,26 @@ class TimerApp {
       this.playPauseButton.textContent = "▶";
       this.isPaused = true;
     }
+  }
+
+  playSound() {
+    // Interval gong
+    this.GongAudio.currentTime = 0;
+    this.GongAudio.play().catch((e) => {
+      console.warn("GongAudio failed:", e);
+      // Retry once if blocked
+      setTimeout(() => this.GongAudio.play().catch(() => {}), 200);
+    });
+  }
+
+  playFinished() {
+    // Final gong
+    this.finishedAudio.currentTime = 0;
+    this.finishedAudio.play().catch((e) => {
+      console.warn("FinishedAudio failed:", e);
+      // Retry once if blocked
+      setTimeout(() => this.finishedAudio.play().catch(() => {}), 200);
+    });
   }
 
   resetTimer() {
@@ -204,16 +232,6 @@ class TimerApp {
     this.intervalTime = 0;
     this.intervalDuration = 0;
     this.hasPlayedStartBell = false;
-  }
-
-  playSound() {
-    this.GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
-  }
-
-  playFinished() {
-    this.finishedAudio
-      .play()
-      .catch((e) => console.warn("FinishedAudio failed:", e));
   }
 
   updateTimer() {
