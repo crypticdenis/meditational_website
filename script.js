@@ -139,10 +139,27 @@ class TimerApp {
       source.connect(this.audioCtx.destination);
       source.start(0);
     }
-    this.silentAudio.volume = 0;
-    this.silentAudio
-      .play()
-      .catch((e) => console.warn("Silent unlock failed:", e));
+    // Unlock all audio elements by playing and pausing them silently
+    const unlock = (audio) => {
+      try {
+        audio.volume = 0;
+        audio.play().then(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        });
+      } catch (e) {
+        // fallback for browsers that don't return a promise
+        audio.play();
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    };
+    unlock(this.silentAudio);
+    unlock(this.GongAudio);
+    unlock(this.finishedAudio);
+    for (const a of Object.values(this.audioFiles)) {
+      unlock(a);
+    }
   }
 
   toggleSoundMenu() {
