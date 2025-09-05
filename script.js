@@ -128,7 +128,6 @@ class TimerApp {
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
-
     if (!this.audioCtx) {
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       this.audioCtx
@@ -140,28 +139,10 @@ class TimerApp {
       source.connect(this.audioCtx.destination);
       source.start(0);
     }
-
-    const unlock = (audio) => {
-      const prevVolume = audio.volume;
-      audio.volume = 0;
-      audio
-        .play()
-        .then(() => {
-          audio.pause();
-          audio.currentTime = 0;
-          audio.volume = prevVolume;
-        })
-        .catch(() => {
-          audio.pause();
-          audio.currentTime = 0;
-          audio.volume = prevVolume;
-        });
-    };
-
-    unlock(this.silentAudio);
-    unlock(this.GongAudio);
-    unlock(this.finishedAudio);
-    for (const a of Object.values(this.audioFiles)) unlock(a);
+    this.silentAudio.volume = 0;
+    this.silentAudio
+      .play()
+      .catch((e) => console.warn("Silent unlock failed:", e));
   }
 
   toggleSoundMenu() {
@@ -190,19 +171,16 @@ class TimerApp {
         this.timeLeft = minutes * 60;
       }
       this.playPauseButton.innerHTML = `
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-        <rect x="6" y="5" width="4" height="14" rx="1" />
-        <rect x="14" y="5" width="4" height="14" rx="1" />
-      </svg>`;
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="5" width="4" height="14" rx="1" />
+          <rect x="14" y="5" width="4" height="14" rx="1" />
+        </svg>`;
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
-
       if (!this.hasPlayedStartBell) {
         this.hasPlayedStartBell = true;
-        this.playSound(); // 🔔 Play full gong at start
       }
-
       if (!this.countdownInterval) {
         this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
       }
