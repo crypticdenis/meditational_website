@@ -140,7 +140,7 @@ class TimerApp {
       source.start(0);
     }
     // Only unlock the gongs and silent audio, not background music
-    const unlock = (audio, originalVolume = 1) => {
+    const unlock = (audio) => {
       const prevVolume = audio.volume;
       audio.volume = 0;
       try {
@@ -162,9 +162,9 @@ class TimerApp {
         audio.volume = prevVolume;
       }
     };
-    unlock(this.silentAudio, 0);
-    unlock(this.GongAudio, 1);
-    unlock(this.finishedAudio, 1);
+    unlock(this.silentAudio);
+    unlock(this.GongAudio);
+    unlock(this.finishedAudio);
     // Do NOT unlock background music here to avoid random playback
   }
 
