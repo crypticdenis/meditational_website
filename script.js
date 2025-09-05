@@ -145,15 +145,18 @@ class TimerApp {
     }
 
     const unlock = (audio) => {
-      const prevVolume = audio.volume; // remember original volume
+      const prevVolume = audio.volume;
+      audio.volume = 0; // mute fully
       try {
-        audio.volume = 0;
         const p = audio.play();
         if (p && typeof p.then === "function") {
           p.then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.volume = prevVolume; // restore
+            // give Safari time to register the play state
+            setTimeout(() => {
+              audio.pause();
+              audio.currentTime = 0;
+              audio.volume = prevVolume; // restore volume
+            }, 50); // short delay prevents clipped sound
           }).catch(() => {
             audio.pause();
             audio.currentTime = 0;
