@@ -128,21 +128,28 @@ class TimerApp {
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
+
+    // Unlock AudioContext
     if (!this.audioCtx) {
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      this.audioCtx
-        .resume()
-        .catch((e) => console.warn("AudioContext resume failed:", e));
+      this.audioCtx.resume().catch(console.warn);
       const buffer = this.audioCtx.createBuffer(1, 1, 22050);
       const source = this.audioCtx.createBufferSource();
       source.buffer = buffer;
       source.connect(this.audioCtx.destination);
       source.start(0);
     }
+
+    // Unlock HTMLAudio
     this.silentAudio.volume = 0;
-    this.silentAudio
-      .play()
-      .catch((e) => console.warn("Silent unlock failed:", e));
+    this.silentAudio.play().catch(console.warn);
+
+    // Also unlock all bells
+    [this.GongAudio, this.finishedAudio].forEach((a) => {
+      a.play()
+        .then(() => a.pause())
+        .catch(console.warn);
+    });
   }
 
   toggleSoundMenu() {
