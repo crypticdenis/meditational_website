@@ -263,6 +263,13 @@ class TimerApp {
       displaySeconds < 10 ? "0" : ""
     }${displaySeconds}`;
   }
+
+  changeToGuided() {
+    this.isPaused = true;
+    clearInterval(this.countdownInterval);
+    this.countdownInterval = null;
+    window.location.href = "guidedSection.html";
+  }
 }
 
 // Initialize
