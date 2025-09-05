@@ -129,14 +129,11 @@ class TimerApp {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
 
-    // Ensure AudioContext exists + is resumed
     if (!this.audioCtx) {
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       this.audioCtx
         .resume()
         .catch((e) => console.warn("AudioContext resume failed:", e));
-
-      // Tiny buffer nudge for Safari unlock
       const buffer = this.audioCtx.createBuffer(1, 1, 22050);
       const source = this.audioCtx.createBufferSource();
       source.buffer = buffer;
@@ -146,35 +143,21 @@ class TimerApp {
 
     const unlock = (audio) => {
       const prevVolume = audio.volume;
-      audio.volume = 0; // mute fully
-      try {
-        const p = audio.play();
-        if (p && typeof p.then === "function") {
-          p.then(() => {
-            // give Safari time to register the play state
-            setTimeout(() => {
-              audio.pause();
-              audio.currentTime = 0;
-              audio.volume = prevVolume; // restore volume
-            }, 50); // short delay prevents clipped sound
-          }).catch(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.volume = prevVolume;
-          });
-        } else {
+      audio.volume = 0;
+      audio
+        .play()
+        .then(() => {
           audio.pause();
           audio.currentTime = 0;
           audio.volume = prevVolume;
-        }
-      } catch (e) {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.volume = prevVolume;
-      }
+        })
+        .catch(() => {
+          audio.pause();
+          audio.currentTime = 0;
+          audio.volume = prevVolume;
+        });
     };
 
-    // Unlock all sounds once
     unlock(this.silentAudio);
     unlock(this.GongAudio);
     unlock(this.finishedAudio);
@@ -207,16 +190,19 @@ class TimerApp {
         this.timeLeft = minutes * 60;
       }
       this.playPauseButton.innerHTML = `
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <rect x="6" y="5" width="4" height="14" rx="1" />
-          <rect x="14" y="5" width="4" height="14" rx="1" />
-        </svg>`;
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="5" width="4" height="14" rx="1" />
+        <rect x="14" y="5" width="4" height="14" rx="1" />
+      </svg>`;
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
+
       if (!this.hasPlayedStartBell) {
         this.hasPlayedStartBell = true;
+        this.playSound(); // 🔔 Play full gong at start
       }
+
       if (!this.countdownInterval) {
         this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
       }
