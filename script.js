@@ -80,7 +80,7 @@ class TimerApp {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
     this.audioCtx.resume().catch(console.warn);
-    this.playBell("start"); // small bell on first click
+    // Do not play any bell on first click; only unlock/resume AudioContext
   }
 
   bindEvents() {
