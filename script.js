@@ -29,7 +29,8 @@ class TimerApp {
     // Audio State
     this.audioUnlocked = false;
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    this.buffers = {}; // For bells
+    this.buffers = {}; // Web Audio buffers for bells
+
     this.audioFiles = {
       "river.mp3": new Audio("sounds/river.mp3"),
       "woods.mp3": new Audio("sounds/woods.mp3"),
@@ -43,14 +44,19 @@ class TimerApp {
 
     this.soundMenuTimeout = null;
 
-    this.loadAllBuffers(); // Load bells into Web Audio
-
+    this.loadAllBuffers(); // Preload bells
     this.bindEvents();
     this.updateDisplayFromInput();
+
+    // Unlock AudioContext on any user gesture
+    ["click", "keydown", "touchstart"].forEach((event) =>
+      document.addEventListener(event, () => this.unlockAllAudioOnce(), {
+        once: true,
+      })
+    );
   }
 
   async loadAllBuffers() {
-    // Load start, interval, finish bells
     const bellFiles = {
       start: "sounds/untitled.mp3",
       interval: "sounds/untitled.mp3",
@@ -69,6 +75,13 @@ class TimerApp {
     source.buffer = this.buffers[type];
     source.connect(this.audioCtx.destination);
     source.start();
+  }
+
+  unlockAllAudioOnce() {
+    if (this.audioUnlocked) return;
+    this.audioUnlocked = true;
+    this.audioCtx.resume().catch(console.warn);
+    this.playBell("start"); // Play start bell on unlock
   }
 
   bindEvents() {
@@ -134,15 +147,7 @@ class TimerApp {
     const volume = this.volumeSlider.value / 100;
     this.musicOnOff.src =
       volume === 0 ? "img/volume-mute.png" : "img/volume.png";
-    if (volume > 0) this.audio.play();
     for (const a of Object.values(this.audioFiles)) a.volume = volume;
-  }
-
-  unlockAllAudioOnce() {
-    if (this.audioUnlocked) return;
-    this.audioUnlocked = true;
-    this.audioCtx.resume().catch(console.warn);
-    this.playBell("start"); // Always play start bell once
   }
 
   toggleSoundMenu() {
@@ -161,6 +166,7 @@ class TimerApp {
 
   playPause() {
     this.unlockAllAudioOnce();
+
     if (!this.countdownInterval || this.isPaused) {
       if (this.timeLeft === 0)
         this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
@@ -179,9 +185,8 @@ class TimerApp {
         this.playBell("start");
       }
 
-      if (!this.countdownInterval) {
+      if (!this.countdownInterval)
         this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
-      }
     } else {
       this.playPauseButton.textContent = "▶";
       this.isPaused = true;
@@ -204,31 +209,34 @@ class TimerApp {
   }
 
   updateTimer() {
-    if (!this.isPaused) {
-      this.timeLeft--;
-      if (this.timeLeft <= 0) {
-        clearInterval(this.countdownInterval);
-        this.countdownInterval = null;
-        this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
-        this.displayTime();
-        this.playPauseButton.textContent = "▶";
-        this.isPaused = false;
-        this.hasPlayedStartBell = false;
-        this.playBell("finish");
-        this.settings.classList.remove("hidden");
-        this.countdownDisplay.classList.remove("move-up");
-      }
+    if (this.isPaused) return;
 
-      if (this.toggleInterval.checked && this.intervalDuration > 0) {
-        this.intervalTime--;
-        if (this.intervalTime <= 0 && this.timeLeft > 1) {
-          this.playBell("interval");
-          this.intervalTime = this.intervalDuration;
-        }
-      }
+    this.timeLeft--;
 
-      this.displayTime();
+    // Interval bell
+    if (this.toggleInterval.checked && this.intervalDuration > 0) {
+      this.intervalTime--;
+      if (this.intervalTime <= 0 && this.timeLeft > 1) {
+        this.playBell("interval");
+        this.intervalTime = this.intervalDuration;
+      }
     }
+
+    // Timer finished
+    if (this.timeLeft <= 0) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = null;
+      this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
+      this.displayTime();
+      this.playPauseButton.textContent = "▶";
+      this.isPaused = false;
+      this.hasPlayedStartBell = false;
+      this.playBell("finish");
+      this.settings.classList.remove("hidden");
+      this.countdownDisplay.classList.remove("move-up");
+    }
+
+    this.displayTime();
   }
 
   displayTime() {
