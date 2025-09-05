@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("pulsate");
 });
 
-// TimerApp encapsulates all timer logic and UI interactions
 class TimerApp {
   constructor() {
     // DOM Elements
@@ -29,12 +28,8 @@ class TimerApp {
 
     // Audio State
     this.audioUnlocked = false;
-    this.audioCtx = null;
-    this.GongAudio = new Audio("sounds/untitled.mp3");
-    this.finishedAudio = new Audio("sounds/gong.mp3");
-    this.silentAudio = new Audio("sounds/silent.mp3");
-    this.finishedAudio.volume = 1;
-    this.GongAudio.volume = 1;
+    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    this.buffers = {}; // For bells
     this.audioFiles = {
       "river.mp3": new Audio("sounds/river.mp3"),
       "woods.mp3": new Audio("sounds/woods.mp3"),
@@ -46,12 +41,34 @@ class TimerApp {
     }
     this.audio = this.audioFiles[this.musicSelect.value];
 
-    // Sound menu state
     this.soundMenuTimeout = null;
 
-    // Bind event listeners
+    this.loadAllBuffers(); // Load bells into Web Audio
+
     this.bindEvents();
     this.updateDisplayFromInput();
+  }
+
+  async loadAllBuffers() {
+    // Load start, interval, finish bells
+    const bellFiles = {
+      start: "sounds/untitled.mp3",
+      interval: "sounds/untitled.mp3",
+      finish: "sounds/gong.mp3",
+    };
+    for (const [key, url] of Object.entries(bellFiles)) {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      this.buffers[key] = await this.audioCtx.decodeAudioData(arrayBuffer);
+    }
+  }
+
+  playBell(type) {
+    if (!this.buffers[type]) return;
+    const source = this.audioCtx.createBufferSource();
+    source.buffer = this.buffers[type];
+    source.connect(this.audioCtx.destination);
+    source.start();
   }
 
   bindEvents() {
@@ -80,10 +97,7 @@ class TimerApp {
   updateIntervalSettings() {
     const maxInterval = parseInt(this.minuteInput.value, 10) || 0;
     let intervalValue = parseInt(this.intervalInput.value, 10) || 0;
-    if (intervalValue > maxInterval) {
-      intervalValue = maxInterval;
-      this.intervalInput.value = maxInterval;
-    }
+    if (intervalValue > maxInterval) intervalValue = maxInterval;
     this.intervalDuration = intervalValue * 60 || 0;
     this.intervalTime = this.intervalDuration;
   }
@@ -102,9 +116,8 @@ class TimerApp {
     this.audio.pause();
     this.audio.currentTime = 0;
     this.audio = this.audioFiles[this.musicSelect.value];
-    if (this.musicOnOff.src.includes("volume.png") && wasPlaying) {
+    if (this.musicOnOff.src.includes("volume.png") && wasPlaying)
       this.audio.play();
-    }
   }
 
   musicOnOffClick() {
@@ -128,43 +141,19 @@ class TimerApp {
   unlockAllAudioOnce() {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
-
-    // Unlock AudioContext
-    if (!this.audioCtx) {
-      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      this.audioCtx.resume().catch(console.warn);
-      const buffer = this.audioCtx.createBuffer(1, 1, 22050);
-      const source = this.audioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(this.audioCtx.destination);
-      source.start(0);
-    }
-
-    // Unlock HTMLAudio
-    this.silentAudio.volume = 0;
-    this.silentAudio.play().catch(console.warn);
-
-    // Also unlock all bells
-    [this.GongAudio, this.finishedAudio].forEach((a) => {
-      a.play()
-        .then(() => a.pause())
-        .catch(console.warn);
-    });
+    this.audioCtx.resume().catch(console.warn);
+    this.playBell("start"); // Always play start bell once
   }
 
   toggleSoundMenu() {
     this.soundMenu.classList.toggle("show");
-    if (this.soundMenu.classList.contains("show")) {
-      this.resetSoundMenuTimeout();
-    } else {
-      clearTimeout(this.soundMenuTimeout);
-    }
+    if (this.soundMenu.classList.contains("show")) this.resetSoundMenuTimeout();
+    else clearTimeout(this.soundMenuTimeout);
   }
 
   hideSoundMenu() {
     this.soundMenu.classList.remove("show");
   }
-
   resetSoundMenuTimeout() {
     clearTimeout(this.soundMenuTimeout);
     this.soundMenuTimeout = setTimeout(() => this.hideSoundMenu(), 4000);
@@ -173,10 +162,9 @@ class TimerApp {
   playPause() {
     this.unlockAllAudioOnce();
     if (!this.countdownInterval || this.isPaused) {
-      if (this.timeLeft === 0) {
-        const minutes = parseInt(this.minuteInput.value, 10) || 0;
-        this.timeLeft = minutes * 60;
-      }
+      if (this.timeLeft === 0)
+        this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
+
       this.playPauseButton.innerHTML = `
         <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
           <rect x="6" y="5" width="4" height="14" rx="1" />
@@ -185,9 +173,12 @@ class TimerApp {
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
+
       if (!this.hasPlayedStartBell) {
         this.hasPlayedStartBell = true;
+        this.playBell("start");
       }
+
       if (!this.countdownInterval) {
         this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
       }
@@ -200,8 +191,7 @@ class TimerApp {
   resetTimer() {
     clearInterval(this.countdownInterval);
     this.countdownInterval = null;
-    const minutes = parseInt(this.minuteInput.value, 10) || 0;
-    this.timeLeft = minutes * 60;
+    this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
     this.isPaused = false;
     this.playPauseButton.textContent = "▶";
     this.displayTime();
@@ -213,40 +203,30 @@ class TimerApp {
     this.hasPlayedStartBell = false;
   }
 
-  playSound() {
-    this.GongAudio.play().catch((e) => console.warn("GongAudio failed:", e));
-  }
-
-  playFinished() {
-    this.finishedAudio
-      .play()
-      .catch((e) => console.warn("FinishedAudio failed:", e));
-  }
-
   updateTimer() {
     if (!this.isPaused) {
       this.timeLeft--;
       if (this.timeLeft <= 0) {
-        this.settings.classList.remove("hidden");
-        this.countdownDisplay.classList.remove("move-up");
         clearInterval(this.countdownInterval);
         this.countdownInterval = null;
-        const minutes = parseInt(this.minuteInput.value, 10) || 0;
-        this.timeLeft = minutes * 60;
+        this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
         this.displayTime();
         this.playPauseButton.textContent = "▶";
         this.isPaused = false;
         this.hasPlayedStartBell = false;
-        this.playFinished();
+        this.playBell("finish");
+        this.settings.classList.remove("hidden");
+        this.countdownDisplay.classList.remove("move-up");
       }
+
       if (this.toggleInterval.checked && this.intervalDuration > 0) {
         this.intervalTime--;
-        // Only play interval bell if timer is not ending
         if (this.intervalTime <= 0 && this.timeLeft > 1) {
-          this.playSound();
+          this.playBell("interval");
           this.intervalTime = this.intervalDuration;
         }
       }
+
       this.displayTime();
     }
   }
@@ -261,8 +241,7 @@ class TimerApp {
   }
 
   updateDisplayFromInput() {
-    const minutes = parseInt(this.minuteInput.value, 10) || 0;
-    this.timeLeft = minutes * 60;
+    this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
     const displayMinutes = Math.floor(this.timeLeft / 60);
     const displaySeconds = this.timeLeft % 60;
     this.countdownDisplay.innerText = `${displayMinutes}:${
@@ -271,8 +250,5 @@ class TimerApp {
   }
 }
 
-// Initialize the app
-window.addEventListener("DOMContentLoaded", () => {
-  document.body.classList.add("pulsate");
-  new TimerApp();
-});
+// Initialize
+window.addEventListener("DOMContentLoaded", () => new TimerApp());
