@@ -111,8 +111,13 @@ class TimerApp {
     const maxInterval = parseInt(this.minuteInput.value, 10) || 0;
     let intervalValue = parseInt(this.intervalInput.value, 10) || 0;
     if (intervalValue > maxInterval) intervalValue = maxInterval;
+
     this.intervalDuration = intervalValue * 60 || 0;
-    this.intervalTime = this.intervalDuration;
+
+    // Only set intervalTime if intervalDuration > 0
+    if (this.intervalDuration > 0) {
+      this.intervalTime = this.intervalDuration;
+    }
   }
 
   toggleIntervalInput() {
