@@ -129,45 +129,53 @@ class TimerApp {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
 
-    // Modern way to ensure audio context is active
+    // Ensure AudioContext exists + is resumed
     if (!this.audioCtx) {
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-
-    if (this.audioCtx.state === "suspended") {
       this.audioCtx
         .resume()
-        .catch((e) => console.error("AudioContext resume failed:", e));
+        .catch((e) => console.warn("AudioContext resume failed:", e));
+
+      // Tiny buffer nudge for Safari unlock
+      const buffer = this.audioCtx.createBuffer(1, 1, 22050);
+      const source = this.audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(this.audioCtx.destination);
+      source.start(0);
     }
 
-    // Create a silent sound to "prime" the audio engine
-    const buffer = this.audioCtx.createBuffer(1, 1, 22050);
-    const source = this.audioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(this.audioCtx.destination);
-    source.start();
+    const unlock = (audio) => {
+      const prevVolume = audio.volume; // remember original volume
+      try {
+        audio.volume = 0;
+        const p = audio.play();
+        if (p && typeof p.then === "function") {
+          p.then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = prevVolume; // restore
+          }).catch(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = prevVolume;
+          });
+        } else {
+          audio.pause();
+          audio.currentTime = 0;
+          audio.volume = prevVolume;
+        }
+      } catch (e) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = prevVolume;
+      }
+    };
 
-    // Load and pre-play all sounds with muted volume
-    const allAudios = [
-      this.GongAudio,
-      this.finishedAudio,
-      this.silentAudio,
-      ...Object.values(this.audioFiles),
-    ];
-
-    allAudios.forEach((audio) => {
-      audio.volume = 0; // Mute the volume for the pre-play
-      audio
-        .play()
-        .catch((e) => console.warn("Pre-play failed for:", audio.src, e));
-    });
-
-    // Reset volumes to their desired levels after a short delay
-    setTimeout(() => {
-      this.GongAudio.volume = 1;
-      this.finishedAudio.volume = 1;
-      this.audio.volume = this.volumeSlider.value / 100;
-    }, 100);
+    // Unlock all sounds once
+    unlock(this.silentAudio);
+    unlock(this.GongAudio);
+    unlock(this.finishedAudio);
+    for (const a of Object.values(this.audioFiles)) unlock(a);
   }
 
   toggleSoundMenu() {
@@ -190,30 +198,22 @@ class TimerApp {
 
   playPause() {
     this.unlockAllAudioOnce();
-
     if (!this.countdownInterval || this.isPaused) {
       if (this.timeLeft === 0) {
         const minutes = parseInt(this.minuteInput.value, 10) || 0;
         this.timeLeft = minutes * 60;
       }
-
       this.playPauseButton.innerHTML = `
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-        <rect x="6" y="5" width="4" height="14" rx="1" />
-        <rect x="14" y="5" width="4" height="14" rx="1" />
-      </svg>`;
-
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="5" width="4" height="14" rx="1" />
+          <rect x="14" y="5" width="4" height="14" rx="1" />
+        </svg>`;
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
-
       if (!this.hasPlayedStartBell) {
         this.hasPlayedStartBell = true;
-        this.GongAudio.play().catch((e) =>
-          console.warn("Start gong failed:", e)
-        );
       }
-
       if (!this.countdownInterval) {
         this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
       }
@@ -222,6 +222,7 @@ class TimerApp {
       this.isPaused = true;
     }
   }
+
   resetTimer() {
     clearInterval(this.countdownInterval);
     this.countdownInterval = null;
