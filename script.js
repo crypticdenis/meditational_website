@@ -140,15 +140,16 @@ class TimerApp {
       source.start(0);
     }
 
-    // Play finish bell once to unlock HTMLAudio
-    this.finishedAudio.volume = 1;
-    this.finishedAudio
-      .play()
-      .then(() => {
-        this.finishedAudio.pause();
-        this.finishedAudio.currentTime = 0; // reset for later
-      })
-      .catch(console.warn);
+    // Unlock HTMLAudio
+    this.silentAudio.volume = 0;
+    this.silentAudio.play().catch(console.warn);
+
+    // Also unlock all bells
+    [this.GongAudio, this.finishedAudio].forEach((a) => {
+      a.play()
+        .then(() => a.pause())
+        .catch(console.warn);
+    });
   }
 
   toggleSoundMenu() {
