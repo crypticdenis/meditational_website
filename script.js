@@ -1,4 +1,4 @@
-https://meditationtimer.online/?d=600   here on ios i can set intervals and stuff and hear a gong but on my code it doesnt work on ios just on leptop: document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("pulsate");
 });
 
