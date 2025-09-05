@@ -17,6 +17,11 @@ class TimerApp {
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
+    // Guided button
+    const guidedBtn = document.getElementById("btn-guided");
+    if (guidedBtn) {
+      guidedBtn.addEventListener("click", () => this.changeToGuided());
+    }
 
     // Timer State
     this.countdownInterval = null;
@@ -71,6 +76,8 @@ class TimerApp {
 
   playBell(type) {
     if (!this.buffers[type]) return;
+    // Always resume AudioContext before playing (for iOS reliability)
+    this.audioCtx.resume().catch(() => {});
     const source = this.audioCtx.createBufferSource();
     source.buffer = this.buffers[type];
     source.connect(this.audioCtx.destination);
