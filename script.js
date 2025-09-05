@@ -116,7 +116,7 @@ class TimerApp {
     this.countdownInterval = null;
 
     // Navigate to guided screen page
-    window.location.href = "guided.html"; // put your guided page filename here
+    window.location.href = "guidedSection.html"; // put your guided page filename here
   }
 
   updateIntervalSettings() {
