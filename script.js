@@ -22,7 +22,7 @@ class TimerApp {
     });
 
     // Timer State
-    this.this.countdownInterval = null;
+    this.countdownInterval = null;
     this.timeLeft = 0;
     this.isPaused = false;
     this.intervalTime = 0;
