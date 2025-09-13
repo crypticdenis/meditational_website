@@ -304,13 +304,12 @@ window.addEventListener("DOMContentLoaded", () => new TimerApp());
 // Show mobile-only mute notice popup on load
 // Show mobile-only mute notice popup on load
 window.addEventListener("DOMContentLoaded", () => {
-  function isIOS() {
-    // Only match real iOS devices (not MacOS Safari, not Windows)
+  function isMobileDevice() {
+    // Match iOS or Android devices with touch support
     const ua = navigator.userAgent;
-    const isIOSDevice = /iPhone|iPad|iPod/.test(ua);
-    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 1;
-    // Exclude MacOS Safari pretending to be iPad (has iPad in UA but no touch)
-    return isIOSDevice && isTouch;
+    const isMobile = /iPhone|iPad|iPod|Android/.test(ua);
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+    return isMobile && isTouch;
   }
 
   const muteNotice = document.getElementById("muteNotice");
@@ -323,8 +322,8 @@ window.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "";
   }
 
-  // Only attach event for iOS devices
-  if (muteNotice && dismissBtn && intervalToggle && isIOS()) {
+  // Only attach event for mobile devices (iOS or Android)
+  if (muteNotice && dismissBtn && intervalToggle && isMobileDevice()) {
     intervalToggle.addEventListener("change", function () {
       if (intervalToggle.checked) {
         muteNotice.style.display = "flex";
