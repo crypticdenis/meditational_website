@@ -317,8 +317,14 @@ window.addEventListener("DOMContentLoaded", () => {
   const dismissBtn = document.getElementById("dismissMuteNotice");
   const intervalToggle = document.getElementById("toggleInterval");
 
+  // Always hide popup on load for all devices
+  if (muteNotice) {
+    muteNotice.style.display = "none";
+    document.body.style.overflow = "";
+  }
+
+  // Only attach event for iOS devices
   if (muteNotice && dismissBtn && intervalToggle && isIOS()) {
-    // Only show popup when toggling interval ON, not on page load
     intervalToggle.addEventListener("change", function () {
       if (intervalToggle.checked) {
         muteNotice.style.display = "flex";
@@ -329,8 +335,5 @@ window.addEventListener("DOMContentLoaded", () => {
       muteNotice.style.display = "none";
       document.body.style.overflow = "";
     });
-    // Ensure popup is hidden on load
-    muteNotice.style.display = "none";
-    document.body.style.overflow = "";
   }
 });
