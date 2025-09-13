@@ -304,7 +304,7 @@ window.addEventListener("DOMContentLoaded", () => new TimerApp());
 // Show mobile-only mute notice popup on load
 window.addEventListener("DOMContentLoaded", () => {
   function isMobile() {
-    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   }
   const muteNotice = document.getElementById("muteNotice");
   const dismissBtn = document.getElementById("dismissMuteNotice");
