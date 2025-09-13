@@ -308,7 +308,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Match iOS or Android devices with touch support
     const ua = navigator.userAgent;
     const isMobile = /iPhone|iPad|iPod|Android/.test(ua);
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 1;
     return isMobile && isTouch;
   }
 
