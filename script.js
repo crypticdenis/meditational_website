@@ -97,9 +97,17 @@ class TimerApp {
   bindEvents() {
     this.playPauseButton.addEventListener("click", () => this.playPause());
     this.resetButton.addEventListener("click", () => this.resetTimer());
+    // Timer minutes input
     this.minuteInput.addEventListener("input", () => {
       this.updateDisplayFromInput();
       this.saveMinutes();
+      // Limit interval max to timer value
+      const timerVal = parseInt(this.minuteInput.value, 10) || 0;
+      this.intervalInput.max = timerVal;
+      if (parseInt(this.intervalInput.value, 10) > timerVal) {
+        this.intervalInput.value = timerVal;
+        this.updateIntervalSettings();
+      }
     });
     this.musicOnOff.addEventListener("click", () => {
       this.musicOnOffClick();
