@@ -302,13 +302,22 @@ class TimerApp {
 window.addEventListener("DOMContentLoaded", () => new TimerApp());
 
 // Show mobile-only mute notice popup on load
+// Show mobile-only mute notice popup on load
 window.addEventListener("DOMContentLoaded", () => {
-  function isMobile() {
-    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  function isIOS() {
+    // Check for iOS with multiple methods
+    const isIOSUserAgent = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isNotDesktop = !/Windows|Macintosh|Linux/.test(navigator.userAgent);
+    const hasTouchScreen = "ontouchstart" in window;
+    const isMobileScreen = window.innerWidth < 1025; // Adjust as needed
+
+    return isIOSUserAgent && isNotDesktop && hasTouchScreen && isMobileScreen;
   }
+
   const muteNotice = document.getElementById("muteNotice");
   const dismissBtn = document.getElementById("dismissMuteNotice");
-  if (muteNotice && isMobile()) {
+
+  if (muteNotice && isIOS()) {
     muteNotice.style.display = "flex";
     document.body.style.overflow = "hidden";
     dismissBtn.addEventListener("click", () => {
