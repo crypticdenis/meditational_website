@@ -314,6 +314,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const intervalToggle = document.getElementById("toggleInterval");
 
   if (muteNotice && dismissBtn && intervalToggle && isIOS()) {
+    // Only show popup when toggling interval ON, not on page load
     intervalToggle.addEventListener("change", function () {
       if (intervalToggle.checked) {
         muteNotice.style.display = "flex";
@@ -324,5 +325,8 @@ window.addEventListener("DOMContentLoaded", () => {
       muteNotice.style.display = "none";
       document.body.style.overflow = "";
     });
+    // Ensure popup is hidden on load
+    muteNotice.style.display = "none";
+    document.body.style.overflow = "";
   }
 });
