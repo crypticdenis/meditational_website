@@ -17,11 +17,19 @@ class TimerApp {
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
+    // Mobile background notice
+    this.mobileBgNotice = document.getElementById("mobileBgNotice");
+    this.dismissBgNotice = document.getElementById("dismissBgNotice");
     // Guided button
     const guidedBtn = document.getElementById("btn-guided");
     if (guidedBtn) {
       guidedBtn.addEventListener("click", () => this.changeToGuided());
     }
+
+    // Device detection
+    this.isMobile =
+      /iPhone|iPad|iPod|Android/.test(navigator.userAgent) &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 1);
 
     // Restore only minutes from localStorage before using values
     this.restoreMinutes();
@@ -108,8 +116,35 @@ class TimerApp {
   }
 
   bindEvents() {
-    this.playPauseButton.addEventListener("click", () => this.playPause());
-    this.resetButton.addEventListener("click", () => this.resetTimer());
+    // Intercept playPause for mobile background notice
+    this.playPauseButton.addEventListener("click", (e) => {
+      if (
+        this.isMobile &&
+        this.mobileBgNotice &&
+        this.mobileBgNotice.style.display !== "none"
+      ) {
+        // If notice is already showing, do nothing
+        return;
+      }
+      if (this.isMobile && this.mobileBgNotice && !this.timerStarted) {
+        e.preventDefault();
+        this.mobileBgNotice.style.display = "flex";
+        document.body.style.overflow = "hidden";
+        // Only start timer after dismiss
+        this.dismissBgNotice.onclick = () => {
+          this.mobileBgNotice.style.display = "none";
+          document.body.style.overflow = "";
+          this.timerStarted = true;
+          this.playPause();
+        };
+        return;
+      }
+      this.playPause();
+    });
+    this.resetButton.addEventListener("click", () => {
+      this.timerStarted = false;
+      this.resetTimer();
+    });
     // Timer minutes input
     this.minuteInput.addEventListener("input", () => {
       this.updateDisplayFromInput();

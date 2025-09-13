@@ -179,6 +179,20 @@
             <button id="playPause" aria-label="Start meditation timer">
               ▶
             </button>
+            <!-- Mobile-only background limitation notice -->
+            <div id="mobileBgNotice" class="mute-notice" style="display: none">
+              <div class="mute-notice-content">
+                <h2 style="margin-top: 0">Important for Mobile Users</h2>
+                <p style="font-size: 1.1em">
+                  <b>Note:</b> On mobile devices, interval bells and sounds may
+                  not play if your screen goes to sleep or you switch apps. This
+                  is a limitation of mobile browsers.
+                </p>
+                <button id="dismissBgNotice" class="mute-notice-btn">
+                  OK, start timer
+                </button>
+              </div>
+            </div>
             <button id="reset" aria-label="Reset meditation timer">✕</button>
           </div>
         </div>
