@@ -305,8 +305,12 @@ window.addEventListener("DOMContentLoaded", () => new TimerApp());
 // Show mobile-only mute notice popup on load
 window.addEventListener("DOMContentLoaded", () => {
   function isIOS() {
-    // Only match iOS devices (iPhone, iPad, iPod) in user agent
-    return /iPhone|iPad|iPod/.test(navigator.userAgent);
+    // Only match real iOS devices (not MacOS Safari, not Windows)
+    const ua = navigator.userAgent;
+    const isIOSDevice = /iPhone|iPad|iPod/.test(ua);
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 1;
+    // Exclude MacOS Safari pretending to be iPad (has iPad in UA but no touch)
+    return isIOSDevice && isTouch;
   }
 
   const muteNotice = document.getElementById("muteNotice");
