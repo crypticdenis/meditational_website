@@ -23,9 +23,6 @@ class TimerApp {
       guidedBtn.addEventListener("click", () => this.changeToGuided());
     }
 
-    // Restore only minutes from localStorage before using values
-    this.restoreMinutes();
-
     // Timer State
     this.countdownInterval = null;
     this.timeLeft = 0;
@@ -97,46 +94,24 @@ class TimerApp {
   bindEvents() {
     this.playPauseButton.addEventListener("click", () => this.playPause());
     this.resetButton.addEventListener("click", () => this.resetTimer());
-    this.minuteInput.addEventListener("input", () => {
-      this.updateDisplayFromInput();
-      this.saveMinutes();
-    });
-    this.musicOnOff.addEventListener("click", () => {
-      this.musicOnOffClick();
-      this.saveSettings();
-    });
-    this.musicSelect.addEventListener("change", () => {
-      this.changeMusic();
-      this.saveSettings();
-    });
-    this.toggleInterval.addEventListener("change", () => {
-      this.toggleIntervalInput();
-      this.saveSettings();
-    });
-    this.intervalInput.addEventListener("input", () => {
-      this.updateIntervalSettings();
-      this.saveSettings();
-    });
+    this.minuteInput.addEventListener("input", () =>
+      this.updateDisplayFromInput()
+    );
+    this.musicOnOff.addEventListener("click", () => this.musicOnOffClick());
+    this.musicSelect.addEventListener("change", () => this.changeMusic());
+    this.toggleInterval.addEventListener("change", () =>
+      this.toggleIntervalInput()
+    );
+    this.intervalInput.addEventListener("input", () =>
+      this.updateIntervalSettings()
+    );
     this.soundToggle.addEventListener("click", () => this.toggleSoundMenu());
-    this.volumeSlider.addEventListener("input", () => {
-      this.changeVolume();
-      this.saveSettings();
-    });
+    this.volumeSlider.addEventListener("input", () => this.changeVolume());
     ["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
       this.soundMenu.addEventListener(event, () =>
         this.resetSoundMenuTimeout()
       );
     });
-  }
-  // Save only minutes to localStorage
-  saveMinutes() {
-    localStorage.setItem("meditational_minutes", this.minuteInput.value);
-  }
-
-  // Restore only minutes from localStorage
-  restoreMinutes() {
-    const minutes = localStorage.getItem("meditational_minutes");
-    if (minutes !== null) this.minuteInput.value = minutes;
   }
 
   updateIntervalSettings() {
