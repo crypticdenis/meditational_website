@@ -25,7 +25,7 @@ class TimerApp {
 
     // Restore minutes, sound, volume, and mute state from localStorage before using values
     this.restoreSettings();
-    this.updateSoundUI();
+    this.setAudioMuteFromIcon();
 
     // Timer State
     this.countdownInterval = null;
@@ -111,7 +111,7 @@ class TimerApp {
       this.saveSettings();
     });
     this.musicOnOff.addEventListener("click", () => {
-      this.musicOnOffClick();
+      this.toggleMusicMute();
       this.saveSettings();
     });
     this.musicOnOff.addEventListener("click", () => {
@@ -171,14 +171,25 @@ class TimerApp {
     }
   }
 
-  // Update icon and slider to match mute/volume state
-  updateSoundUI() {
-    const volume = parseInt(this.volumeSlider.value, 10);
-    const muted = localStorage.getItem("meditational_music_muted");
-    if (muted === null || muted === "1" || volume === 0) {
-      this.musicOnOff.src = "img/volume-mute.png";
+  // Set audio element mute/pause state to match icon on load
+  setAudioMuteFromIcon() {
+    const isMuted = this.musicOnOff.src.includes("volume-mute.png");
+    if (isMuted) {
+      this.audio.pause();
     } else {
+      this.audio.play();
+    }
+  }
+
+  // Toggle mute/unmute, update icon and audio state
+  toggleMusicMute() {
+    const isCurrentlyMuted = this.musicOnOff.src.includes("volume-mute.png");
+    if (isCurrentlyMuted) {
       this.musicOnOff.src = "img/volume.png";
+      this.audio.play();
+    } else {
+      this.musicOnOff.src = "img/volume-mute.png";
+      this.audio.pause();
     }
   }
 
