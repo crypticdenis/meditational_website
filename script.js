@@ -23,8 +23,8 @@ class TimerApp {
       guidedBtn.addEventListener("click", () => this.changeToGuided());
     }
 
-    // Restore settings from localStorage before using values
-    this.restoreSettings();
+    // Restore only minutes from localStorage before using values
+    this.restoreMinutes();
 
     // Timer State
     this.countdownInterval = null;
@@ -99,7 +99,7 @@ class TimerApp {
     this.resetButton.addEventListener("click", () => this.resetTimer());
     this.minuteInput.addEventListener("input", () => {
       this.updateDisplayFromInput();
-      this.saveSettings();
+      this.saveMinutes();
     });
     this.musicOnOff.addEventListener("click", () => {
       this.musicOnOffClick();
@@ -128,53 +128,15 @@ class TimerApp {
       );
     });
   }
-  // Save settings to localStorage
-  saveSettings() {
+  // Save only minutes to localStorage
+  saveMinutes() {
     localStorage.setItem("meditational_minutes", this.minuteInput.value);
-    localStorage.setItem("meditational_music", this.musicSelect.value);
-    localStorage.setItem("meditational_volume", this.volumeSlider.value);
-    localStorage.setItem(
-      "meditational_interval_enabled",
-      this.toggleInterval.checked ? "1" : "0"
-    );
-    localStorage.setItem(
-      "meditational_interval_value",
-      this.intervalInput.value
-    );
-    localStorage.setItem(
-      "meditational_music_on",
-      this.musicOnOff.src.includes("volume.png") ? "1" : "0"
-    );
   }
 
-  // Restore settings from localStorage
-  restoreSettings() {
+  // Restore only minutes from localStorage
+  restoreMinutes() {
     const minutes = localStorage.getItem("meditational_minutes");
     if (minutes !== null) this.minuteInput.value = minutes;
-    const music = localStorage.getItem("meditational_music");
-    if (music && this.musicSelect.querySelector(`option[value='${music}']`)) {
-      this.musicSelect.value = music;
-    }
-    const volume = localStorage.getItem("meditational_volume");
-    if (volume !== null) this.volumeSlider.value = volume;
-    const intervalEnabled = localStorage.getItem(
-      "meditational_interval_enabled"
-    );
-    if (intervalEnabled === "1") {
-      this.toggleInterval.checked = true;
-      this.intervalInput.classList.remove("hidden");
-    } else {
-      this.toggleInterval.checked = false;
-      this.intervalInput.classList.add("hidden");
-    }
-    const intervalValue = localStorage.getItem("meditational_interval_value");
-    if (intervalValue !== null) this.intervalInput.value = intervalValue;
-    const musicOn = localStorage.getItem("meditational_music_on");
-    if (musicOn === "1") {
-      this.musicOnOff.src = "img/volume.png";
-    } else {
-      this.musicOnOff.src = "img/volume-mute.png";
-    }
   }
 
   updateIntervalSettings() {
