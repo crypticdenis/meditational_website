@@ -283,7 +283,8 @@ class TimerApp {
     if (this.toggleInterval.checked && this.intervalDuration > 0) {
       this.intervalTime--;
       if (this.intervalTime <= 0 && this.timeLeft > 1) {
-        this.unlockAllAudioOnce(); // iOS: ensure context is unlocked before bell
+        // Always unlock audio before playing interval bell (iOS reliability)
+        this.unlockAllAudioOnce();
         this.playBell("interval");
         this.intervalTime = this.intervalDuration;
       }
