@@ -300,3 +300,20 @@ class TimerApp {
 
 // Initialize
 window.addEventListener("DOMContentLoaded", () => new TimerApp());
+
+// Show mobile-only mute notice popup on load
+window.addEventListener("DOMContentLoaded", () => {
+  function isMobile() {
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  }
+  const muteNotice = document.getElementById("muteNotice");
+  const dismissBtn = document.getElementById("dismissMuteNotice");
+  if (muteNotice && isMobile()) {
+    muteNotice.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    dismissBtn.addEventListener("click", () => {
+      muteNotice.style.display = "none";
+      document.body.style.overflow = "";
+    });
+  }
+});

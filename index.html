@@ -38,6 +38,58 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="no-scroll" lang="en">
+    <!-- Mobile-only mute switch info popup -->
+    <div
+      id="muteNotice"
+      style="
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      "
+    >
+      <div
+        style="
+          background: #222;
+          padding: 2rem 1.5rem;
+          border-radius: 12px;
+          max-width: 90vw;
+          text-align: center;
+          box-shadow: 0 2px 12px #000;
+        "
+      >
+        <h2 style="margin-top: 0">Heads up if not using headphones!</h2>
+        <p style="font-size: 1.1em">
+          If you want to hear interval bells, please make sure your phone’s mute
+          switch is <b>off</b>.<br />Background sounds will play regardless, but
+          bells are silenced by iOS/Android mute.
+        </p>
+        <button
+          id="dismissMuteNotice"
+          style="
+            margin-top: 1.5rem;
+            padding: 0.7em 2em;
+            font-size: 1.1em;
+            border-radius: 8px;
+            border: none;
+            background: #4a6ee0;
+            color: white;
+            cursor: pointer;
+          "
+        >
+          OK, got it
+        </button>
+      </div>
+    </div>
     <header role="banner">
       <h1 id="mainTitle">Your Meditation Space</h1>
       <div class="quote" id="quote">
