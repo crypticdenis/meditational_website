@@ -23,6 +23,9 @@ class TimerApp {
       guidedBtn.addEventListener("click", () => this.changeToGuided());
     }
 
+    // Restore settings from localStorage before using values
+    this.restoreSettings();
+
     // Timer State
     this.countdownInterval = null;
     this.timeLeft = 0;
@@ -94,24 +97,84 @@ class TimerApp {
   bindEvents() {
     this.playPauseButton.addEventListener("click", () => this.playPause());
     this.resetButton.addEventListener("click", () => this.resetTimer());
-    this.minuteInput.addEventListener("input", () =>
-      this.updateDisplayFromInput()
-    );
-    this.musicOnOff.addEventListener("click", () => this.musicOnOffClick());
-    this.musicSelect.addEventListener("change", () => this.changeMusic());
-    this.toggleInterval.addEventListener("change", () =>
-      this.toggleIntervalInput()
-    );
-    this.intervalInput.addEventListener("input", () =>
-      this.updateIntervalSettings()
-    );
+    this.minuteInput.addEventListener("input", () => {
+      this.updateDisplayFromInput();
+      this.saveSettings();
+    });
+    this.musicOnOff.addEventListener("click", () => {
+      this.musicOnOffClick();
+      this.saveSettings();
+    });
+    this.musicSelect.addEventListener("change", () => {
+      this.changeMusic();
+      this.saveSettings();
+    });
+    this.toggleInterval.addEventListener("change", () => {
+      this.toggleIntervalInput();
+      this.saveSettings();
+    });
+    this.intervalInput.addEventListener("input", () => {
+      this.updateIntervalSettings();
+      this.saveSettings();
+    });
     this.soundToggle.addEventListener("click", () => this.toggleSoundMenu());
-    this.volumeSlider.addEventListener("input", () => this.changeVolume());
+    this.volumeSlider.addEventListener("input", () => {
+      this.changeVolume();
+      this.saveSettings();
+    });
     ["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
       this.soundMenu.addEventListener(event, () =>
         this.resetSoundMenuTimeout()
       );
     });
+  }
+  // Save settings to localStorage
+  saveSettings() {
+    localStorage.setItem("meditational_minutes", this.minuteInput.value);
+    localStorage.setItem("meditational_music", this.musicSelect.value);
+    localStorage.setItem("meditational_volume", this.volumeSlider.value);
+    localStorage.setItem(
+      "meditational_interval_enabled",
+      this.toggleInterval.checked ? "1" : "0"
+    );
+    localStorage.setItem(
+      "meditational_interval_value",
+      this.intervalInput.value
+    );
+    localStorage.setItem(
+      "meditational_music_on",
+      this.musicOnOff.src.includes("volume.png") ? "1" : "0"
+    );
+  }
+
+  // Restore settings from localStorage
+  restoreSettings() {
+    const minutes = localStorage.getItem("meditational_minutes");
+    if (minutes !== null) this.minuteInput.value = minutes;
+    const music = localStorage.getItem("meditational_music");
+    if (music && this.musicSelect.querySelector(`option[value='${music}']`)) {
+      this.musicSelect.value = music;
+    }
+    const volume = localStorage.getItem("meditational_volume");
+    if (volume !== null) this.volumeSlider.value = volume;
+    const intervalEnabled = localStorage.getItem(
+      "meditational_interval_enabled"
+    );
+    if (intervalEnabled === "1") {
+      this.toggleInterval.checked = true;
+      this.intervalInput.classList.remove("hidden");
+    } else {
+      this.toggleInterval.checked = false;
+      this.intervalInput.classList.add("hidden");
+    }
+    const intervalValue = localStorage.getItem("meditational_interval_value");
+    if (intervalValue !== null) this.intervalInput.value = intervalValue;
+    const musicOn = localStorage.getItem("meditational_music_on");
+    if (musicOn === "1") {
+      this.musicOnOff.src = "img/volume.png";
+    } else {
+      this.musicOnOff.src = "img/volume-mute.png";
+    }
   }
 
   updateIntervalSettings() {
