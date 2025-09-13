@@ -6,7 +6,6 @@ class TimerApp {
   constructor() {
     // DOM Elements
     this.minuteInput = document.getElementById("minutes");
-    this.minuteInputMobile = document.getElementById("minutesMobile");
     this.playPauseButton = document.getElementById("playPause");
     this.resetButton = document.getElementById("reset");
     this.countdownDisplay = document.getElementById("countdown");
@@ -15,7 +14,6 @@ class TimerApp {
     this.musicSelect = document.getElementById("musicSelect");
     this.toggleInterval = document.getElementById("toggleInterval");
     this.intervalInput = document.getElementById("interval");
-    this.intervalInputMobile = document.getElementById("intervalMobile");
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
@@ -24,11 +22,6 @@ class TimerApp {
     if (guidedBtn) {
       guidedBtn.addEventListener("click", () => this.changeToGuided());
     }
-
-    // Device detection
-    this.isMobile =
-      /iPhone|iPad|iPod|Android/.test(navigator.userAgent) &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 1);
 
     // Restore only minutes from localStorage before using values
     this.restoreMinutes();
@@ -62,14 +55,6 @@ class TimerApp {
     this.loadAllBuffers(); // Preload bells
     this.bindEvents();
     this.updateDisplayFromInput();
-
-    // Sync mobile/desktop pickers on load
-    if (this.isMobile && this.minuteInputMobile) {
-      this.minuteInputMobile.value = this.minuteInput.value;
-    }
-    if (this.isMobile && this.intervalInputMobile) {
-      this.intervalInputMobile.value = this.intervalInput.value;
-    }
 
     // Unlock AudioContext on any user gesture
     ["click", "keydown", "touchstart"].forEach((event) =>
@@ -112,43 +97,10 @@ class TimerApp {
   bindEvents() {
     this.playPauseButton.addEventListener("click", () => this.playPause());
     this.resetButton.addEventListener("click", () => this.resetTimer());
-
-    // Timer minutes input
-    if (this.isMobile && this.minuteInputMobile) {
-      this.minuteInputMobile.addEventListener("change", () => {
-        this.minuteInput.value = this.minuteInputMobile.value;
-        this.updateDisplayFromInput();
-        this.saveMinutes();
-      });
-      // Keep desktop input in sync
-      this.minuteInput.addEventListener("input", () => {
-        this.minuteInputMobile.value = this.minuteInput.value;
-      });
-    } else {
-      this.minuteInput.addEventListener("input", () => {
-        this.updateDisplayFromInput();
-        this.saveMinutes();
-      });
-    }
-
-    // Interval input
-    if (this.isMobile && this.intervalInputMobile) {
-      this.intervalInputMobile.addEventListener("change", () => {
-        this.intervalInput.value = this.intervalInputMobile.value;
-        this.updateIntervalSettings();
-        this.saveSettings();
-      });
-      // Keep desktop input in sync
-      this.intervalInput.addEventListener("input", () => {
-        this.intervalInputMobile.value = this.intervalInput.value;
-      });
-    } else {
-      this.intervalInput.addEventListener("input", () => {
-        this.updateIntervalSettings();
-        this.saveSettings();
-      });
-    }
-
+    this.minuteInput.addEventListener("input", () => {
+      this.updateDisplayFromInput();
+      this.saveMinutes();
+    });
     this.musicOnOff.addEventListener("click", () => {
       this.musicOnOffClick();
       this.saveSettings();
@@ -160,14 +112,10 @@ class TimerApp {
     this.toggleInterval.addEventListener("change", () => {
       this.toggleIntervalInput();
       this.saveSettings();
-      // Show/hide mobile interval select
-      if (this.isMobile && this.intervalInputMobile) {
-        if (this.toggleInterval.checked) {
-          this.intervalInputMobile.classList.remove("hidden");
-        } else {
-          this.intervalInputMobile.classList.add("hidden");
-        }
-      }
+    });
+    this.intervalInput.addEventListener("input", () => {
+      this.updateIntervalSettings();
+      this.saveSettings();
     });
     this.soundToggle.addEventListener("click", () => this.toggleSoundMenu());
     this.volumeSlider.addEventListener("input", () => {
@@ -182,32 +130,18 @@ class TimerApp {
   }
   // Save only minutes to localStorage
   saveMinutes() {
-    const value =
-      this.isMobile && this.minuteInputMobile
-        ? this.minuteInputMobile.value
-        : this.minuteInput.value;
-    localStorage.setItem("meditational_minutes", value);
+    localStorage.setItem("meditational_minutes", this.minuteInput.value);
   }
 
   // Restore only minutes from localStorage
   restoreMinutes() {
     const minutes = localStorage.getItem("meditational_minutes");
-    if (minutes !== null) {
-      this.minuteInput.value = minutes;
-      if (this.minuteInputMobile) this.minuteInputMobile.value = minutes;
-    }
+    if (minutes !== null) this.minuteInput.value = minutes;
   }
 
   updateIntervalSettings() {
-    const minutesVal =
-      this.isMobile && this.minuteInputMobile
-        ? this.minuteInputMobile.value
-        : this.minuteInput.value;
-    const maxInterval = parseInt(minutesVal, 10) || 0;
-    let intervalValue =
-      this.isMobile && this.intervalInputMobile
-        ? parseInt(this.intervalInputMobile.value, 10)
-        : parseInt(this.intervalInput.value, 10);
+    const maxInterval = parseInt(this.minuteInput.value, 10) || 0;
+    let intervalValue = parseInt(this.intervalInput.value, 10) || 0;
     if (intervalValue > maxInterval) intervalValue = maxInterval;
     this.intervalDuration = intervalValue * 60 || 0;
     this.intervalTime = this.intervalDuration;
@@ -348,14 +282,10 @@ class TimerApp {
   }
 
   updateDisplayFromInput() {
-    const minutesVal =
-      this.isMobile && this.minuteInputMobile
-        ? this.minuteInputMobile.value
-        : this.minuteInput.value;
-    this.timeLeft = (parseInt(minutesVal, 10) || 0) * 60;
+    this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
     const displayMinutes = Math.floor(this.timeLeft / 60);
     const displaySeconds = this.timeLeft % 60;
-    this.countdownDisplay.innerText = `${displayMinutes}:$${
+    this.countdownDisplay.innerText = `${displayMinutes}:${
       displaySeconds < 10 ? "0" : ""
     }${displaySeconds}`;
   }

@@ -141,34 +141,13 @@
         <div class="container" id="timerContainer">
           <div class="input-section" id="timerInput">
             <label for="minutes">Timer</label>
-            <!-- Desktop input -->
             <input
               type="number"
               id="minutes"
               min="1"
               value="10"
               aria-label="Set meditation duration in minutes"
-              class="desktop-only"
             />
-            <!-- Mobile select -->
-            <select
-              id="minutesMobile"
-              class="mobile-only"
-              aria-label="Set meditation duration in minutes"
-            >
-              <!-- Options 1-60 -->
-              <option value="" disabled selected>Minutes</option>
-              <option value="1">1</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
-              <option value="30">30</option>
-              <option value="40">40</option>
-              <option value="50">50</option>
-              <option value="60">60</option>
-            </select>
           </div>
           <hr class="animated-hr" />
           <div class="input-section" id="intervalInput">
@@ -182,31 +161,14 @@
               />
               <span class="slider round"></span>
             </label>
-            <!-- Desktop input -->
             <input
               type="number"
               id="interval"
               min="1"
               value="1"
-              class="hidden desktop-only"
+              class="hidden"
               aria-label="Interval in minutes"
             />
-            <!-- Mobile select -->
-            <select
-              id="intervalMobile"
-              class="hidden mobile-only"
-              aria-label="Interval in minutes"
-            >
-              <option value="" disabled selected>Minutes</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-            </select>
           </div>
         </div>
         <div class="container">
