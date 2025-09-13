@@ -93,6 +93,19 @@ class TimerApp {
     this.audioCtx.resume().catch(console.warn);
     // Do not play any bell on unlock; only unlock/resume AudioContext
   }
+  updateIntervalSettings() {
+    const timerVal = parseInt(this.minuteInput.value, 10) || 0;
+    let intervalVal = parseInt(this.intervalInput.value, 10) || 0;
+
+    // Clamp interval to timer
+    if (intervalVal > timerVal) {
+      intervalVal = timerVal;
+      this.intervalInput.value = timerVal; // also fix UI
+    }
+
+    this.intervalDuration = intervalVal * 60;
+    this.intervalTime = this.intervalDuration;
+  }
 
   bindEvents() {
     this.playPauseButton.addEventListener("click", () => this.playPause());
@@ -148,16 +161,16 @@ class TimerApp {
   }
 
   updateIntervalSettings() {
-    const maxInterval = parseInt(this.minuteInput.value, 10) || 0;
-    let intervalValue = parseInt(this.intervalInput.value, 10) || 0;
-    if (intervalValue > maxInterval) intervalValue = maxInterval;
-    this.intervalDuration = intervalValue * 60 || 0;
+    const timerVal = parseInt(this.minuteInput.value, 10) || 0;
+    this.intervalInput.value = timerVal; // Always equal to timer
+    this.intervalDuration = timerVal * 60;
     this.intervalTime = this.intervalDuration;
   }
 
   toggleIntervalInput() {
     if (this.toggleInterval.checked) {
       this.intervalInput.classList.remove("hidden");
+      this.intervalInput.disabled = false; // keep editable
       this.updateIntervalSettings();
     } else {
       this.intervalInput.classList.add("hidden");
