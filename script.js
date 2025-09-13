@@ -23,8 +23,9 @@ class TimerApp {
       guidedBtn.addEventListener("click", () => this.changeToGuided());
     }
 
-    // Restore only minutes from localStorage before using values
-    this.restoreMinutes();
+    // Restore minutes, sound, volume, and mute state from localStorage before using values
+    this.restoreSettings();
+    this.updateSoundUI();
 
     // Timer State
     this.countdownInterval = null;
@@ -99,7 +100,22 @@ class TimerApp {
     this.resetButton.addEventListener("click", () => this.resetTimer());
     this.minuteInput.addEventListener("input", () => {
       this.updateDisplayFromInput();
-      this.saveMinutes();
+      this.saveSettings();
+    });
+    this.musicSelect.addEventListener("change", () => {
+      this.changeMusic();
+      this.saveSettings();
+      this.updateSoundUI();
+    });
+    this.volumeSlider.addEventListener("input", () => {
+      this.changeVolume();
+      this.saveSettings();
+      this.updateSoundUI();
+    });
+    this.musicOnOff.addEventListener("click", () => {
+      this.musicOnOffClick();
+      this.saveSettings();
+      this.updateSoundUI();
     });
     this.musicOnOff.addEventListener("click", () => {
       this.musicOnOffClick();
@@ -128,15 +144,45 @@ class TimerApp {
       );
     });
   }
-  // Save only minutes to localStorage
-  saveMinutes() {
+  // Save minutes, sound, volume, and mute state to localStorage
+  saveSettings() {
     localStorage.setItem("meditational_minutes", this.minuteInput.value);
+    localStorage.setItem("meditational_music", this.musicSelect.value);
+    localStorage.setItem("meditational_volume", this.volumeSlider.value);
+    localStorage.setItem(
+      "meditational_music_muted",
+      this.musicOnOff.src.includes("volume-mute.png") ? "1" : "0"
+    );
   }
 
-  // Restore only minutes from localStorage
-  restoreMinutes() {
+  // Restore minutes, sound, volume, and mute state from localStorage
+  restoreSettings() {
     const minutes = localStorage.getItem("meditational_minutes");
     if (minutes !== null) this.minuteInput.value = minutes;
+    const music = localStorage.getItem("meditational_music");
+    if (music && this.musicSelect.querySelector(`option[value='${music}']`)) {
+      this.musicSelect.value = music;
+    }
+    const volume = localStorage.getItem("meditational_volume");
+    this.volumeSlider.value = volume !== null ? volume : 50;
+    // Mute state: default to muted for first-time users
+    const muted = localStorage.getItem("meditational_music_muted");
+    if (muted === null || muted === "1") {
+      this.musicOnOff.src = "img/volume-mute.png";
+    } else {
+      this.musicOnOff.src = "img/volume.png";
+    }
+  }
+
+  // Update icon and slider to match mute/volume state
+  updateSoundUI() {
+    const volume = parseInt(this.volumeSlider.value, 10);
+    const muted = localStorage.getItem("meditational_music_muted");
+    if (muted === null || muted === "1" || volume === 0) {
+      this.musicOnOff.src = "img/volume-mute.png";
+    } else {
+      this.musicOnOff.src = "img/volume.png";
+    }
   }
 
   updateIntervalSettings() {
