@@ -114,14 +114,20 @@ class TimerApp {
     this.minuteInput.addEventListener("input", () => {
       this.updateDisplayFromInput();
       this.saveMinutes();
-      // Limit interval max to timer value
+
       const timerVal = parseInt(this.minuteInput.value, 10) || 0;
+
+      // keep intervalInput's max synced with timer
       this.intervalInput.max = timerVal;
+
+      // clamp if interval > timer
       if (parseInt(this.intervalInput.value, 10) > timerVal) {
         this.intervalInput.value = timerVal;
-        this.updateIntervalSettings();
       }
+
+      this.updateIntervalSettings();
     });
+
     this.musicOnOff.addEventListener("click", () => {
       this.musicOnOffClick();
       this.saveSettings();
@@ -162,8 +168,15 @@ class TimerApp {
 
   updateIntervalSettings() {
     const timerVal = parseInt(this.minuteInput.value, 10) || 0;
-    this.intervalInput.value = timerVal; // Always equal to timer
-    this.intervalDuration = timerVal * 60;
+    let intervalVal = parseInt(this.intervalInput.value, 10) || 0;
+
+    // clamp interval
+    if (intervalVal > timerVal) {
+      intervalVal = timerVal;
+      this.intervalInput.value = timerVal;
+    }
+
+    this.intervalDuration = intervalVal * 60;
     this.intervalTime = this.intervalDuration;
   }
 
