@@ -311,10 +311,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const muteNotice = document.getElementById("muteNotice");
   const dismissBtn = document.getElementById("dismissMuteNotice");
+  const intervalToggle = document.getElementById("toggleInterval");
 
-  if (muteNotice && isIOS()) {
-    muteNotice.style.display = "flex";
-    document.body.style.overflow = "hidden";
+  if (muteNotice && dismissBtn && intervalToggle && isIOS()) {
+    intervalToggle.addEventListener("change", function () {
+      if (intervalToggle.checked) {
+        muteNotice.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+    });
     dismissBtn.addEventListener("click", () => {
       muteNotice.style.display = "none";
       document.body.style.overflow = "";
