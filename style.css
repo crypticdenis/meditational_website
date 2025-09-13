@@ -1,3 +1,37 @@
+/* Mute notice popup styles */
+.mute-notice {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.mute-notice-content {
+  background: #222;
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  max-width: 90vw;
+  text-align: center;
+  box-shadow: 0 2px 12px #000;
+}
+.mute-notice-btn {
+  margin-top: 1.5rem;
+  padding: 0.7em 2em;
+  font-size: 1.1em;
+  border-radius: 8px;
+  border: none;
+  background-color: rgb(141, 157, 218);
+  color: white;
+  cursor: pointer;
+}
 /* Accessibility and button style moved from index.html */
 .visually-hidden {
   position: absolute !important;
