@@ -1,3 +1,27 @@
+/* Accessibility and button style moved from index.html */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+.btn-guided-access,
+.btn-sound-access {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.guided-label,
+.sound-label {
+  display: block;
+  text-align: center;
+  font-size: 0.75em;
+  margin-top: 4px;
+  color: white;
+}
 body.pulsate::before {
   content: "";
   position: fixed;
@@ -171,6 +195,18 @@ body.scroll {
 header {
   text-align: center;
   margin-bottom: 5px;
+}
+
+.heading-meditational {
+  font-family: "Courier Prime", monospace;
+  letter-spacing: 2px; /* Adds breathing space */
+  font-weight: 300;
+  color: rgb(193, 201, 229);
+  margin-top: 0;
+  font-size: 2.5rem; /* Adjust size */
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .quote {
@@ -636,10 +672,20 @@ footer.scroll {
     box-sizing: border-box;
   }
 }
+.btn-sound-access,
 .sound-toggle {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
   cursor: pointer;
-  padding: 10px;
+}
+
+.sound-toggle {
   position: fixed;
-  top: 5px;
-  right: 5px;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 0;
+  margin: 0;
 }
