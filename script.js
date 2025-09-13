@@ -105,17 +105,14 @@ class TimerApp {
     this.musicSelect.addEventListener("change", () => {
       this.changeMusic();
       this.saveSettings();
-      this.updateSoundUI();
     });
     this.volumeSlider.addEventListener("input", () => {
       this.changeVolume();
       this.saveSettings();
-      this.updateSoundUI();
     });
     this.musicOnOff.addEventListener("click", () => {
       this.musicOnOffClick();
       this.saveSettings();
-      this.updateSoundUI();
     });
     this.musicOnOff.addEventListener("click", () => {
       this.musicOnOffClick();
