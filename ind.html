@@ -79,11 +79,11 @@
   </head>
   <body>
     <main id="main-content" tabindex="-1" aria-label="Meditation Timer Session">
-      <!-- Exit button -->
-      <a
-        href="index.html"
+      <!-- Exit button (now a button for consistent styling) -->
+      <button
         id="exit-btn"
         aria-label="Exit to main page"
+        onclick="window.location.href='index.html'"
         style="
           position: fixed;
           top: 24px;
@@ -95,7 +95,8 @@
           font-size: 1.2em;
           border-radius: 2em;
           padding: 0.5em 1.3em;
-          text-decoration: none;
+          min-width: 8.5em;
+          min-height: 2.5em;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
           transition: background 0.3s, color 0.3s;
           letter-spacing: 0.04em;
@@ -103,11 +104,14 @@
           outline: none;
           cursor: pointer;
           display: inline-block;
+          text-align: center;
+          white-space: nowrap;
         "
         onmouseover="this.style.background='#e0e0e0';this.style.color='#111';"
         onmouseout="this.style.background='rgba(255,255,255,0.85)';this.style.color='#333';"
-        >⟵ Exit</a
       >
+        ⟵ Exit
+      </button>
       <!-- Hide/Show Timer button -->
       <button
         id="toggle-timer-btn"
