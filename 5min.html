@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video Background Timer</title>
+    <!-- Rounded, relaxing font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      /* Fullscreen background video */
+      video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+      }
+
+      /* Timer container */
+      .timer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 320px;
+        height: 320px;
+      }
+
+      .progress-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg); /* Start progress at top */
+      }
+
+      .progress-ring__circle {
+        stroke: white;
+        transition: stroke-dasharray 0.3s linear, stroke-dashoffset 1s linear;
+      }
+
+      .time-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 5em;
+        color: white;
+        font-family: "Quicksand", Arial, sans-serif;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Your video background -->
+    <video autoplay muted loop>
+      <source src="mov.mov" type="video/quicktime" />
+      <source src="mov.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Meditation overlays -->
+    <div
+      id="welcome-overlay"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 3s;
+      "
+    >
+      <div
+        style="
+          color: white;
+          font-size: 3em;
+          text-align: center;
+          font-family: 'Quicksand', Arial, sans-serif;
+          letter-spacing: 0.03em;
+          max-width: 90vw;
+        "
+      >
+        <div
+          id="welcome-message-1"
+          style="opacity: 0; transition: opacity 2.5s"
+        >
+          Welcome to your moment of calm.
+        </div>
+        <div
+          id="welcome-message-2"
+          style="opacity: 0; transition: opacity 2.5s; margin-top: 1em"
+        >
+          Let yourself settle and breathe deeply.
+        </div>
+        <div
+          id="welcome-message-3"
+          style="opacity: 0; transition: opacity 2.5s; margin-top: 1em"
+        >
+          Your session is starting now.<br />Let go and be present.
+        </div>
+      </div>
+    </div>
+    <!-- Timer overlay -->
+    <div
+      class="timer"
+      id="timer-container"
+      style="opacity: 0; transition: opacity 1.5s"
+    >
+      <svg class="progress-ring" width="320" height="320">
+        <circle
+          class="progress-ring__circle-bg"
+          stroke-width="18"
+          fill="transparent"
+          r="150"
+          cx="160"
+          cy="160"
+        />
+        <circle
+          class="progress-ring__circle"
+          stroke-width="18"
+          fill="transparent"
+          r="150"
+          cx="160"
+          cy="160"
+        />
+      </svg>
+      <div class="time-text" id="time">60</div>
+    </div>
+    <!-- Goodbye overlay -->
+    <div
+      id="goodbye-overlay"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 3s;
+        pointer-events: none;
+      "
+    >
+      <div
+        style="
+          color: white;
+          font-size: 3em;
+          text-align: center;
+          font-family: 'Quicksand', Arial, sans-serif;
+          letter-spacing: 0.03em;
+          max-width: 90vw;
+        "
+      >
+        <div>
+          Thank you for taking this time for yourself.<br />Carry this peace
+          with you into the rest of your day.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let seconds = 6; // 10 minutes
+      const timeEl = document.getElementById("time");
+      const progressCircle = document.querySelector(".progress-ring__circle");
+      const radius = 150;
+      const circumference = 2 * Math.PI * radius;
+      progressCircle.setAttribute("stroke-dasharray", circumference);
+      progressCircle.setAttribute("stroke-dashoffset", circumference);
+
+      function setProgress(percent) {
+        const offset = circumference - percent * circumference;
+        progressCircle.setAttribute("stroke-dashoffset", offset);
+      }
+
+      function formatTime(secs) {
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return `${m}:${s.toString().padStart(2, "0")}`;
+      }
+
+      // Meditation overlay logic
+      const welcomeOverlay = document.getElementById("welcome-overlay");
+      const welcomeMsg1 = document.getElementById("welcome-message-1");
+      const welcomeMsg2 = document.getElementById("welcome-message-2");
+      const welcomeMsg3 = document.getElementById("welcome-message-3");
+      const timerContainer = document.getElementById("timer-container");
+      const goodbyeOverlay = document.getElementById("goodbye-overlay");
+
+      // Sequence: Welcome1 -> Welcome2 -> Welcome3 -> Timer -> Goodbye
+      function fadeIn(el) {
+        el.style.opacity = 1;
+      }
+      function fadeOut(el) {
+        el.style.opacity = 0;
+      }
+
+      // Helper to fade in, wait, then fade out a message
+      function showMessage(msgEl, fadeInMs, visibleMs, fadeOutMs, next) {
+        msgEl.style.opacity = 1;
+        setTimeout(() => {
+          msgEl.style.opacity = 0;
+          setTimeout(next, fadeOutMs);
+        }, visibleMs);
+      }
+
+      // Show overlays with slow fade in/out
+      setTimeout(() => {
+        welcomeOverlay.style.opacity = 1;
+        // Fade in first message
+        showMessage(
+          welcomeMsg1,
+          2500, // fade in ms (matches CSS)
+          5000, // visible ms
+          2500, // fade out ms
+          () => {
+            // Fade in second message
+            showMessage(welcomeMsg2, 2500, 5000, 2500, () => {
+              // Fade in third message
+              showMessage(welcomeMsg3, 2500, 5000, 2500, () => {
+                // Fade out overlay, fade in timer
+                fadeOut(welcomeOverlay);
+                setTimeout(() => {
+                  welcomeOverlay.style.display = "none";
+                  timerContainer.style.opacity = 1;
+                  startTimer();
+                }, 3000);
+              });
+            });
+          }
+        );
+      }, 100);
+
+      function startTimer() {
+        setProgress(0); // Start empty
+        let elapsed = 0;
+        timeEl.textContent = formatTime(seconds);
+        const interval = setInterval(() => {
+          elapsed++;
+          const remaining = seconds - elapsed;
+          timeEl.textContent = formatTime(Math.max(remaining, 0));
+          setProgress(elapsed / seconds);
+          if (elapsed >= seconds) {
+            clearInterval(interval);
+            setProgress(1);
+            timeEl.textContent = "0:00";
+            // Show goodbye overlay
+            setTimeout(() => {
+              timerContainer.style.opacity = 0;
+              setTimeout(() => {
+                goodbyeOverlay.style.opacity = 1;
+              }, 2000);
+            }, 2000);
+          }
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>

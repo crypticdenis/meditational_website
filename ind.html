@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Guided Meditation Timer | Relax & Focus</title>
+    <meta
+      name="description"
+      content="A relaxing guided meditation timer with a calming video background, accessible controls, and friendly overlays to help you focus and unwind."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Rounded, relaxing font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      /* Fullscreen background video */
+      video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+      }
+
+      /* Timer container */
+      .timer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 320px;
+        height: 320px;
+      }
+
+      .progress-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg); /* Start progress at top */
+      }
+
+      .progress-ring__circle {
+        stroke: white;
+        transition: stroke-dasharray 0.3s linear, stroke-dashoffset 1s linear;
+      }
+
+      .time-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 5em;
+        color: white;
+        font-family: "Quicksand", Arial, sans-serif;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="main-content" tabindex="-1" aria-label="Meditation Timer Session">
+      <!-- Exit button -->
+      <a
+        href="index.html"
+        id="exit-btn"
+        aria-label="Exit to main page"
+        style="
+          position: fixed;
+          top: 24px;
+          left: 24px;
+          z-index: 20;
+          background: rgba(255, 255, 255, 0.85);
+          color: #333;
+          font-family: 'Quicksand', Arial, sans-serif;
+          font-size: 1.2em;
+          border-radius: 2em;
+          padding: 0.5em 1.3em;
+          text-decoration: none;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+          transition: background 0.3s, color 0.3s;
+          letter-spacing: 0.04em;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          display: inline-block;
+        "
+        onmouseover="this.style.background='#e0e0e0';this.style.color='#111';"
+        onmouseout="this.style.background='rgba(255,255,255,0.85)';this.style.color='#333';"
+        >⟵ Exit</a
+      >
+      <!-- Hide/Show Timer button -->
+      <button
+        id="toggle-timer-btn"
+        aria-controls="timer-container"
+        aria-pressed="true"
+        aria-label="Hide timer"
+        style="
+          position: fixed;
+          top: 24px;
+          right: 24px;
+          z-index: 20;
+          background: rgba(255, 255, 255, 0.85);
+          color: #333;
+          font-family: 'Quicksand', Arial, sans-serif;
+          font-size: 1.2em;
+          border-radius: 2em;
+          padding: 0.5em 1.3em;
+          min-width: 8.5em;
+          min-height: 2.5em;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+          transition: background 0.3s, color 0.3s;
+          letter-spacing: 0.04em;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          display: inline-block;
+          text-align: center;
+          white-space: nowrap;
+        "
+        onmouseover="this.style.background='#e0e0e0';this.style.color='#111';"
+        onmouseout="this.style.background='rgba(255,255,255,0.85)';this.style.color='#333';"
+      >
+        Hide Timer
+      </button>
+      <!-- Your video background -->
+      <video
+        autoplay
+        muted
+        loop
+        aria-label="Calming background video"
+        tabindex="-1"
+      >
+        <source src="mov.mov" type="video/quicktime" />
+        <source src="mov.mp4" type="video/mp4" />
+        <track
+          kind="descriptions"
+          src=""
+          srclang="en"
+          label="Video description"
+        />
+        Your browser does not support the video tag.
+      </video>
+
+      <!-- Start Session overlay (required for audio autoplay) -->
+      <div
+        id="start-session-overlay"
+        style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.85);
+          z-index: 100;
+        "
+      >
+        <button
+          id="start-session-btn"
+          style="
+            font-size: 2em;
+            padding: 0.7em 2em;
+            border-radius: 2em;
+            border: none;
+            background: #fff;
+            color: #333;
+            font-family: 'Quicksand', Arial, sans-serif;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            outline: none;
+            transition: background 0.2s;
+          "
+        >
+          Start Session
+        </button>
+      </div>
+      <!-- Gong audio for start/end cues -->
+      <audio id="gong-audio" preload="auto">
+        <source src="sounds/gong.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+      <!-- Meditation overlays -->
+      <div
+        id="welcome-overlay"
+        style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.7);
+          z-index: 10;
+          opacity: 0;
+          transition: opacity 3s;
+        "
+      >
+        <div
+          style="
+            color: white;
+            font-size: 3em;
+            text-align: center;
+            font-family: 'Quicksand', Arial, sans-serif;
+            letter-spacing: 0.03em;
+            max-width: 90vw;
+          "
+        >
+          <div
+            id="welcome-message-1"
+            style="opacity: 0; transition: opacity 2.5s"
+          >
+            Welcome to your moment of calm.
+          </div>
+          <div
+            id="welcome-message-2"
+            style="opacity: 0; transition: opacity 2.5s; margin-top: 1em"
+          >
+            Let yourself settle and breathe deeply.
+          </div>
+          <div
+            id="welcome-message-3"
+            style="opacity: 0; transition: opacity 2.5s; margin-top: 1em"
+          >
+            Your session is starting now.<br />Let go and be present.
+          </div>
+        </div>
+      </div>
+      <!-- Timer overlay -->
+      <section
+        class="timer"
+        id="timer-container"
+        aria-live="polite"
+        aria-label="Meditation Timer"
+        style="
+          opacity: 0;
+          transition: opacity 1.5s;
+          visibility: visible;
+          min-height: 320px;
+          min-width: 320px;
+        "
+        tabindex="0"
+        role="region"
+        aria-hidden="false"
+      >
+        <svg class="progress-ring" width="320" height="320">
+          <circle
+            class="progress-ring__circle-bg"
+            stroke-width="18"
+            fill="transparent"
+            r="150"
+            cx="160"
+            cy="160"
+          />
+          <circle
+            class="progress-ring__circle"
+            stroke-width="18"
+            fill="transparent"
+            r="150"
+            cx="160"
+            cy="160"
+          />
+        </svg>
+        <div
+          class="time-text"
+          id="time"
+          aria-live="polite"
+          aria-atomic="true"
+          role="status"
+        >
+          60
+        </div>
+      </section>
+      <!-- Goodbye overlay -->
+      <div
+        id="goodbye-overlay"
+        style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.7);
+          z-index: 10;
+          opacity: 0;
+          transition: opacity 3s;
+          pointer-events: none;
+        "
+      >
+        <div
+          style="
+            color: white;
+            font-size: 3em;
+            text-align: center;
+            font-family: 'Quicksand', Arial, sans-serif;
+            letter-spacing: 0.03em;
+            max-width: 90vw;
+          "
+        >
+          <div>
+            Thank you for taking this time for yourself.<br />Carry this peace
+            with you into the rest of your day.
+          </div>
+        </div>
+      </div>
+
+      <script>
+        // Hide/Show Timer Button Logic & Accessibility
+        const toggleBtn = document.getElementById("toggle-timer-btn");
+        const timerSection = document.getElementById("timer-container");
+        let timerVisible = true;
+        toggleBtn.addEventListener("click", function () {
+          timerVisible = !timerVisible;
+          timerSection.style.visibility = timerVisible ? "visible" : "hidden";
+          timerSection.setAttribute(
+            "aria-hidden",
+            timerVisible ? "false" : "true"
+          );
+          toggleBtn.setAttribute(
+            "aria-pressed",
+            timerVisible ? "true" : "false"
+          );
+          toggleBtn.setAttribute(
+            "aria-label",
+            timerVisible ? "Hide timer" : "Show timer"
+          );
+          toggleBtn.textContent = timerVisible ? "Hide Timer" : "Show Timer";
+          if (timerVisible) timerSection.focus();
+        });
+        let seconds = 60; // 10 minutes
+        const timeEl = document.getElementById("time");
+        const progressCircle = document.querySelector(".progress-ring__circle");
+        const radius = 150;
+        const circumference = 2 * Math.PI * radius;
+        progressCircle.setAttribute("stroke-dasharray", circumference);
+        progressCircle.setAttribute("stroke-dashoffset", circumference);
+
+        function setProgress(percent) {
+          const offset = circumference - percent * circumference;
+          progressCircle.setAttribute("stroke-dashoffset", offset);
+        }
+
+        function formatTime(secs) {
+          const m = Math.floor(secs / 60);
+          const s = secs % 60;
+          return `${m}:${s.toString().padStart(2, "0")}`;
+        }
+
+        // Meditation overlay logic
+        const welcomeOverlay = document.getElementById("welcome-overlay");
+        const welcomeMsg1 = document.getElementById("welcome-message-1");
+        const welcomeMsg2 = document.getElementById("welcome-message-2");
+        const welcomeMsg3 = document.getElementById("welcome-message-3");
+        const timerContainer = document.getElementById("timer-container");
+        const goodbyeOverlay = document.getElementById("goodbye-overlay");
+
+        // Sequence: Welcome1 -> Welcome2 -> Welcome3 -> Timer -> Goodbye
+        function fadeIn(el) {
+          el.style.opacity = 1;
+        }
+        function fadeOut(el) {
+          el.style.opacity = 0;
+        }
+
+        // Helper to fade in, wait, then fade out a message
+        function showMessage(msgEl, fadeInMs, visibleMs, fadeOutMs, next) {
+          msgEl.style.opacity = 1;
+          setTimeout(() => {
+            msgEl.style.opacity = 0;
+            setTimeout(next, fadeOutMs);
+          }, visibleMs);
+        }
+
+        // Show overlays with slow fade in/out
+        const gong = document.getElementById("gong-audio");
+        const startOverlay = document.getElementById("start-session-overlay");
+        const startBtn = document.getElementById("start-session-btn");
+
+        function beginSessionSequence() {
+          startOverlay.style.display = "none";
+          setTimeout(() => {
+            welcomeOverlay.style.opacity = 1;
+            // Fade in first message
+            showMessage(
+              welcomeMsg1,
+              2500, // fade in ms (matches CSS)
+              5000, // visible ms
+              2500, // fade out ms
+              () => {
+                // Fade in second message
+                showMessage(welcomeMsg2, 2500, 5000, 2500, () => {
+                  // Fade in third message
+                  showMessage(welcomeMsg3, 2500, 5000, 2500, () => {
+                    // Fade out overlay, fade in timer
+                    fadeOut(welcomeOverlay);
+                    setTimeout(() => {
+                      welcomeOverlay.style.display = "none";
+                      timerContainer.style.opacity = 1;
+                      // Play gong at session start
+                      if (gong) {
+                        try {
+                          gong.currentTime = 0;
+                          gong.play();
+                        } catch (e) {}
+                      }
+                      startTimer();
+                    }, 3000);
+                  });
+                });
+              }
+            );
+          }, 100);
+        }
+
+        startBtn.addEventListener("click", beginSessionSequence);
+
+        function startTimer() {
+          setProgress(0); // Start empty
+          let elapsed = 0;
+          timeEl.textContent = formatTime(seconds);
+          const interval = setInterval(() => {
+            elapsed++;
+            const remaining = seconds - elapsed;
+            timeEl.textContent = formatTime(Math.max(remaining, 0));
+            setProgress(elapsed / seconds);
+            if (elapsed >= seconds) {
+              clearInterval(interval);
+              setProgress(1);
+              timeEl.textContent = "0:00";
+              // Show goodbye overlay
+              setTimeout(() => {
+                timerContainer.style.opacity = 0;
+                setTimeout(() => {
+                  // Play gong at session end
+                  if (gong) {
+                    try {
+                      gong.currentTime = 0;
+                      gong.play();
+                    } catch (e) {}
+                  }
+                  goodbyeOverlay.style.opacity = 1;
+                }, 2000);
+              }, 2000);
+            }
+          }, 1000);
+        }
+      </script>
+    </main>
+    <!-- Landmarks for accessibility -->
+    <nav aria-label="Main Navigation" style="display: none"></nav>
+    <footer aria-label="Footer" style="display: none"></footer>
+  </body>
+</html>
