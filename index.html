@@ -59,19 +59,207 @@
       </div>
     </header>
     <section class="guided-section" aria-label="Guided meditation">
-      <button
-        id="btn-guided"
-        aria-label="Go to guided meditation sessions"
-        class="btn-guided-access"
-      >
-        <img
-          src="img/meditation.png"
-          alt="Guided meditation sessions"
-          class="top-right-image"
-          id="guidedeIcon"
-        />
-        <span class="guided-label">Guided</span>
-      </button>
+      <div style="display: flex; gap: 1.2em; align-items: center">
+        <button
+          id="btn-guided"
+          aria-label="Go to guided meditation sessions"
+          class="btn-guided-access"
+        >
+          <img
+            src="img/meditation.png"
+            alt="Guided meditation sessions"
+            class="top-right-image"
+            id="guidedeIcon"
+          />
+          <span class="guided-label">Guided</span>
+        </button>
+        <button
+          id="btn-ambient"
+          aria-label="Go to ambient mode"
+          class="btn-guided-access"
+          style="display: flex; flex-direction: column; align-items: center"
+        >
+          <img
+            src="img/meditation.png"
+            alt="Ambient mode"
+            class="top-right-image"
+            id="ambientIcon"
+          />
+          <span class="guided-label">Ambient Mode</span>
+        </button>
+        <div
+          id="ambient-dropdown"
+          style="
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 32, 40, 0.98);
+            border-radius: 1.5em;
+            box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
+            padding: 1.2em 2em;
+            z-index: 100;
+            min-width: 260px;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2em;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              gap: 1.5em;
+              justify-content: center;
+              flex-wrap: wrap;
+            "
+          >
+            <button
+              class="ambient-option"
+              data-ambient="waterfall"
+              data-video="mov.mp4"
+              style="
+                background: none;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="img/home.png"
+                alt="Waterfall"
+                style="
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 1em;
+                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                "
+              />
+              <span
+                style="
+                  color: #b0e6c1;
+                  font-size: 1em;
+                  margin-top: 0.3em;
+                  font-family: 'Quicksand', Arial, sans-serif;
+                "
+                >Waterfall</span
+              >
+            </button>
+            <button
+              class="ambient-option"
+              data-ambient="woods"
+              style="
+                background: none;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="img/wave-sound.png"
+                alt="Woods (coming soon)"
+                style="
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 1em;
+                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                  opacity: 0.5;
+                  filter: grayscale(1);
+                "
+              />
+              <span
+                style="
+                  color: #b0e6c1;
+                  font-size: 1em;
+                  margin-top: 0.3em;
+                  font-family: 'Quicksand', Arial, sans-serif;
+                  opacity: 0.6;
+                "
+                >Woods</span
+              >
+            </button>
+            <button
+              class="ambient-option"
+              data-ambient="white_noise"
+              style="
+                background: none;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="img/volume.png"
+                alt="White Noise (coming soon)"
+                style="
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 1em;
+                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                  opacity: 0.5;
+                  filter: grayscale(1);
+                "
+              />
+              <span
+                style="
+                  color: #b0e6c1;
+                  font-size: 1em;
+                  margin-top: 0.3em;
+                  font-family: 'Quicksand', Arial, sans-serif;
+                  opacity: 0.6;
+                "
+                >White Noise</span
+              >
+            </button>
+          </div>
+        </div>
+
+        <script>
+          // Ambient Mode Dropdown Logic
+          document.addEventListener("DOMContentLoaded", function () {
+            const ambientBtn = document.getElementById("btn-ambient");
+            const dropdown = document.getElementById("ambient-dropdown");
+            let dropdownOpen = false;
+            if (ambientBtn && dropdown) {
+              ambientBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                dropdown.style.display = dropdownOpen ? "none" : "flex";
+                dropdownOpen = !dropdownOpen;
+              });
+              // Hide dropdown when clicking outside
+              document.addEventListener("click", function (e) {
+                if (
+                  dropdownOpen &&
+                  !dropdown.contains(e.target) &&
+                  e.target !== ambientBtn
+                ) {
+                  dropdown.style.display = "none";
+                  dropdownOpen = false;
+                }
+              });
+              // Optionally, handle ambient option selection
+              dropdown.querySelectorAll(".ambient-option").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                  const video = btn.getAttribute("data-video");
+                  if (video) {
+                    window.location.href = `ind.html?video=${encodeURIComponent(
+                      video
+                    )}`;
+                  }
+                  dropdown.style.display = "none";
+                  dropdownOpen = false;
+                });
+              });
+            }
+          });
+        </script>
+      </div>
     </section>
     <section id="sound-section" aria-label="Background sounds">
       <button
