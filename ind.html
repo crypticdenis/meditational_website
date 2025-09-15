@@ -200,9 +200,17 @@
           Start Session
         </button>
       </div>
-      <!-- Gong audio for start/end cues -->
+      <!-- Welcome, Gong, and Goodbye audio for start/end cues -->
+      <audio id="welcome-audio" preload="auto">
+        <source src="sounds/welcome.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
       <audio id="gong-audio" preload="auto">
         <source src="sounds/gong.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+      <audio id="goodbye-audio" preload="auto">
+        <source src="sounds/goodbye.mp3" type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
       <!-- Meditation overlays -->
@@ -220,7 +228,7 @@
           background: rgba(0, 0, 0, 0.7);
           z-index: 10;
           opacity: 0;
-          transition: opacity 3s;
+          transition: opacity 2s;
         "
       >
         <div
@@ -235,19 +243,19 @@
         >
           <div
             id="welcome-message-1"
-            style="opacity: 0; transition: opacity 2.5s"
+            style="opacity: 0; transition: opacity 1.5s"
           >
             Welcome to your moment of calm.
           </div>
           <div
             id="welcome-message-2"
-            style="opacity: 0; transition: opacity 2.5s; margin-top: 1em"
+            style="opacity: 0; transition: opacity 1.5s; margin-top: 1em"
           >
             Let yourself settle and breathe deeply.
           </div>
           <div
             id="welcome-message-3"
-            style="opacity: 0; transition: opacity 2.5s; margin-top: 1em"
+            style="opacity: 0; transition: opacity 1.5s; margin-top: 1em"
           >
             Your session is starting now.<br />Let go and be present.
           </div>
@@ -328,8 +336,9 @@
           "
         >
           <div>
-            Thank you for taking this time for yourself.<br />Carry this peace
-            with you into the rest of your day.
+            I’m glad you took this time for yourself.<br />
+            Hold this quiet space in your heart.<br />
+            Whenever you’re ready, gently return.
           </div>
         </div>
       </div>
@@ -357,7 +366,7 @@
           toggleBtn.textContent = timerVisible ? "Hide Timer" : "Show Timer";
           if (timerVisible) timerSection.focus();
         });
-        let seconds = 60; // 10 minutes
+        let seconds = 6; // 10 minutes
         const timeEl = document.getElementById("time");
         const progressCircle = document.querySelector(".progress-ring__circle");
         const radius = 150;
@@ -403,24 +412,33 @@
 
         // Show overlays with slow fade in/out
         const gong = document.getElementById("gong-audio");
+        const welcomeAudio = document.getElementById("welcome-audio");
         const startOverlay = document.getElementById("start-session-overlay");
         const startBtn = document.getElementById("start-session-btn");
+        const goodbyeAudio = document.getElementById("goodbye-audio");
 
         function beginSessionSequence() {
+          // Play welcome audio
+          if (welcomeAudio) {
+            try {
+              welcomeAudio.currentTime = 0;
+              welcomeAudio.play();
+            } catch (e) {}
+          }
           startOverlay.style.display = "none";
           setTimeout(() => {
             welcomeOverlay.style.opacity = 1;
             // Fade in first message
             showMessage(
               welcomeMsg1,
-              2500, // fade in ms (matches CSS)
-              5000, // visible ms
-              2500, // fade out ms
+              1200, // fade in ms (matches CSS)
+              3000, // visible ms
+              1200, // fade out ms
               () => {
                 // Fade in second message
-                showMessage(welcomeMsg2, 2500, 5000, 2500, () => {
+                showMessage(welcomeMsg2, 1200, 4500, 1800, () => {
                   // Fade in third message
-                  showMessage(welcomeMsg3, 2500, 5000, 2500, () => {
+                  showMessage(welcomeMsg3, 1200, 6000, 1200, () => {
                     // Fade out overlay, fade in timer
                     fadeOut(welcomeOverlay);
                     setTimeout(() => {
@@ -434,7 +452,7 @@
                         } catch (e) {}
                       }
                       startTimer();
-                    }, 3000);
+                    }, 1500);
                   });
                 });
               }
@@ -469,6 +487,15 @@
                     } catch (e) {}
                   }
                   goodbyeOverlay.style.opacity = 1;
+                  // Play goodbye.mp3 a few seconds after the end gong
+                  setTimeout(() => {
+                    if (goodbyeAudio) {
+                      try {
+                        goodbyeAudio.currentTime = 0;
+                        goodbyeAudio.play();
+                      } catch (e) {}
+                    }
+                  }, 2500); // 2.5s after overlay appears
                 }, 2000);
               }, 2000);
             }
