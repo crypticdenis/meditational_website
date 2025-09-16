@@ -781,8 +781,9 @@ footer.scroll {
 /* Guided section container */
 .guided-container {
   display: flex;
-  gap: 1.2em;
+  gap: 0.5em;
   align-items: center;
+  flex-direction: column;
 }
 
 /* Ambient button container */
