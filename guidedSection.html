@@ -2,136 +2,583 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>
-      Simple Online Meditation Timer with Nature Sounds | Meditational
-    </title>
+    <title>Guided Meditation Sessions | Meditational Space</title>
     <link rel="preload" href="sounds/5min-calm.mp3" as="audio" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- SEO Meta Tags -->
     <meta name="robots" content="index, follow" />
-
     <meta
       name="description"
-      content="Free, simple online meditation timer with interval bells and calming background sounds. No sign-up. Perfect for mindfulness practice, yoga, or focus sessions."
+      content="Guided meditation sessions with varying lengths. Perfect for mindfulness practice, relaxation, and focus."
     />
     <meta
       name="keywords"
-      content="online meditation timer, interval timer, mindfulness, background sounds, focus timer, meditation app, free meditation timer, no ads"
+      content="guided meditation, mindfulness, relaxation, meditation sessions, focus"
     />
     <meta name="author" content="Meditational" />
-    <link rel="canonical" href="https://www.yourdomain.com/" />
+    <link rel="canonical" href="https://www.yourdomain.com/guided" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="stylesheet" href="style.css" />
     <style>
-      /* Add this to your style.css or keep it here */
-      .meditation-session {
-        display: none;
+      :root {
+        --primary: rgba(30, 32, 40, 0.98);
+        --primary-light: rgba(30, 32, 40, 0.98);
+        --primary-dark: rgba(30, 32, 40, 0.98);
+        --secondary: rgba(30, 32, 40, 0.98);
+        --accent: #10b981;
+        --text: rgb(193, 201, 229);
+        --text-light: rgb(193, 201, 229);
+        --card-bg: rgba(30, 32, 40, 0.98);
+        --background: rgba(30, 32, 40, 0.98);
+        --gradient: linear-gradient(
+          180deg,
+          rgb(141, 157, 218) 0%,
+          rgb(30, 32, 40) 100%
+        );
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Courier Prime", monospace;
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        width: 100%;
+      }
+
+      /* Header Styles */
+      header {
+        background: var(--background);
+        color: white;
+        padding: 2rem 0;
         text-align: center;
-        padding: 20px;
+        position: relative;
+        margin-bottom: 2rem;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 10;
+      }
+
+      h1 {
+        font-family: "Courier Prime", monospace;
+        font-size: 2.5rem;
+        color: var(--text-light);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Navigation */
+      .nav-home {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        z-index: 20;
+        transition: opacity 0.2s;
+      }
+
+      .nav-home:hover {
+        opacity: 0.8;
+      }
+
+      .nav-home img {
+        width: 24px;
+        height: 24px;
+        filter: brightness(0) invert(1);
+      }
+
+      /* Meditation Cards */
+      .meditation-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      .meditation-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .meditation-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .card-image {
+        height: 160px;
+        background: var(--gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+      }
+
+      .card-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+
+      .card-description {
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+      }
+
+      .card-duration {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary);
+        font-weight: 500;
+      }
+
+      /* Session Controls */
+      #session-controls {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      #session-controls.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .session-modal {
+        background: rgba(30, 32, 40, 0.98);
+        border-radius: 16px;
+        padding: 2rem;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
       }
 
       .session-title {
-        font-size: 24px;
-        margin-bottom: 20px;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text);
       }
 
-      .session-controls {
+      .control-buttons {
         display: flex;
+        gap: 1rem;
         justify-content: center;
-        gap: 20px;
-        margin-top: 30px;
       }
 
-      .session-controls button {
-        padding: 10px 20px;
-        font-size: 16px;
+      .control-btn {
+        padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
+        font-weight: 600;
         cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
 
-      #start-btn {
-        background-color: #4caf50;
+      .play-pause-btn {
+        background: var(--primary);
         color: white;
       }
 
-      #pause-btn {
-        background-color: #ffc107;
-        color: black;
+      .play-pause-btn:hover {
+        background: var(--primary-dark);
       }
 
-      #exit-btn {
-        background-color: #f44336;
+      .exit-btn {
+        background: #ef4444;
         color: white;
       }
 
-      .timer-display {
-        font-size: 48px;
-        margin: 30px 0;
+      .exit-btn:hover {
+        background: #dc2626;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--background);
+        color: white;
+        text-align: center;
+        padding: 2rem 0;
+        margin-top: auto;
+      }
+
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .footer-links a {
+        color: white;
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+
+      .footer-links a:hover {
+        opacity: 0.8;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .meditation-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .nav-home {
+          position: relative;
+          top: 0;
+          left: 0;
+          justify-content: center;
+          margin-bottom: 1rem;
+        }
+
+        header {
+          background: var(--background);
+          padding: 1.5rem 0;
+        }
+
+        .control-buttons {
+          flex-direction: column;
+        }
+
+        .control-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 0 1rem;
+        }
+
+        h1 {
+          font-size: 1.75rem;
+        }
+
+        .subtitle {
+          font-size: 1rem;
+        }
+
+        .card-image {
+          height: 120px;
+          font-size: 2rem;
+        }
+
+        .card-content {
+          padding: 1rem;
+        }
+      }
+
+      /* Animation */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .meditation-card {
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      /* Utility Classes */
+      .hidden {
+        display: none !important;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .mt-2 {
+        margin-top: 2rem;
       }
     </style>
   </head>
-  <body class="no-scroll">
-    <!-- Main Page Content -->
-    <div id="main-content">
-      <header>
-        <h1>Your Meditation Space</h1>
-        <div class="quote" id="quote">
-          <p>"The mind is everything. What you think you become." <br /></p>
-        </div>
-        <hr />
-        <h3>Guided Sessions</h3>
-        <div class="quote" id="quote">
-          <p>
-            Here you will find guided Meditations of differing lengths brought
-            to you by our meditation teacher rakshit.
-          </p>
-        </div>
-        <hr />
-      </header>
-      <div class="guided-section">
-        <div onclick="changeToIndex()">
-          <img src="img/home.png" alt="Tiny Image" class="top-right-image" />
-          <div style="text-align: center; font-size: 0.75em; margin-top: 4px">
-            Home
+  <body>
+    <header>
+      <a href="/" class="nav-home">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJtMyA5IDktNyA5IDd2MTFhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJ6Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iOSAyMiA5IDEyIDE1IDEyIDE1IDIyIj48L3BvbHlsaW5lPjwvc3ZnPg=="
+          alt="Home"
+        />
+        <span>Back to Timer</span>
+      </a>
+      <div class="container header-content">
+        <h1>Guided Meditation Sessions</h1>
+      </div>
+    </header>
+
+    <main class="container">
+      <section>
+        <h2 class="text-center">Available Sessions</h2>
+
+        <div class="meditation-grid">
+          <div
+            class="meditation-card"
+            onclick="startMeditationSession('sounds/5min-calm.mp3', '5-Minute Calm')"
+          >
+            <div class="card-image">🧘</div>
+            <div class="card-content">
+              <h3 class="card-title">5-Minute Calm</h3>
+              <p class="card-description">
+                A quick relaxation session to center yourself and find peace
+                amidst a busy day.
+              </p>
+              <div class="card-duration">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>5 minutes</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="guided-meditations">
-        <button
-          class="meditation-card"
-          onclick="startMeditationSession('sounds/5min-calm.mp3')"
-        >
-          <div class="card-content" style="background-color: #c7ceea">
-            <h3>5min Calm</h3>
-            <p>A quick relaxation</p>
-          </div>
-        </button>
-      </div>
-      <div class="button">
-        <button class="hidden" id="guided-start">▶</button>
-        <button id="guided-stop" class="hidden">X</button>
-      </div>
-      <!-- Add this after your main content but before the footer -->
-      <div id="session-controls" class="hidden">
-        <div class="session-title" id="session-title"></div>
-        <div class="session-controls">
-          <button id="play-pause-btn" onclick="togglePlayPause()">⏸</button>
-          <button id="exit-btn" onclick="exitSession()">X</button>
+      </section>
+    </main>
+
+    <!-- Session Controls Modal -->
+    <div id="session-controls">
+      <div class="session-modal">
+        <h2 class="session-title" id="session-title">Session Title</h2>
+        <div class="control-buttons">
+          <button
+            class="control-btn play-pause-btn"
+            id="play-pause-btn"
+            onclick="togglePlayPause()"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            Pause
+          </button>
+          <button class="control-btn exit-btn" onclick="exitSession()">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Exit
+          </button>
         </div>
       </div>
-      <footer>
-        <p>
-          <a class="link" href="/about">About</a> | © 2025 Meditational.space
-        </p>
-      </footer>
     </div>
-    <script src="scriptGuided.js"></script>
+
+    <footer>
+      <div class="container footer-content">
+        <div class="footer-links"></div>
+        <p>© 2025 Meditational.space - Find your inner peace</p>
+      </div>
+    </footer>
+
+    <script>
+      // Sample meditation data
+      const meditationSessions = [
+        {
+          id: 1,
+          title: "5-Minute Calm",
+          description: "A quick relaxation session to center yourself",
+          duration: "5 min",
+          audio: "sounds/5min-calm.mp3",
+        },
+        {
+          id: 2,
+          title: "10-Minute Focus",
+          description: "Enhance your concentration and mental clarity",
+          duration: "10 min",
+          audio: "sounds/10min-focus.mp3",
+        },
+        {
+          id: 3,
+          title: "Deep Relaxation",
+          description: "Release tension and experience profound relaxation",
+          duration: "15 min",
+          audio: "sounds/15min-deep-relax.mp3",
+        },
+      ];
+
+      let audioPlayer = null;
+      let isPlaying = false;
+
+      function startMeditationSession(audioFile, title) {
+        // Set session title
+        document.getElementById("session-title").textContent = title;
+
+        // Show session controls
+        document.getElementById("session-controls").classList.add("active");
+
+        // Initialize audio player
+        if (audioPlayer) {
+          audioPlayer.pause();
+        }
+
+        audioPlayer = new Audio(audioFile);
+        audioPlayer.play();
+        isPlaying = true;
+
+        // Update button text
+        document.getElementById("play-pause-btn").innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+          Pause
+        `;
+      }
+
+      function togglePlayPause() {
+        if (!audioPlayer) return;
+
+        if (isPlaying) {
+          audioPlayer.pause();
+          document.getElementById("play-pause-btn").innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Play
+          `;
+        } else {
+          audioPlayer.play();
+          document.getElementById("play-pause-btn").innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            Pause
+          `;
+        }
+
+        isPlaying = !isPlaying;
+      }
+
+      function exitSession() {
+        if (audioPlayer) {
+          audioPlayer.pause();
+          audioPlayer = null;
+        }
+
+        document.getElementById("session-controls").classList.remove("active");
+        isPlaying = false;
+      }
+
+      // Handle page visibility change (pause when tab is hidden)
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden && audioPlayer && isPlaying) {
+          togglePlayPause();
+        }
+      });
+    </script>
   </body>
 </html>
