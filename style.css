@@ -705,14 +705,22 @@ footer.scroll {
 }
 
 @media (max-width: 800px) {
+  /* Adjust header spacing */
+  h1 {
+    margin-bottom: 0px; /* Reduce space below heading */
+  }
+
   .guided-section {
     position: relative;
-    top: auto;
+    top: 0px;
+    margin: 0px;
     left: auto;
     display: flex;
     justify-content: center;
     width: 100%;
     box-sizing: border-box;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
   }
 
   .guided-container {
@@ -722,6 +730,7 @@ footer.scroll {
     width: 100%;
     max-width: 100%;
     flex-wrap: nowrap;
+    top: 0px;
   }
 
   .button {
