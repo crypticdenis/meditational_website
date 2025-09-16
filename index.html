@@ -59,7 +59,7 @@
       </div>
     </header>
     <section class="guided-section" aria-label="Guided meditation">
-      <div style="display: flex; gap: 1.2em; align-items: center">
+      <div class="guided-container">
         <button
           id="btn-guided"
           aria-label="Go to guided meditation sessions"
@@ -77,75 +77,29 @@
           id="btn-ambient"
           aria-label="Go to ambient mode"
           class="btn-guided-access"
-          style="display: flex; flex-direction: column; align-items: center"
+          class="ambient-btn-container"
         >
           <img
-            src="img/meditation.png"
+            src="img/leaves.png"
             alt="Ambient mode"
             class="top-right-image"
             id="ambientIcon"
           />
           <span class="guided-label">Ambient Mode</span>
         </button>
-        <div
-          id="ambient-dropdown"
-          style="
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30, 32, 40, 0.98);
-            border-radius: 1.5em;
-            box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
-            padding: 1.2em 2em;
-            z-index: 100;
-            min-width: 260px;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.2em;
-          "
-        >
-          <div
-            style="
-              display: flex;
-              gap: 1.5em;
-              justify-content: center;
-              flex-wrap: wrap;
-            "
-          >
+        <div id="ambient-dropdown" class="ambient-dropdown">
+          <div class="ambient-options">
             <button
-              class="ambient-option"
+              class="ambient-option-btn"
               data-ambient="waterfall"
               data-video="mov.mp4"
-              style="
-                background: none;
-                border: none;
-                cursor: pointer;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-              "
             >
               <img
                 src="img/waterfall.jpg"
                 alt="Waterfall"
-                style="
-                  width: 56px;
-                  height: 56px;
-                  border-radius: 1em;
-                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                "
+                class="ambient-option-img"
               />
-              <span
-                style="
-                  color: #b0e6c1;
-                  font-size: 1em;
-                  margin-top: 0.3em;
-                  font-family: 'Quicksand', Arial, sans-serif;
-                "
-                >Waterfall</span
-              >
+              <div class="ambient-option-label">Waterfall</div>
             </button>
           </div>
         </div>

@@ -93,14 +93,20 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 .guided-label,
 .sound-label {
   display: block;
   text-align: center;
-  font-size: 0.75em;
-  margin-top: 4px;
+  font-size: 1em;
+  margin-top: 0.7em;
   color: white;
+  font-family: inherit;
 }
 body.pulsate::before {
   content: "";
@@ -768,4 +774,95 @@ footer.scroll {
   z-index: 1000;
   padding: 0;
   margin: 0;
+}
+
+/* Add these to your style.css file */
+
+/* Guided section container */
+.guided-container {
+  display: flex;
+  gap: 1.2em;
+  align-items: center;
+}
+
+/* Ambient button container */
+.ambient-btn-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 160px;
+  min-height: 120px;
+}
+
+/* Ambient dropdown */
+.ambient-dropdown {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(30, 32, 40, 0.98);
+  border-radius: 1.5em;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
+  padding: 1.2em 2em;
+  z-index: 100;
+  min-width: 260px;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2em;
+}
+
+/* Ambient options container */
+.ambient-options {
+  display: flex;
+  gap: 1.5em;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Ambient option button */
+.ambient-option-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: none;
+  padding: 0.5em 1em;
+  border-radius: 1.2em;
+  min-width: 120px;
+  justify-content: center;
+}
+
+/* Ambient option image */
+.ambient-option-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 1em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.7em;
+}
+
+/* Ambient option label */
+.ambient-option-label {
+  text-align: center;
+  display: block;
+  width: 100%;
+  color: #fff;
+  font-size: 1.3em;
+  margin-top: 0;
+  font-family: "Quicksand", Arial, sans-serif;
+  text-align: center;
+  display: block;
+  margin-bottom: 0.2em;
+  font-weight: 400;
 }
