@@ -17,19 +17,60 @@ class TimerApp {
     this.soundMenu = document.getElementById("soundMenu");
     this.soundToggle = document.getElementById("soundToggle");
     this.volumeSlider = document.getElementById("volumeSlider");
+
     // Mobile background notice
     this.mobileBgNotice = document.getElementById("mobileBgNotice");
     this.dismissBgNotice = document.getElementById("dismissBgNotice");
+
     // Guided button
     const guidedBtn = document.getElementById("btn-guided");
     if (guidedBtn) {
       guidedBtn.addEventListener("click", () => this.changeToGuided());
     }
 
+    // Ambient button and dropdown
+    const ambientBtn = document.getElementById("btn-ambient");
+    const dropdown = document.getElementById("ambient-dropdown");
+    if (ambientBtn && dropdown) {
+      let dropdownOpen = false;
+      ambientBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        dropdown.style.display = dropdownOpen ? "none" : "flex";
+        dropdownOpen = !dropdownOpen;
+      });
+
+      // Hide dropdown when clicking outside
+      document.addEventListener("click", function (e) {
+        if (
+          dropdownOpen &&
+          !dropdown.contains(e.target) &&
+          e.target !== ambientBtn
+        ) {
+          dropdown.style.display = "none";
+          dropdownOpen = false;
+        }
+      });
+
+      // Handle ambient option selection
+      dropdown.querySelectorAll(".ambient-option-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const video = btn.getAttribute("data-video");
+          if (video) {
+            window.location.href = `ind.html?video=${encodeURIComponent(
+              video
+            )}`;
+          }
+          dropdown.style.display = "none";
+          dropdownOpen = false;
+        });
+      });
+    }
+
     // Device detection
     this.isMobile =
       /iPhone|iPad|iPod|Android/.test(navigator.userAgent) &&
       ("ontouchstart" in window || navigator.maxTouchPoints > 1);
+    this.timerStarted = false;
 
     // Restore only minutes from localStorage before using values
     this.restoreMinutes();
@@ -52,12 +93,13 @@ class TimerApp {
       "woods.mp3": new Audio("sounds/woods.mp3"),
       "white_noise.mp3": new Audio("sounds/white_noise.mp3"),
     };
+
     for (const a of Object.values(this.audioFiles)) {
       a.loop = true;
       a.volume = 0.5;
     }
-    this.audio = this.audioFiles[this.musicSelect.value];
 
+    this.audio = this.audioFiles[this.musicSelect.value];
     this.soundMenuTimeout = null;
 
     this.loadAllBuffers(); // Preload bells
@@ -78,15 +120,21 @@ class TimerApp {
       interval: "sounds/untitled.mp3",
       finish: "sounds/gong.mp3",
     };
+
     for (const [key, url] of Object.entries(bellFiles)) {
-      const response = await fetch(url);
-      const arrayBuffer = await response.arrayBuffer();
-      this.buffers[key] = await this.audioCtx.decodeAudioData(arrayBuffer);
+      try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        this.buffers[key] = await this.audioCtx.decodeAudioData(arrayBuffer);
+      } catch (error) {
+        console.error(`Error loading audio file ${url}:`, error);
+      }
     }
   }
 
   playBell(type) {
     if (!this.buffers[type]) return;
+
     // Always resume AudioContext before playing (for iOS reliability)
     this.audioCtx.resume().catch(() => {});
     const source = this.audioCtx.createBufferSource();
@@ -101,6 +149,7 @@ class TimerApp {
     this.audioCtx.resume().catch(console.warn);
     // Do not play any bell on unlock; only unlock/resume AudioContext
   }
+
   updateIntervalSettings() {
     const timerVal = parseInt(this.minuteInput.value, 10) || 0;
     let intervalVal = parseInt(this.intervalInput.value, 10) || 0;
@@ -126,10 +175,12 @@ class TimerApp {
         // If notice is already showing, do nothing
         return;
       }
+
       if (this.isMobile && this.mobileBgNotice && !this.timerStarted) {
         e.preventDefault();
         this.mobileBgNotice.style.display = "flex";
         document.body.style.overflow = "hidden";
+
         // Only start timer after dismiss
         this.dismissBgNotice.onclick = () => {
           this.mobileBgNotice.style.display = "none";
@@ -139,12 +190,15 @@ class TimerApp {
         };
         return;
       }
+
       this.playPause();
     });
+
     this.resetButton.addEventListener("click", () => {
       this.timerStarted = false;
       this.resetTimer();
     });
+
     // Timer minutes input
     this.minuteInput.addEventListener("input", () => {
       this.updateDisplayFromInput();
@@ -167,29 +221,50 @@ class TimerApp {
       this.musicOnOffClick();
       this.saveSettings();
     });
+
     this.musicSelect.addEventListener("change", () => {
       this.changeMusic();
       this.saveSettings();
     });
+
     this.toggleInterval.addEventListener("change", () => {
       this.toggleIntervalInput();
       this.saveSettings();
     });
+
     this.intervalInput.addEventListener("input", () => {
       this.updateIntervalSettings();
       this.saveSettings();
     });
-    this.soundToggle.addEventListener("click", () => this.toggleSoundMenu());
+
+    this.soundToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleSoundMenu();
+      this.soundToggle.blur();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (
+        this.soundMenu.classList.contains("show") &&
+        !this.soundMenu.contains(e.target) &&
+        e.target !== this.soundToggle
+      ) {
+        this.hideSoundMenu();
+      }
+    });
+
     this.volumeSlider.addEventListener("input", () => {
       this.changeVolume();
       this.saveSettings();
     });
+
     ["mousemove", "mousedown", "touchstart", "keydown"].forEach((event) => {
       this.soundMenu.addEventListener(event, () =>
         this.resetSoundMenuTimeout()
       );
     });
   }
+
   // Save only minutes to localStorage
   saveMinutes() {
     localStorage.setItem("meditational_minutes", this.minuteInput.value);
@@ -199,20 +274,6 @@ class TimerApp {
   restoreMinutes() {
     const minutes = localStorage.getItem("meditational_minutes");
     if (minutes !== null) this.minuteInput.value = minutes;
-  }
-
-  updateIntervalSettings() {
-    const timerVal = parseInt(this.minuteInput.value, 10) || 0;
-    let intervalVal = parseInt(this.intervalInput.value, 10) || 0;
-
-    // clamp interval
-    if (intervalVal > timerVal) {
-      intervalVal = timerVal;
-      this.intervalInput.value = timerVal;
-    }
-
-    this.intervalDuration = intervalVal * 60;
-    this.intervalTime = this.intervalDuration;
   }
 
   toggleIntervalInput() {
@@ -230,8 +291,9 @@ class TimerApp {
     this.audio.pause();
     this.audio.currentTime = 0;
     this.audio = this.audioFiles[this.musicSelect.value];
-    if (this.musicOnOff.src.includes("volume.png") && wasPlaying)
+    if (this.musicOnOff.src.includes("volume.png") && wasPlaying) {
       this.audio.play();
+    }
   }
 
   musicOnOffClick() {
@@ -260,6 +322,7 @@ class TimerApp {
   hideSoundMenu() {
     this.soundMenu.classList.remove("show");
   }
+
   resetSoundMenuTimeout() {
     clearTimeout(this.soundMenuTimeout);
     this.soundMenuTimeout = setTimeout(() => this.hideSoundMenu(), 4000);
@@ -269,14 +332,16 @@ class TimerApp {
     this.unlockAllAudioOnce();
 
     if (!this.countdownInterval || this.isPaused) {
-      if (this.timeLeft === 0)
+      if (this.timeLeft === 0) {
         this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
+      }
 
       this.playPauseButton.innerHTML = `
         <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
           <rect x="6" y="5" width="4" height="14" rx="1" />
           <rect x="14" y="5" width="4" height="14" rx="1" />
         </svg>`;
+
       this.isPaused = false;
       this.settings.classList.add("hidden");
       this.countdownDisplay.classList.add("move-up");
@@ -286,10 +351,11 @@ class TimerApp {
         this.playBell("start");
       }
 
-      if (!this.countdownInterval)
+      if (!this.countdownInterval) {
         this.countdownInterval = setInterval(() => this.updateTimer(), 1000);
+      }
     } else {
-      this.playPauseButton.textContent = "▶";
+      this.playPauseButton.innerHTML = "▶";
       this.isPaused = true;
     }
   }
@@ -299,7 +365,7 @@ class TimerApp {
     this.countdownInterval = null;
     this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
     this.isPaused = false;
-    this.playPauseButton.textContent = "▶";
+    this.playPauseButton.innerHTML = "▶";
     this.displayTime();
     this.settings.style.visibility = "visible";
     this.settings.classList.remove("hidden");
@@ -331,7 +397,7 @@ class TimerApp {
       this.countdownInterval = null;
       this.timeLeft = (parseInt(this.minuteInput.value, 10) || 0) * 60;
       this.displayTime();
-      this.playPauseButton.textContent = "▶";
+      this.playPauseButton.innerHTML = "▶";
       this.isPaused = false;
       this.hasPlayedStartBell = false;
       this.playBell("finish");
@@ -366,14 +432,18 @@ class TimerApp {
     this.countdownInterval = null;
     window.location.href = "guidedSection.html";
   }
+
+  // Placeholder methods for saving/loading settings
+  saveSettings() {
+    // Implementation for saving settings to localStorage
+  }
 }
 
 // Initialize
-window.addEventListener("DOMContentLoaded", () => new TimerApp());
-
-// Show mobile-only mute notice popup on load
-// Show mobile-only mute notice popup on load
 window.addEventListener("DOMContentLoaded", () => {
+  new TimerApp();
+
+  // Show mobile-only mute notice popup on load
   function isMobileDevice() {
     // Match iOS or Android devices with touch support
     const ua = navigator.userAgent;
@@ -400,6 +470,7 @@ window.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow = "hidden";
       }
     });
+
     dismissBtn.addEventListener("click", () => {
       muteNotice.style.display = "none";
       document.body.style.overflow = "";
