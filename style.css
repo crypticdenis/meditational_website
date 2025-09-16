@@ -778,7 +778,9 @@ footer.scroll {
     flex-direction: column;
     align-items: center;
   }
-
+  .slidecontainer {
+    visibility: hidden;
+  }
   .session-controls {
     position: fixed;
     bottom: 50px;
