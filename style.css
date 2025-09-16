@@ -87,8 +87,13 @@
   clip: rect(1px, 1px, 1px, 1px);
   white-space: nowrap;
 }
-.btn-guided-access,
 .btn-sound-access {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-guided-access {
   background: none;
   border: none;
   cursor: pointer;
@@ -108,8 +113,7 @@
 }
 
 .btn-guided-access:hover,
-.btn-guided-access:focus .btn-sound-access:hover,
-.btn-sound-access:focus {
+.btn-guided-access:focus {
   transform: scale(1.13);
   box-shadow: 0 4px 24px 0 rgba(141, 157, 218, 0.18);
   z-index: 2;
@@ -773,6 +777,7 @@ footer.scroll {
     border-radius: 1.5em;
     min-width: 180px;
     display: flex;
+    max-height: 40px;
     flex-direction: column;
     align-items: center;
   }
