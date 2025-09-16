@@ -128,18 +128,20 @@
                 }
               });
               // Optionally, handle ambient option selection
-              dropdown.querySelectorAll(".ambient-option").forEach((btn) => {
-                btn.addEventListener("click", function () {
-                  const video = btn.getAttribute("data-video");
-                  if (video) {
-                    window.location.href = `ind.html?video=${encodeURIComponent(
-                      video
-                    )}`;
-                  }
-                  dropdown.style.display = "none";
-                  dropdownOpen = false;
+              dropdown
+                .querySelectorAll(".ambient-option-btn")
+                .forEach((btn) => {
+                  btn.addEventListener("click", function () {
+                    const video = btn.getAttribute("data-video");
+                    if (video) {
+                      window.location.href = `ind.html?video=${encodeURIComponent(
+                        video
+                      )}`;
+                    }
+                    dropdown.style.display = "none";
+                    dropdownOpen = false;
+                  });
                 });
-              });
             }
           });
         </script>
