@@ -709,6 +709,15 @@ footer.scroll {
 }
 
 @media (max-width: 800px) {
+  /* Hide guided and ambient buttons on mobile */
+  #btn-ambient {
+    display: none !important;
+  }
+  /* Center the background sounds button */
+  .guided-container {
+    justify-content: center !important;
+    gap: 25%;
+  }
   header {
     height: 1px;
     min-height: 0;
