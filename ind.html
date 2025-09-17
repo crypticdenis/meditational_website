@@ -806,6 +806,16 @@
           ) {
             window.TimerAppInstance.unlockAllAudioOnce();
           }
+          // Play gong immediately on user gesture for iOS compatibility
+          const gong = document.getElementById("gong-audio");
+          if (gong) {
+            try {
+              gong.currentTime = 0;
+              gong.play();
+            } catch (e) {
+              console.error("Error playing gong:", e);
+            }
+          }
           beginSessionSequence();
         });
 
