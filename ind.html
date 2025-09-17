@@ -746,18 +746,16 @@
         }
 
         startBtn.addEventListener("click", function () {
-          if (
-            window.TimerAppInstance &&
-            typeof window.TimerAppInstance.unlockAllAudioOnce === "function"
-          ) {
-            window.TimerAppInstance.unlockAllAudioOnce();
-          }
+          // Always unlock audio context before playing any sound (for iOS and other browsers)
+          unlockAllAudioOnce();
+
           // Play muted gong immediately on user gesture for iOS compatibility
           const gong = document.getElementById("gong-audio");
           if (gong) {
             try {
               gong.muted = true;
               gong.currentTime = 0;
+              // On iOS, .play() must be called directly in response to user gesture
               gong.play();
               // Do NOT unmute here; keep muted until next bell
             } catch (e) {
