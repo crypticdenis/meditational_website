@@ -789,7 +789,15 @@
           }, 100);
         }
 
-        startBtn.addEventListener("click", beginSessionSequence);
+        startBtn.addEventListener("click", function () {
+          if (
+            window.TimerAppInstance &&
+            typeof window.TimerAppInstance.unlockAllAudioOnce === "function"
+          ) {
+            window.TimerAppInstance.unlockAllAudioOnce();
+          }
+          beginSessionSequence();
+        });
 
         function startTimer() {
           setProgress(0); // Start empty
