@@ -774,54 +774,51 @@
           // Unlock audio context before playing any sound (for iOS)
           unlockAllAudioOnce();
 
-          // Delay welcome audio and welcome overlay by 2 seconds
-          setTimeout(() => {
-            // Play welcome audio
-            if (welcomeAudio) {
-              try {
-                welcomeAudio.currentTime = 0;
-                welcomeAudio.play();
-              } catch (e) {
-                console.error("Error playing welcome audio:", e);
-              }
+          // Play welcome audio immediately
+          if (welcomeAudio) {
+            try {
+              welcomeAudio.currentTime = 0;
+              welcomeAudio.play();
+            } catch (e) {
+              console.error("Error playing welcome audio:", e);
             }
+          }
 
-            welcomeOverlay.style.opacity = 1;
-            // Fade in first message
-            showMessage(
-              welcomeMsg1,
-              1200, // fade in ms (matches CSS)
-              3000, // visible ms
-              1200, // fade out ms
-              () => {
-                // Fade in second message
-                showMessage(welcomeMsg2, 1200, 4500, 1800, () => {
-                  // Fade in third message
-                  showMessage(welcomeMsg3, 1200, 6000, 1200, () => {
-                    // Fade out overlay, fade in timer
-                    fadeOut(welcomeOverlay);
-                    setTimeout(() => {
-                      welcomeOverlay.style.display = "none";
-                      timerContainer.style.opacity = 1;
-                      // Unlock audio context before playing gong
-                      unlockAllAudioOnce();
-                      // Unmute gong before playing the next bell
-                      if (gong) {
-                        gong.muted = false;
-                        try {
-                          gong.currentTime = 0;
-                          gong.play();
-                        } catch (e) {
-                          console.error("Error playing gong:", e);
-                        }
+          welcomeOverlay.style.opacity = 1;
+          // Fade in first message
+          showMessage(
+            welcomeMsg1,
+            1200, // fade in ms (matches CSS)
+            3000, // visible ms
+            1200, // fade out ms
+            () => {
+              // Fade in second message
+              showMessage(welcomeMsg2, 1200, 4500, 1800, () => {
+                // Fade in third message
+                showMessage(welcomeMsg3, 1200, 6000, 1200, () => {
+                  // Fade out overlay, fade in timer
+                  fadeOut(welcomeOverlay);
+                  setTimeout(() => {
+                    welcomeOverlay.style.display = "none";
+                    timerContainer.style.opacity = 1;
+                    // Unlock audio context before playing gong
+                    unlockAllAudioOnce();
+                    // Unmute gong before playing the next bell
+                    if (gong) {
+                      gong.muted = false;
+                      try {
+                        gong.currentTime = 0;
+                        gong.play();
+                      } catch (e) {
+                        console.error("Error playing gong:", e);
                       }
-                      startTimer();
-                    }, 1500);
-                  });
+                    }
+                    startTimer();
+                  }, 1500);
                 });
-              }
-            );
-          }, 2000); // 2 second delay before showing welcome overlay and playing welcome audio
+              });
+            }
+          );
         }
 
         function startTimer() {
