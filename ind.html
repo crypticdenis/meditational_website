@@ -732,6 +732,32 @@
           }
         }
 
+        startBtn.addEventListener("click", function () {
+          if (
+            window.TimerAppInstance &&
+            typeof window.TimerAppInstance.unlockAllAudioOnce === "function"
+          ) {
+            window.TimerAppInstance.unlockAllAudioOnce();
+          }
+          // Play muted gong immediately on user gesture for iOS compatibility
+          const gong = document.getElementById("gong-audio");
+          if (gong) {
+            try {
+              gong.muted = true;
+              gong.currentTime = 0;
+              gong.play();
+              setTimeout(() => {
+                gong.muted = false;
+              }, 2000); // Unmute after 2 seconds
+            } catch (e) {
+              console.error("Error playing gong:", e);
+            }
+          }
+          // Hide the start session overlay (slider) immediately
+          startOverlay.style.display = "none";
+          beginSessionSequence();
+        });
+
         function beginSessionSequence() {
           // Use slider value for timer
           seconds = parseInt(slider.value, 10) * 60;
@@ -750,7 +776,7 @@
           // Unlock audio context before playing any sound (for iOS)
           unlockAllAudioOnce();
 
-          // Delay welcome audio and welcome overlay by 4 seconds
+          // Delay welcome audio and welcome overlay by 2 seconds
           setTimeout(() => {
             // Play welcome audio
             if (welcomeAudio) {
@@ -762,67 +788,42 @@
               }
             }
 
-            startOverlay.style.display = "none";
-            setTimeout(() => {
-              welcomeOverlay.style.opacity = 1;
-              // Fade in first message
-              showMessage(
-                welcomeMsg1,
-                1200, // fade in ms (matches CSS)
-                3000, // visible ms
-                1200, // fade out ms
-                () => {
-                  // Fade in second message
-                  showMessage(welcomeMsg2, 1200, 4500, 1800, () => {
-                    // Fade in third message
-                    showMessage(welcomeMsg3, 1200, 6000, 1200, () => {
-                      // Fade out overlay, fade in timer
-                      fadeOut(welcomeOverlay);
-                      setTimeout(() => {
-                        welcomeOverlay.style.display = "none";
-                        timerContainer.style.opacity = 1;
-                        // Unlock audio context before playing gong
-                        unlockAllAudioOnce();
-                        // Play gong at session start
-                        if (gong) {
-                          try {
-                            gong.currentTime = 0;
-                            gong.play();
-                          } catch (e) {
-                            console.error("Error playing gong:", e);
-                          }
+            welcomeOverlay.style.opacity = 1;
+            // Fade in first message
+            showMessage(
+              welcomeMsg1,
+              1200, // fade in ms (matches CSS)
+              3000, // visible ms
+              1200, // fade out ms
+              () => {
+                // Fade in second message
+                showMessage(welcomeMsg2, 1200, 4500, 1800, () => {
+                  // Fade in third message
+                  showMessage(welcomeMsg3, 1200, 6000, 1200, () => {
+                    // Fade out overlay, fade in timer
+                    fadeOut(welcomeOverlay);
+                    setTimeout(() => {
+                      welcomeOverlay.style.display = "none";
+                      timerContainer.style.opacity = 1;
+                      // Unlock audio context before playing gong
+                      unlockAllAudioOnce();
+                      // Play gong at session start
+                      if (gong) {
+                        try {
+                          gong.currentTime = 0;
+                          gong.play();
+                        } catch (e) {
+                          console.error("Error playing gong:", e);
                         }
-                        startTimer();
-                      }, 1500);
-                    });
+                      }
+                      startTimer();
+                    }, 1500);
                   });
-                }
-              );
-            }, 100);
-          }, 4000); // 4 second delay before showing welcome overlay and playing welcome audio
+                });
+              }
+            );
+          }, 2000); // 2 second delay before showing welcome overlay and playing welcome audio
         }
-
-        startBtn.addEventListener("click", function () {
-          if (
-            window.TimerAppInstance &&
-            typeof window.TimerAppInstance.unlockAllAudioOnce === "function"
-          ) {
-            window.TimerAppInstance.unlockAllAudioOnce();
-          }
-          // Play gong immediately on user gesture for iOS compatibility
-          const gong = document.getElementById("gong-audio");
-          if (gong) {
-            try {
-              gong.currentTime = 0;
-              gong.play();
-            } catch (e) {
-              console.error("Error playing gong:", e);
-            }
-          }
-          // Hide the start session overlay (slider) immediately
-          startOverlay.style.display = "none";
-          beginSessionSequence();
-        });
 
         function startTimer() {
           setProgress(0); // Start empty
@@ -853,7 +854,7 @@
                     }
                   }
                   goodbyeOverlay.style.opacity = 1;
-                  // Play goodbye.mp3 3 seconds after the end gong
+                  // Play goodbye.mp3 2 seconds after the end gong
                   setTimeout(() => {
                     unlockAllAudioOnce();
                     if (goodbyeAudio) {
@@ -864,7 +865,7 @@
                         console.error("Error playing goodbye audio:", e);
                       }
                     }
-                  }, 3000); // 3s after overlay appears
+                  }, 2000); // 2s after overlay appears
                 }, 2000);
               }, 2000);
             }
