@@ -20,17 +20,64 @@
         padding: 0;
         height: 100%;
         overflow: hidden;
+        font-family: "Quicksand", Arial, sans-serif;
       }
 
-      /* Fullscreen background video */
-      video {
+      /* iOS-specific video fixes */
+      .video-background {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        overflow: hidden;
         z-index: -1;
+      }
+
+      .video-background video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        object-fit: cover;
+      }
+
+      /* iOS-specific inline video fixes */
+      video {
+        /* Prevents the fullscreen video UI on iOS */
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        /* Prevents the play button from appearing */
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+
+      /* Force the video to behave as a background on iOS */
+      video::-webkit-media-controls {
+        display: none !important;
+      }
+
+      video::-webkit-media-controls-enclosure {
+        display: none !important;
+      }
+
+      video::-webkit-media-controls-panel {
+        display: none !important;
+      }
+
+      video::-webkit-media-controls-play-button {
+        display: none !important;
+      }
+
+      video::-webkit-media-controls-start-playback-button {
+        display: none !important;
       }
 
       /* Timer container */
@@ -75,95 +122,157 @@
           transform: rotate(360deg);
         }
       }
+
+      /* Button styles */
+      .btn {
+        position: fixed;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.85);
+        color: #333;
+        font-family: "Quicksand", Arial, sans-serif;
+        font-size: 1.2em;
+        border-radius: 2em;
+        padding: 0.5em 1.3em;
+        min-width: 8.5em;
+        min-height: 2.5em;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: background 0.3s, color 0.3s;
+        letter-spacing: 0.04em;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .btn:hover {
+        background: #e0e0e0;
+        color: #111;
+      }
+
+      .exit-btn {
+        top: 24px;
+        left: 24px;
+      }
+
+      .toggle-btn {
+        top: 24px;
+        right: 24px;
+      }
+
+      .start-btn {
+        font-size: 1.3em;
+        padding: 0.7em 2.2em;
+        border-radius: 2em;
+        border: none;
+        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+        color: #232526;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-top: 0.5em;
+      }
+
+      .start-btn:hover {
+        background: linear-gradient(90deg, #38d769 0%, #2de0c2 100%);
+      }
+
+      /* Media queries for mobile optimization */
+      @media screen and (max-width: 768px) {
+        .timer {
+          width: 280px;
+          height: 280px;
+        }
+
+        .time-text {
+          font-size: 4em;
+        }
+
+        .btn {
+          font-size: 1em;
+          min-width: 7em;
+          padding: 0.4em 1em;
+        }
+
+        .exit-btn,
+        .toggle-btn {
+          top: 16px;
+        }
+
+        .exit-btn {
+          left: 16px;
+        }
+
+        .toggle-btn {
+          right: 16px;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .timer {
+          width: 240px;
+          height: 240px;
+        }
+
+        .time-text {
+          font-size: 3.5em;
+        }
+
+        .btn {
+          font-size: 0.9em;
+          min-width: 6em;
+          padding: 0.35em 0.9em;
+        }
+      }
     </style>
   </head>
   <body>
     <main id="main-content" tabindex="-1" aria-label="Meditation Timer Session">
-      <!-- Exit button (now a button for consistent styling) -->
+      <!-- Exit button -->
       <button
         id="exit-btn"
+        class="btn exit-btn"
         aria-label="Exit to main page"
         onclick="window.location.href='index.html'"
-        style="
-          position: fixed;
-          top: 24px;
-          left: 24px;
-          z-index: 20;
-          background: rgba(255, 255, 255, 0.85);
-          color: #333;
-          font-family: 'Quicksand', Arial, sans-serif;
-          font-size: 1.2em;
-          border-radius: 2em;
-          padding: 0.5em 1.3em;
-          min-width: 8.5em;
-          min-height: 2.5em;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-          transition: background 0.3s, color 0.3s;
-          letter-spacing: 0.04em;
-          border: none;
-          outline: none;
-          cursor: pointer;
-          display: inline-block;
-          text-align: center;
-          white-space: nowrap;
-        "
-        onmouseover="this.style.background='#e0e0e0';this.style.color='#111';"
-        onmouseout="this.style.background='rgba(255,255,255,0.85)';this.style.color='#333';"
       >
         ⟵ Exit
       </button>
+
       <!-- Hide/Show Timer button -->
       <button
         id="toggle-timer-btn"
+        class="btn toggle-btn"
         aria-controls="timer-container"
         aria-pressed="true"
         aria-label="Hide timer"
-        style="
-          position: fixed;
-          top: 24px;
-          right: 24px;
-          z-index: 20;
-          background: rgba(255, 255, 255, 0.85);
-          color: #333;
-          font-family: 'Quicksand', Arial, sans-serif;
-          font-size: 1.2em;
-          border-radius: 2em;
-          padding: 0.5em 1.3em;
-          min-width: 8.5em;
-          min-height: 2.5em;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-          transition: background 0.3s, color 0.3s;
-          letter-spacing: 0.04em;
-          border: none;
-          outline: none;
-          cursor: pointer;
-          display: inline-block;
-          text-align: center;
-          white-space: nowrap;
-        "
-        onmouseover="this.style.background='#e0e0e0';this.style.color='#111';"
-        onmouseout="this.style.background='rgba(255,255,255,0.85)';this.style.color='#333';"
       >
         Hide Timer
       </button>
-      <!-- Your video background -->
-      <video
-        id="bg-video"
-        autoplay
-        muted
-        loop
-        aria-label="Calming background video"
-        tabindex="-1"
-      >
-        <source id="bg-video-source" src="mov.mp4" type="video/mp4" />
-        <track
-          kind="descriptions"
-          src=""
-          srclang="en"
-          label="Video description"
-        />
-        Your browser does not support the video tag.
-      </video>
+
+      <!-- Your video background with iOS optimizations -->
+      <div class="video-background">
+        <video
+          id="bg-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          aria-label="Calming background video"
+          tabindex="-1"
+        >
+          <source id="bg-video-source" src="mov.mp4" type="video/mp4" />
+          <track
+            kind="descriptions"
+            src=""
+            srclang="en"
+            label="Video description"
+          />
+          Your browser does not support the video tag.
+        </video>
+      </div>
 
       <!-- Start Session overlay (required for audio autoplay) -->
       <div
@@ -246,29 +355,12 @@
               style="width: 260px; accent-color: #43e97b; height: 2.2em"
             />
           </div>
-          <button
-            id="start-session-btn"
-            style="
-              font-size: 1.3em;
-              padding: 0.7em 2.2em;
-              border-radius: 2em;
-              border: none;
-              background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-              color: #232526;
-              font-family: 'Quicksand', Arial, sans-serif;
-              box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-              cursor: pointer;
-              outline: none;
-              font-weight: 700;
-              letter-spacing: 0.04em;
-              transition: background 0.2s, color 0.2s;
-              margin-top: 0.5em;
-            "
-          >
+          <button id="start-session-btn" class="start-btn">
             Start Session
           </button>
         </div>
       </div>
+
       <!-- Welcome, Gong, and Goodbye audio for start/end cues -->
       <audio id="welcome-audio" preload="auto">
         <source src="sounds/welcome.mp3" type="audio/mpeg" />
@@ -282,6 +374,7 @@
         <source src="sounds/goodbye.mp3" type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
+
       <!-- Meditation overlays -->
       <div
         id="welcome-overlay"
@@ -330,6 +423,7 @@
           </div>
         </div>
       </div>
+
       <!-- Timer overlay -->
       <section
         class="timer"
@@ -375,6 +469,7 @@
           60
         </div>
       </section>
+
       <!-- Goodbye overlay -->
       <div
         id="goodbye-overlay"
@@ -405,14 +500,21 @@
           "
         >
           <div>
-            I’m glad you took this time for yourself.<br />
+            I'm glad you took this time for yourself.<br />
             Hold this quiet space in your heart.<br />
-            Whenever you’re ready, gently return.
+            Whenever you're ready, gently return.
           </div>
         </div>
       </div>
 
       <script>
+        // iOS video optimization
+        function isIOS() {
+          return (
+            /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+          );
+        }
+
         // Set background video from URL parameter if present
         (function () {
           function getQueryParam(name) {
@@ -428,7 +530,69 @@
               video.load();
             }
           }
+
+          // Additional iOS video optimizations
+          if (isIOS()) {
+            const video = document.getElementById("bg-video");
+
+            // Force inline playback
+            video.setAttribute("playsinline", "true");
+            video.setAttribute("webkit-playsinline", "true");
+
+            // Prevent the video from seeking ahead to preload
+            video.preload = "auto";
+
+            // Handle potential autoplay restrictions
+            const playVideo = () => {
+              video.play().catch((e) => {
+                console.log("Autoplay prevented:", e);
+                // If autoplay is prevented, show a play button overlay
+                showPlayButtonOverlay();
+              });
+            };
+
+            // Try to play the video after user interaction
+            document.addEventListener(
+              "click",
+              function () {
+                playVideo();
+              },
+              { once: true }
+            );
+
+            // Also try to play on page load
+            window.addEventListener("load", playVideo);
+          }
         })();
+
+        function showPlayButtonOverlay() {
+          // Create a play button overlay if autoplay is blocked
+          const playOverlay = document.createElement("div");
+          playOverlay.style.position = "fixed";
+          playOverlay.style.top = "0";
+          playOverlay.style.left = "0";
+          playOverlay.style.width = "100%";
+          playOverlay.style.height = "100%";
+          playOverlay.style.backgroundColor = "rgba(0,0,0,0.5)";
+          playOverlay.style.display = "flex";
+          playOverlay.style.justifyContent = "center";
+          playOverlay.style.alignItems = "center";
+          playOverlay.style.zIndex = "15";
+
+          const playButton = document.createElement("button");
+          playButton.innerHTML = "▶ Play Video";
+          playButton.className = "btn start-btn";
+          playButton.style.fontSize = "1.5em";
+          playButton.style.padding = "1em 2em";
+          playButton.onclick = function () {
+            document.getElementById("bg-video").play();
+            document.body.removeChild(playOverlay);
+          };
+
+          playOverlay.appendChild(playButton);
+          document.body.appendChild(playOverlay);
+        }
+
         // Hide/Show Timer Button Logic & Accessibility
         const toggleBtn = document.getElementById("toggle-timer-btn");
         const timerSection = document.getElementById("timer-container");
@@ -451,6 +615,7 @@
           toggleBtn.textContent = timerVisible ? "Hide Timer" : "Show Timer";
           if (timerVisible) timerSection.focus();
         });
+
         let seconds = 600; // default 10 minutes
         const slider = document.getElementById("session-slider");
         const sliderValue = document.getElementById("slider-value");
@@ -458,9 +623,11 @@
           sliderValue.textContent = slider.value;
           seconds = parseInt(slider.value, 10) * 60;
         });
+
         // Initialize value
         sliderValue.textContent = slider.value;
         seconds = parseInt(slider.value, 10) * 60;
+
         const timeEl = document.getElementById("time");
         const progressCircle = document.querySelector(".progress-ring__circle");
         const radius = 150;
@@ -514,21 +681,28 @@
         function beginSessionSequence() {
           // Use slider value for timer
           seconds = parseInt(slider.value, 10) * 60;
+
           // Restart background video
           const bgVideo = document.getElementById("bg-video");
           if (bgVideo) {
             try {
               bgVideo.currentTime = 0;
               bgVideo.play();
-            } catch (e) {}
+            } catch (e) {
+              console.error("Error playing video:", e);
+            }
           }
+
           // Play welcome audio
           if (welcomeAudio) {
             try {
               welcomeAudio.currentTime = 0;
               welcomeAudio.play();
-            } catch (e) {}
+            } catch (e) {
+              console.error("Error playing welcome audio:", e);
+            }
           }
+
           startOverlay.style.display = "none";
           setTimeout(() => {
             welcomeOverlay.style.opacity = 1;
@@ -553,7 +727,9 @@
                         try {
                           gong.currentTime = 0;
                           gong.play();
-                        } catch (e) {}
+                        } catch (e) {
+                          console.error("Error playing gong:", e);
+                        }
                       }
                       startTimer();
                     }, 1500);
@@ -588,7 +764,9 @@
                     try {
                       gong.currentTime = 0;
                       gong.play();
-                    } catch (e) {}
+                    } catch (e) {
+                      console.error("Error playing gong:", e);
+                    }
                   }
                   goodbyeOverlay.style.opacity = 1;
                   // Play goodbye.mp3 a few seconds after the end gong
@@ -597,7 +775,9 @@
                       try {
                         goodbyeAudio.currentTime = 0;
                         goodbyeAudio.play();
-                      } catch (e) {}
+                      } catch (e) {
+                        console.error("Error playing goodbye audio:", e);
+                      }
                     }
                   }, 2500); // 2.5s after overlay appears
                 }, 2000);
