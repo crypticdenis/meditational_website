@@ -771,7 +771,7 @@
             }
           }
 
-          // Unlock audio context before playing any sound (for iOS)
+          // Always unlock audio context before playing any sound (for iOS and other browsers)
           unlockAllAudioOnce();
 
           // Play welcome audio immediately
@@ -801,7 +801,7 @@
                   setTimeout(() => {
                     welcomeOverlay.style.display = "none";
                     timerContainer.style.opacity = 1;
-                    // Unlock audio context before playing gong
+                    // Unlock audio context before playing gong (important for iOS)
                     unlockAllAudioOnce();
                     // Unmute gong before playing the next bell
                     if (gong) {
