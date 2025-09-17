@@ -746,9 +746,7 @@
               gong.muted = true;
               gong.currentTime = 0;
               gong.play();
-              setTimeout(() => {
-                gong.muted = false;
-              }, 2000); // Unmute after 2 seconds
+              // Do NOT unmute here; keep muted until next bell
             } catch (e) {
               console.error("Error playing gong:", e);
             }
@@ -807,8 +805,9 @@
                       timerContainer.style.opacity = 1;
                       // Unlock audio context before playing gong
                       unlockAllAudioOnce();
-                      // Play gong at session start
+                      // Unmute gong before playing the next bell
                       if (gong) {
+                        gong.muted = false;
                         try {
                           gong.currentTime = 0;
                           gong.play();
