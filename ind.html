@@ -819,6 +819,8 @@
               console.error("Error playing gong:", e);
             }
           }
+          // Hide the start session overlay (slider) immediately
+          startOverlay.style.display = "none";
           beginSessionSequence();
         });
 
