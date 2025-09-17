@@ -709,10 +709,6 @@ footer.scroll {
 }
 
 @media (max-width: 800px) {
-  /* Hide guided and ambient buttons on mobile */
-  #btn-ambient {
-    display: none !important;
-  }
   /* Center the background sounds button */
   .guided-container {
     justify-content: center !important;
@@ -928,4 +924,58 @@ footer.scroll {
   display: block;
   margin-bottom: 0.2em;
   font-weight: 400;
+}
+
+/* Mobile welcome overlay and start session overlay improvements */
+@media screen and (max-width: 600px) {
+  #welcome-overlay > div {
+    font-size: 1.5em !important;
+    max-width: 90vw !important;
+    text-align: center !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7em;
+  }
+  #welcome-message-1,
+  #welcome-message-2,
+  #welcome-message-3 {
+    font-size: 1em !important;
+    margin-top: 0.7em !important;
+    text-align: center !important;
+    width: 100%;
+    display: block;
+  }
+  #start-session-overlay > div {
+    min-width: 80vw !important;
+    max-width: 80vw !important;
+    padding: 1.2em 0.5em 1em 0.5em !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2em;
+  }
+  #start-session-overlay label,
+  #start-session-overlay span {
+    font-size: 1em !important;
+    text-align: center !important;
+    width: 100%;
+    display: block;
+  }
+  #session-slider {
+    width: 70vw !important;
+    max-width: 90vw !important;
+    margin: 0 auto;
+    display: block;
+  }
+  .start-btn {
+    width: 80vw !important;
+    max-width: 80vw !important;
+    font-size: 1.1em !important;
+    padding: 0.7em 0 !important;
+    margin: 0.5em auto 0 auto !important;
+    display: block;
+  }
 }
