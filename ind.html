@@ -851,7 +851,7 @@
                     }
                   }
                   goodbyeOverlay.style.opacity = 1;
-                  // Play goodbye.mp3 a few seconds after the end gong
+                  // Play goodbye.mp3 3 seconds after the end gong
                   setTimeout(() => {
                     unlockAllAudioOnce();
                     if (goodbyeAudio) {
@@ -862,7 +862,7 @@
                         console.error("Error playing goodbye audio:", e);
                       }
                     }
-                  }, 2500); // 2.5s after overlay appears
+                  }, 3000); // 3s after overlay appears
                 }, 2000);
               }, 2000);
             }
