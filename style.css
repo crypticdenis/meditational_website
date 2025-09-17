@@ -822,6 +822,13 @@ footer.scroll {
     align-items: center;
     box-sizing: border-box;
   }
+
+  /* Show ambient button on mobile */
+  #btn-ambient {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
 }
 .sound-toggle {
   background: none !important;
