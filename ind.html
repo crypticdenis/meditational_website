@@ -719,6 +719,16 @@
             typeof window.TimerAppInstance.unlockAllAudioOnce === "function"
           ) {
             window.TimerAppInstance.unlockAllAudioOnce();
+            return;
+          }
+          if (unlockAllAudioOnce.audioUnlocked) return;
+          unlockAllAudioOnce.audioUnlocked = true;
+          if (window.AudioContext || window.webkitAudioContext) {
+            const ctx =
+              window.audioCtx ||
+              new (window.AudioContext || window.webkitAudioContext)();
+            window.audioCtx = ctx;
+            ctx.resume().catch(console.warn);
           }
         }
 
