@@ -712,9 +712,9 @@ footer.scroll {
   /* Center the background sounds button */
   .guided-container {
     justify-content: center !important;
-    gap: 8vw; /* Use viewport width for more natural spacing */
-    padding-left: 15vw;
-    padding-right: 15vw;
+    gap: 16vw; /* Increased gap for more space between buttons */
+    padding-left: 10vw;
+    padding-right: 10vw;
   }
   header {
     height: 1px;
