@@ -235,6 +235,12 @@
           width: 100%;
           display: block;
         }
+        #session-slider {
+          width: 70vw !important;
+          max-width: 90vw !important;
+          margin: 0 auto;
+          display: block;
+        }
       }
 
       @media screen and (max-width: 480px) {
@@ -706,6 +712,16 @@
         const startBtn = document.getElementById("start-session-btn");
         const goodbyeAudio = document.getElementById("goodbye-audio");
 
+        // Helper to unlock audio context (calls method from script.js if available)
+        function unlockAllAudioOnce() {
+          if (
+            window.TimerAppInstance &&
+            typeof window.TimerAppInstance.unlockAllAudioOnce === "function"
+          ) {
+            window.TimerAppInstance.unlockAllAudioOnce();
+          }
+        }
+
         function beginSessionSequence() {
           // Use slider value for timer
           seconds = parseInt(slider.value, 10) * 60;
@@ -720,6 +736,9 @@
               console.error("Error playing video:", e);
             }
           }
+
+          // Unlock audio context before playing any sound (for iOS)
+          unlockAllAudioOnce();
 
           // Play welcome audio
           if (welcomeAudio) {
@@ -750,6 +769,8 @@
                     setTimeout(() => {
                       welcomeOverlay.style.display = "none";
                       timerContainer.style.opacity = 1;
+                      // Unlock audio context before playing gong
+                      unlockAllAudioOnce();
                       // Play gong at session start
                       if (gong) {
                         try {
@@ -787,6 +808,8 @@
               setTimeout(() => {
                 timerContainer.style.opacity = 0;
                 setTimeout(() => {
+                  // Unlock audio context before playing gong
+                  unlockAllAudioOnce();
                   // Play gong at session end
                   if (gong) {
                     try {
@@ -799,6 +822,7 @@
                   goodbyeOverlay.style.opacity = 1;
                   // Play goodbye.mp3 a few seconds after the end gong
                   setTimeout(() => {
+                    unlockAllAudioOnce();
                     if (goodbyeAudio) {
                       try {
                         goodbyeAudio.currentTime = 0;
