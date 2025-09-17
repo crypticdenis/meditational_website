@@ -854,14 +854,23 @@
                   // Play gong at session end
                   if (gong) {
                     audioManager.playAudioElement(gong);
+                    gong.onended = function () {
+                      goodbyeOverlay.style.opacity = 1;
+                      setTimeout(() => {
+                        if (goodbyeAudio) {
+                          audioManager.playAudioElement(goodbyeAudio);
+                        }
+                      }, 500); // small delay after gong ends
+                    };
+                  } else {
+                    // fallback if gong doesn't exist
+                    goodbyeOverlay.style.opacity = 1;
+                    setTimeout(() => {
+                      if (goodbyeAudio) {
+                        audioManager.playAudioElement(goodbyeAudio);
+                      }
+                    }, 500);
                   }
-                  goodbyeOverlay.style.opacity = 1;
-                  // Play goodbye audio
-                  setTimeout(() => {
-                    if (goodbyeAudio) {
-                      audioManager.playAudioElement(goodbyeAudio);
-                    }
-                  }, 2000); // 2s after overlay appears
                 }, 2000);
               }, 2000);
             }
