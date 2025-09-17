@@ -712,7 +712,7 @@ footer.scroll {
   /* Center the background sounds button */
   .guided-container {
     justify-content: center !important;
-    gap: 16vw; /* Increased gap for more space between buttons */
+    gap: 5vw; /* Increased gap for more space between buttons */
     padding-left: 10vw;
     padding-right: 10vw;
   }
