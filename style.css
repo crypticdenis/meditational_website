@@ -713,8 +713,8 @@ footer.scroll {
   .guided-container {
     justify-content: center !important;
     gap: 8vw; /* Use viewport width for more natural spacing */
-    padding-left: 8vw;
-    padding-right: 8vw;
+    padding-left: 15vw;
+    padding-right: 15vw;
   }
   header {
     height: 1px;
