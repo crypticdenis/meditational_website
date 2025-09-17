@@ -555,6 +555,47 @@
       </div>
 
       <script>
+        // Audio unlock logic - same as TimerApp
+        class GuidedMeditationAudio {
+          constructor() {
+            this.audioUnlocked = false;
+            this.audioCtx = new (window.AudioContext ||
+              window.webkitAudioContext)();
+
+            // Unlock AudioContext on any user gesture
+            ["click", "keydown", "touchstart"].forEach((event) =>
+              document.addEventListener(
+                event,
+                () => this.unlockAllAudioOnce(),
+                {
+                  once: true,
+                }
+              )
+            );
+          }
+
+          unlockAllAudioOnce() {
+            if (this.audioUnlocked) return;
+            this.audioUnlocked = true;
+            this.audioCtx.resume().catch(console.warn);
+          }
+
+          // Helper method to play audio elements with unlock
+          playAudioElement(audioElement) {
+            this.unlockAllAudioOnce();
+            try {
+              audioElement.play().catch((e) => {
+                console.error("Error playing audio:", e);
+              });
+            } catch (e) {
+              console.error("Error with audio element:", e);
+            }
+          }
+        }
+
+        // Initialize audio manager
+        const audioManager = new GuidedMeditationAudio();
+
         // iOS video optimization
         function isIOS() {
           return (
@@ -725,32 +766,8 @@
         const startBtn = document.getElementById("start-session-btn");
         const goodbyeAudio = document.getElementById("goodbye-audio");
 
-        // Helper to unlock audio context (calls method from script.js if available)
-        function unlockAllAudioOnce() {
-          if (
-            window.TimerAppInstance &&
-            typeof window.TimerAppInstance.unlockAllAudioOnce === "function"
-          ) {
-            window.TimerAppInstance.unlockAllAudioOnce();
-            return;
-          }
-          if (unlockAllAudioOnce.audioUnlocked) return;
-          unlockAllAudioOnce.audioUnlocked = true;
-          if (window.AudioContext || window.webkitAudioContext) {
-            const ctx =
-              window.audioCtx ||
-              new (window.AudioContext || window.webkitAudioContext)();
-            window.audioCtx = ctx;
-            ctx.resume().catch(console.warn);
-          }
-        }
-
         startBtn.addEventListener("click", function () {
-          // Always unlock audio context before playing any sound (for iOS and other browsers)
-          unlockAllAudioOnce();
-
           // Play muted gong immediately on user gesture for iOS compatibility
-          const gong = document.getElementById("gong-audio");
           if (gong) {
             try {
               gong.muted = true;
@@ -782,17 +799,9 @@
             }
           }
 
-          // Always unlock audio context before playing any sound (for iOS and other browsers)
-          unlockAllAudioOnce();
-
-          // Play welcome audio immediately
+          // Play welcome audio with proper unlock
           if (welcomeAudio) {
-            try {
-              welcomeAudio.currentTime = 0;
-              welcomeAudio.play();
-            } catch (e) {
-              console.error("Error playing welcome audio:", e);
-            }
+            audioManager.playAudioElement(welcomeAudio);
           }
 
           welcomeOverlay.style.opacity = 1;
@@ -812,17 +821,10 @@
                   setTimeout(() => {
                     welcomeOverlay.style.display = "none";
                     timerContainer.style.opacity = 1;
-                    // Unlock audio context before playing gong (important for iOS)
-                    unlockAllAudioOnce();
                     // Unmute gong before playing the next bell
                     if (gong) {
                       gong.muted = false;
-                      try {
-                        gong.currentTime = 0;
-                        gong.play();
-                      } catch (e) {
-                        console.error("Error playing gong:", e);
-                      }
+                      audioManager.playAudioElement(gong);
                     }
                     startTimer();
                   }, 1500);
@@ -849,28 +851,15 @@
               setTimeout(() => {
                 timerContainer.style.opacity = 0;
                 setTimeout(() => {
-                  // Unlock audio context before playing gong
-                  unlockAllAudioOnce();
                   // Play gong at session end
                   if (gong) {
-                    try {
-                      gong.currentTime = 0;
-                      gong.play();
-                    } catch (e) {
-                      console.error("Error playing gong:", e);
-                    }
+                    audioManager.playAudioElement(gong);
                   }
                   goodbyeOverlay.style.opacity = 1;
-                  // Unlock audio context before playing goodbye audio (important for iOS)
+                  // Play goodbye audio
                   setTimeout(() => {
-                    unlockAllAudioOnce();
                     if (goodbyeAudio) {
-                      try {
-                        goodbyeAudio.currentTime = 0;
-                        goodbyeAudio.play();
-                      } catch (e) {
-                        console.error("Error playing goodbye audio:", e);
-                      }
+                      audioManager.playAudioElement(goodbyeAudio);
                     }
                   }, 2000); // 2s after overlay appears
                 }, 2000);
