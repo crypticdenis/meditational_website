@@ -875,6 +875,53 @@
             }
           }, 1000);
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          const video = document.getElementById("bg-video");
+          if (!video) return;
+
+          // Create Web Audio context and nodes
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const source = ctx.createMediaElementSource(video);
+          const gainNode = ctx.createGain();
+          source.connect(gainNode).connect(ctx.destination);
+
+          // Fade duration in seconds
+          const fadeTime = 2;
+
+          // Fade in at start
+          gainNode.gain.setValueAtTime(0, ctx.currentTime);
+          video.addEventListener("play", () => {
+            gainNode.gain.linearRampToValueAtTime(
+              1,
+              ctx.currentTime + fadeTime
+            );
+          });
+
+          // Fade out before loop ends, fade in after restart
+          video.addEventListener("timeupdate", function () {
+            if (
+              video.duration &&
+              video.currentTime > video.duration - fadeTime
+            ) {
+              gainNode.gain.linearRampToValueAtTime(
+                0,
+                ctx.currentTime + fadeTime
+              );
+            }
+          });
+
+          video.addEventListener("ended", function () {
+            // Reset volume and fade in
+            gainNode.gain.setValueAtTime(0, ctx.currentTime);
+            video.currentTime = 0;
+            video.play();
+            gainNode.gain.linearRampToValueAtTime(
+              1,
+              ctx.currentTime + fadeTime
+            );
+          });
+        });
       </script>
     </main>
     <!-- Landmarks for accessibility -->
