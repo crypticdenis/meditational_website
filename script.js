@@ -87,22 +87,18 @@ class TimerApp {
     this.audioUnlocked = false;
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     this.buffers = {}; // Web Audio buffers for bells
+    this.ambientBuffers = {}; // Web Audio buffers for ambient
+    this.ambientSource = null;
+    this.ambientGain = this.audioCtx.createGain();
+    this.ambientGain.gain.value = 0.5;
+    this.ambientGain.connect(this.audioCtx.destination);
 
-    this.audioFiles = {
-      "river.mp3": new Audio("sounds/river.mp3"),
-      "woods.mp3": new Audio("sounds/woods.mp3"),
-      "white_noise.mp3": new Audio("sounds/white_noise.mp3"),
-    };
+    this.audio = null; // currently active ambient
 
-    for (const a of Object.values(this.audioFiles)) {
-      a.loop = true;
-      a.volume = 0.5;
-    }
-
-    this.audio = this.audioFiles[this.musicSelect.value];
     this.soundMenuTimeout = null;
 
     this.loadAllBuffers(); // Preload bells
+    this.loadAmbientBuffers(); // Preload ambient tracks
     this.bindEvents();
     this.updateDisplayFromInput();
 
@@ -132,10 +128,29 @@ class TimerApp {
     }
   }
 
+  async loadAmbientBuffers() {
+    const ambientFiles = {
+      "river.mp3": "sounds/river.mp3",
+      "woods.mp3": "sounds/woods.mp3",
+      "white_noise.mp3": "sounds/white_noise.mp3",
+    };
+
+    for (const [key, url] of Object.entries(ambientFiles)) {
+      try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        this.ambientBuffers[key] = await this.audioCtx.decodeAudioData(
+          arrayBuffer
+        );
+      } catch (error) {
+        console.error(`Error loading ambient file ${url}:`, error);
+      }
+    }
+  }
+
   playBell(type) {
     if (!this.buffers[type]) return;
 
-    // Always resume AudioContext before playing (for iOS reliability)
     this.audioCtx.resume().catch(() => {});
     const source = this.audioCtx.createBufferSource();
     source.buffer = this.buffers[type];
@@ -147,17 +162,15 @@ class TimerApp {
     if (this.audioUnlocked) return;
     this.audioUnlocked = true;
     this.audioCtx.resume().catch(console.warn);
-    // Do not play any bell on unlock; only unlock/resume AudioContext
   }
 
   updateIntervalSettings() {
     const timerVal = parseInt(this.minuteInput.value, 10) || 0;
     let intervalVal = parseInt(this.intervalInput.value, 10) || 0;
 
-    // Clamp interval to timer
     if (intervalVal > timerVal) {
       intervalVal = timerVal;
-      this.intervalInput.value = timerVal; // also fix UI
+      this.intervalInput.value = timerVal;
     }
 
     this.intervalDuration = intervalVal * 60;
@@ -165,14 +178,12 @@ class TimerApp {
   }
 
   bindEvents() {
-    // Intercept playPause for mobile background notice
     this.playPauseButton.addEventListener("click", (e) => {
       if (
         this.isMobile &&
         this.mobileBgNotice &&
         this.mobileBgNotice.style.display !== "none"
       ) {
-        // If notice is already showing, do nothing
         return;
       }
 
@@ -181,7 +192,6 @@ class TimerApp {
         this.mobileBgNotice.style.display = "flex";
         document.body.style.overflow = "hidden";
 
-        // Only start timer after dismiss
         this.dismissBgNotice.onclick = () => {
           this.mobileBgNotice.style.display = "none";
           document.body.style.overflow = "";
@@ -199,17 +209,13 @@ class TimerApp {
       this.resetTimer();
     });
 
-    // Timer minutes input
     this.minuteInput.addEventListener("input", () => {
       this.updateDisplayFromInput();
       this.saveMinutes();
 
       const timerVal = parseInt(this.minuteInput.value, 10) || 0;
-
-      // keep intervalInput's max synced with timer
       this.intervalInput.max = timerVal;
 
-      // clamp if interval > timer
       if (parseInt(this.intervalInput.value, 10) > timerVal) {
         this.intervalInput.value = timerVal;
       }
@@ -265,12 +271,10 @@ class TimerApp {
     });
   }
 
-  // Save only minutes to localStorage
   saveMinutes() {
     localStorage.setItem("meditational_minutes", this.minuteInput.value);
   }
 
-  // Restore only minutes from localStorage
   restoreMinutes() {
     const minutes = localStorage.getItem("meditational_minutes");
     if (minutes !== null) this.minuteInput.value = minutes;
@@ -279,7 +283,7 @@ class TimerApp {
   toggleIntervalInput() {
     if (this.toggleInterval.checked) {
       this.intervalInput.classList.remove("hidden");
-      this.intervalInput.disabled = false; // keep editable
+      this.intervalInput.disabled = false;
       this.updateIntervalSettings();
     } else {
       this.intervalInput.classList.add("hidden");
@@ -287,22 +291,44 @@ class TimerApp {
   }
 
   changeMusic() {
-    const wasPlaying = !this.audio.paused;
-    this.audio.pause();
-    this.audio.currentTime = 0;
-    this.audio = this.audioFiles[this.musicSelect.value];
-    if (this.musicOnOff.src.includes("volume.png") && wasPlaying) {
-      this.audio.play();
+    const selected = this.musicSelect.value;
+    this.stopAmbient();
+    if (this.musicOnOff.src.includes("volume.png")) {
+      this.startAmbient(selected);
+    }
+  }
+
+  startAmbient(key) {
+    if (!this.ambientBuffers[key]) return;
+    this.stopAmbient();
+
+    const source = this.audioCtx.createBufferSource();
+    source.buffer = this.ambientBuffers[key];
+    source.loop = true;
+    source.connect(this.ambientGain);
+    source.start(0);
+
+    this.ambientSource = source;
+    this.audio = key;
+  }
+
+  stopAmbient() {
+    if (this.ambientSource) {
+      try {
+        this.ambientSource.stop();
+      } catch {}
+      this.ambientSource.disconnect();
+      this.ambientSource = null;
     }
   }
 
   musicOnOffClick() {
     if (this.musicOnOff.src.includes("volume.png")) {
       this.musicOnOff.src = "img/volume-mute.png";
-      this.audio.pause();
+      this.stopAmbient();
     } else {
       this.musicOnOff.src = "img/volume.png";
-      this.audio.play();
+      this.startAmbient(this.musicSelect.value);
     }
   }
 
@@ -310,7 +336,7 @@ class TimerApp {
     const volume = this.volumeSlider.value / 100;
     this.musicOnOff.src =
       volume === 0 ? "img/volume-mute.png" : "img/volume.png";
-    for (const a of Object.values(this.audioFiles)) a.volume = volume;
+    this.ambientGain.gain.value = volume;
   }
 
   toggleSoundMenu() {
@@ -380,18 +406,15 @@ class TimerApp {
 
     this.timeLeft--;
 
-    // Interval bell
     if (this.toggleInterval.checked && this.intervalDuration > 0) {
       this.intervalTime--;
       if (this.intervalTime <= 0 && this.timeLeft > 1) {
-        // Always unlock audio before playing interval bell (iOS reliability)
         this.unlockAllAudioOnce();
         this.playBell("interval");
         this.intervalTime = this.intervalDuration;
       }
     }
 
-    // Timer finished
     if (this.timeLeft <= 0) {
       clearInterval(this.countdownInterval);
       this.countdownInterval = null;
@@ -433,19 +456,15 @@ class TimerApp {
     window.location.href = "guidedSection.html";
   }
 
-  // Placeholder methods for saving/loading settings
   saveSettings() {
-    // Implementation for saving settings to localStorage
+    // placeholder
   }
 }
 
-// Initialize
 window.addEventListener("DOMContentLoaded", () => {
   new TimerApp();
 
-  // Show mobile-only mute notice popup on load
   function isMobileDevice() {
-    // Match iOS or Android devices with touch support
     const ua = navigator.userAgent;
     const isMobile = /iPhone|iPad|iPod|Android/.test(ua);
     const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 1;
@@ -456,13 +475,11 @@ window.addEventListener("DOMContentLoaded", () => {
   const dismissBtn = document.getElementById("dismissMuteNotice");
   const intervalToggle = document.getElementById("toggleInterval");
 
-  // Always hide popup on load for all devices
   if (muteNotice) {
     muteNotice.style.display = "none";
     document.body.style.overflow = "";
   }
 
-  // Only attach event for mobile devices (iOS or Android)
   if (muteNotice && dismissBtn && intervalToggle && isMobileDevice()) {
     intervalToggle.addEventListener("change", function () {
       if (intervalToggle.checked) {
