@@ -133,6 +133,7 @@ class TimerApp {
       "river.mp3": "sounds/river.mp3",
       "woods.mp3": "sounds/woods.mp3",
       "white_noise.mp3": "sounds/white_noise.mp3",
+      "stalactite_cave.mp3": "sounds/stalactite_cave.mp3",
     };
 
     for (const [key, url] of Object.entries(ambientFiles)) {
