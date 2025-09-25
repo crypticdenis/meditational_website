@@ -136,6 +136,10 @@ class TimerApp {
       "stalactite_cave.mp3": "sounds/stalactite_cave.mp3",
     };
 
+    // Track loaded count
+    let loadedCount = 0;
+    const totalFiles = Object.keys(ambientFiles).length;
+
     for (const [key, url] of Object.entries(ambientFiles)) {
       try {
         const response = await fetch(url);
@@ -145,6 +149,17 @@ class TimerApp {
         );
       } catch (error) {
         console.error(`Error loading ambient file ${url}:`, error);
+      }
+      loadedCount++;
+      // When all buffers are loaded, check if music should start
+      if (loadedCount === totalFiles) {
+        // Only start ambient if unmuted and buffer exists
+        if (this.musicOnOff.src.includes("volume.png")) {
+          const selected = this.musicSelect.value;
+          if (this.ambientBuffers[selected]) {
+            this.startAmbient(selected);
+          }
+        }
       }
     }
   }
