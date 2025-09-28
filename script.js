@@ -131,7 +131,6 @@ class TimerApp {
   async loadAmbientBuffers() {
     const ambientFiles = {
       "river.mp3": "sounds/river.mp3",
-      "woods.mp3": "sounds/woods.mp3",
       "white_noise.mp3": "sounds/white_noise.mp3",
       "stalactite_cave.mp3": "sounds/stalactite_cave.mp3",
     };
@@ -256,6 +255,15 @@ class TimerApp {
         // update hidden select so your existing logic still works
         musicSelect.value = value;
         musicSelect.dispatchEvent(new Event("change"));
+
+        // Unmute and update icon if currently muted
+        if (
+          this.musicOnOff &&
+          this.musicOnOff.src.includes("volume-mute.png")
+        ) {
+          this.musicOnOff.src = "img/volume.png";
+          this.startAmbient(value);
+        }
       });
     });
 
