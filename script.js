@@ -256,6 +256,16 @@ class TimerApp {
         // update hidden select so your existing logic still works
         musicSelect.value = value;
         musicSelect.dispatchEvent(new Event("change"));
+
+        // Unmute and update icon if currently muted
+        const musicOnOff = document.getElementById("musicOn");
+        if (musicOnOff && musicOnOff.src.includes("volume-mute.png")) {
+          musicOnOff.src = "img/volume.png";
+        }
+        // Start ambient if needed
+        if (typeof app !== "undefined" && app.startAmbient) {
+          app.startAmbient(value);
+        }
       });
     });
 
