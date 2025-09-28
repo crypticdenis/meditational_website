@@ -565,7 +565,7 @@ main {
 
 .sound-row {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -935,56 +935,150 @@ footer.scroll {
   font-weight: 400;
 }
 
-/* Mobile welcome overlay and start session overlay improvements */
-@media screen and (max-width: 600px) {
-  #welcome-overlay > div {
-    font-size: 1.5em !important;
-    max-width: 90vw !important;
-    text-align: center !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.7em;
+/* Music picker layout and equal sizing */
+.music-picker {
+  display: flex;
+  gap: 2em;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 0.5em;
+  padding: 1em 0 0.5em 0;
+  background: rgba(30, 32, 40, 0.85);
+  border-radius: 1em;
+}
+
+.music-option {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  padding: 0.5em 0.5em 0 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 110px;
+  min-width: 110px;
+  max-width: 110px;
+  box-sizing: border-box;
+  transition: background 0.2s, box-shadow 0.2s;
+  border-radius: 1em;
+}
+
+.music-option-img-wrap {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5em;
+}
+
+.music-option img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.18s cubic-bezier(0.4, 1.4, 0.6, 1);
+}
+
+.music-option:focus,
+.music-option:hover {
+  background: rgba(141, 157, 218, 0.15);
+  box-shadow: 0 2px 12px rgba(141, 157, 218, 0.18);
+  outline: none;
+}
+
+.music-option-label {
+  font-size: 1.05em;
+  color: #fff;
+  margin-top: 0.2em;
+  font-family: "Quicksand", Arial, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.2;
+  min-height: 2.4em;
+  display: block;
+}
+
+.sound-controls-column {
+  display: flex;
+  flex-direction: row;
+}
+
+.sound-controls-under {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  margin-top: 1.5em;
+}
+
+.slidecontainer {
+  width: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: visible !important;
+}
+
+.sound-slider {
+  width: 100px;
+  margin-left: 0;
+}
+
+@media (max-width: 600px) {
+  .sound-menu {
+    min-width: 0;
+    width: 96vw;
+    max-width: 98vw;
+    padding: 0.7em 0.1em;
+    border-radius: 0.8em;
   }
-  #welcome-message-1,
-  #welcome-message-2,
-  #welcome-message-3 {
-    font-size: 1em !important;
-    margin-top: 0.7em !important;
-    text-align: center !important;
-    width: 100%;
-    display: block;
+  .music-picker {
+    flex-wrap: wrap;
+    gap: 0.4em;
+    padding: 0.3em 0.1em 0.3em 0.1em;
+    border-radius: 0.8em;
   }
-  #start-session-overlay > div {
-    min-width: 80vw !important;
-    max-width: 80vw !important;
-    padding: 1.2em 0.5em 1em 0.5em !important;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2em;
+  .music-option {
+    width: 38vw;
+    min-width: 90px;
+    max-width: 120px;
+    margin-bottom: 0.3em;
+    padding: 0.3em 0.1em 0 0.1em;
   }
-  #start-session-overlay label,
-  #start-session-overlay span {
-    font-size: 1em !important;
-    text-align: center !important;
-    width: 100%;
-    display: block;
+  .music-option-img-wrap {
+    width: 60vw;
+    max-width: 70px;
+    height: 60vw;
+    max-height: 70px;
+    margin-bottom: 0.2em;
   }
-  #session-slider {
-    width: 70vw !important;
-    max-width: 90vw !important;
-    margin: 0 auto;
-    display: block;
+  .music-option img {
+    width: 60vw;
+    max-width: 64px;
+    height: 60vw;
+    max-height: 64px;
   }
-  .start-btn {
-    width: 80vw !important;
-    max-width: 80vw !important;
-    font-size: 1.1em !important;
-    padding: 0.7em 0 !important;
-    margin: 0.5em auto 0 auto !important;
-    display: block;
+  .music-option-label {
+    font-size: 0.97em;
+    min-height: 1.7em;
+  }
+  .sound-controls-under {
+    margin-top: 0.5em;
+    gap: 0.4em;
+  }
+  .slidecontainer {
+    width: 70vw;
+    max-width: 140px;
+  }
+  .sound-slider {
+    width: 55vw;
+    max-width: 120px;
   }
 }

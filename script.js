@@ -248,6 +248,16 @@ class TimerApp {
       this.changeMusic();
       this.saveSettings();
     });
+    document.querySelectorAll(".music-option").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const value = btn.dataset.value;
+        const musicSelect = document.getElementById("musicSelect");
+
+        // update hidden select so your existing logic still works
+        musicSelect.value = value;
+        musicSelect.dispatchEvent(new Event("change"));
+      });
+    });
 
     this.toggleInterval.addEventListener("change", () => {
       this.toggleIntervalInput();
@@ -350,9 +360,14 @@ class TimerApp {
 
   changeVolume() {
     const volume = this.volumeSlider.value / 100;
+    // If muted and slider is moved, unmute
+    if (this.musicOnOff.src.includes("volume-mute.png") && volume > 0) {
+      this.musicOnOff.src = "img/volume.png";
+      this.startAmbient(this.musicSelect.value);
+    }
+    this.ambientGain.gain.value = volume;
     this.musicOnOff.src =
       volume === 0 ? "img/volume-mute.png" : "img/volume.png";
-    this.ambientGain.gain.value = volume;
   }
 
   toggleSoundMenu() {

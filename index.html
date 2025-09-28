@@ -88,38 +88,62 @@
             <label for="musicSelect" class="visually-hidden"
               >Background sound</label
             >
-            <select
-              class="dropdown-s"
-              name="musicSelect"
-              id="musicSelect"
-              aria-label="Choose background sound"
-            >
+            <div class="music-picker">
+              <button class="music-option" data-value="river.mp3">
+                <div class="music-option-img-wrap">
+                  <img src="img/river.jpg" alt="River" />
+                </div>
+                <span class="music-option-label">River</span>
+              </button>
+              <button class="music-option" data-value="woods.mp3">
+                <div class="music-option-img-wrap">
+                  <img src="img/river.jpg" alt="Woods" />
+                </div>
+                <span class="music-option-label">Woods</span>
+              </button>
+              <button class="music-option" data-value="white_noise.mp3">
+                <div class="music-option-img-wrap">
+                  <img src="img/river.jpg" alt="White Noise" />
+                </div>
+                <span class="music-option-label">White Noise</span>
+              </button>
+              <button class="music-option" data-value="stalactite_cave.mp3">
+                <div class="music-option-img-wrap">
+                  <img src="img/stalactite_cave.jpg" alt="Stalactite Cave" />
+                </div>
+                <span class="music-option-label">Stalactite Cave</span>
+              </button>
+            </div>
+            <div class="sound-controls-column">
+              <button id="musicToggle" class="btn-sound-access">
+                <img
+                  src="img/volume-mute.png"
+                  alt="Mute background sounds"
+                  class="top-right-image"
+                  id="musicOn"
+                />
+              </button>
+              <div class="slidecontainer">
+                <label for="volumeSlider" class="visually-hidden">Volume</label>
+                <input
+                  type="range"
+                  aria-label="Adjust volume"
+                  min="0"
+                  max="100"
+                  value="50"
+                  class="sound-slider"
+                  id="volumeSlider"
+                  style="padding: 0"
+                />
+              </div>
+            </div>
+            <!-- hidden select for accessibility -->
+            <select id="musicSelect" class="hidden">
               <option value="river.mp3">river</option>
               <option value="woods.mp3">woods</option>
               <option value="white_noise.mp3">white noise</option>
               <option value="stalactite_cave.mp3">stalactite cave</option>
             </select>
-            <button id="musicToggle" class="btn-sound-access">
-              <img
-                src="img/volume-mute.png"
-                alt="Mute background sounds"
-                class="top-right-image"
-                id="musicOn"
-              />
-            </button>
-          </div>
-          <div class="slidecontainer">
-            <label for="volumeSlider" class="visually-hidden">Volume</label>
-            <input
-              type="range"
-              aria-label="Adjust volume"
-              min="0"
-              max="100"
-              value="50"
-              class="sound-slider"
-              id="volumeSlider"
-              style="padding: 0"
-            />
           </div>
         </div>
 
