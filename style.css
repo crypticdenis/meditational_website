@@ -143,13 +143,13 @@ body.pulsate::before {
   pointer-events: none;
   animation: rippleEffect 3s ease-out forwards;
 }
+/* Replace your current body background with this for a matching logo background */
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: rgb(2, 0, 20);
-  background: radial-gradient(circle, rgb(40, 50, 70) 0%, rgb(0, 8, 16) 200%);
+  background: #181818; /* Matches the logo background */
   color: rgb(255, 255, 255);
   overflow-x: hidden;
-  overflow-y: auto; /* or scroll */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -709,6 +709,12 @@ footer.scroll {
 }
 
 @media (max-width: 800px) {
+  /* Hide logo on small screens */
+  .main-logo {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
   /* Center the background sounds button */
   .guided-container {
     justify-content: center !important;
@@ -1032,6 +1038,12 @@ footer.scroll {
 }
 
 @media (max-width: 600px) {
+  /* Hide logo on small screens */
+  .main-logo {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
   .sound-menu {
     min-width: 0;
     width: 96vw;
@@ -1081,4 +1093,12 @@ footer.scroll {
     width: 55vw;
     max-width: 120px;
   }
+}
+
+.main-logo {
+  display: block;
+  margin: 0 auto;
+  max-width: 320px;
+  width: 80vw;
+  height: auto;
 }
