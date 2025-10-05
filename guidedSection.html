@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -40,7 +40,7 @@
         --text: rgb(193, 201, 229);
         --text-light: rgb(193, 201, 229);
         --card-bg: rgb(36, 41, 57);
-        --background: rgb(28, 38, 54);
+        --background: #181818;
         --gradient: linear-gradient(
           180deg,
           rgb(141, 157, 218) 0%,
@@ -59,8 +59,33 @@
         color: white;
       }
 
+      body,
+      input,
+      button,
+      label,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      .subtitle,
+      .card-title,
+      .card-description,
+      .card-duration,
+      .session-title,
+      .control-btn,
+      .nav-home,
+      .footer-content,
+      .footer-links,
+      .container,
+      .meditation-card,
+      .main-logo {
+        font-family: "Comfortaa", cursive !important;
+      }
+
       body {
-        font-family: "Courier Prime", monospace;
+        font-family: "Comfortaa", cursive;
         background: var(--background);
         color: var(--text);
         line-height: 1.6;
@@ -74,6 +99,19 @@
         margin: 0 auto;
         padding: 0 1.5rem;
         width: 100%;
+      }
+      .main-logo {
+        display: block;
+        margin: 0 auto;
+        max-width: 320px;
+        width: 80vw;
+        height: auto;
+      }
+      @media (max-width: 600px), (max-width: 800px) {
+        .main-logo {
+          display: none !important;
+          visibility: hidden !important;
+        }
       }
 
       /* Header Styles */
@@ -92,7 +130,7 @@
       }
 
       h1 {
-        font-family: "Courier Prime", monospace;
+        font-family: "Comfortaa", cursive;
         font-size: 2.5rem;
         color: var(--text-light);
         font-weight: 600;
@@ -396,14 +434,14 @@
   <body>
     <header>
       <a href="/" class="nav-home">
-        <img
-          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJtMyA5IDktNyA5IDd2MTFhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJ6Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iOSAyMiA5IDEyIDE1IDEyIDE1IDIyIj48L3BvbHlsaW5lPjwvc3ZnPg=="
-          alt="Home"
-        />
+        <img src="img/home.png" alt="Home" />
         <span>Back to Timer</span>
       </a>
-      <div class="container header-content">
-        <h1>Guided Meditation Sessions</h1>
+      <div
+        class="container header-content"
+        style="display: flex; flex-direction: column; align-items: center"
+      >
+        <img src="img/logo.png" alt="Meditational Logo" class="main-logo" />
       </div>
     </header>
 

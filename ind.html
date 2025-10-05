@@ -20,7 +20,7 @@
         padding: 0;
         height: 100%;
         overflow: hidden;
-        font-family: "Quicksand", Arial, sans-serif;
+        font-family: "Comfortaa", Arial, sans-serif;
       }
 
       /* iOS-specific video fixes */
@@ -100,7 +100,7 @@
       }
 
       .progress-ring__circle {
-        stroke: white;
+        stroke: rgb(141, 157, 218);
         transition: stroke-dasharray 0.3s linear, stroke-dashoffset 1s linear;
       }
 
@@ -110,8 +110,9 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 5em;
-        color: white;
-        font-family: "Quicksand", Arial, sans-serif;
+        color: rgb(141, 157, 218);
+        font-family: "Comfortaa", Arial, sans-serif;
+        font-weight: 500;
       }
 
       @keyframes spin {
@@ -127,15 +128,15 @@
       .btn {
         position: fixed;
         z-index: 20;
-        background: rgba(255, 255, 255, 0.85);
-        color: #333;
-        font-family: "Quicksand", Arial, sans-serif;
+        background: rgba(141, 157, 218, 0.9);
+        color: #fff;
+        font-family: "Comfortaa", Arial, sans-serif;
         font-size: 1.2em;
         border-radius: 2em;
         padding: 0.5em 1.3em;
         min-width: 8.5em;
         min-height: 2.5em;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(141, 157, 218, 0.3);
         transition: background 0.3s, color 0.3s;
         letter-spacing: 0.04em;
         border: none;
@@ -147,8 +148,8 @@
       }
 
       .btn:hover {
-        background: #e0e0e0;
-        color: #111;
+        background: rgba(121, 134, 203, 0.95);
+        color: #fff;
       }
 
       .exit-btn {
@@ -166,16 +167,24 @@
         padding: 0.7em 2.2em;
         border-radius: 2em;
         border: none;
-        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-        color: #232526;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-        font-weight: 700;
+        background: linear-gradient(
+          90deg,
+          rgb(141, 157, 218) 0%,
+          rgb(121, 134, 203) 100%
+        );
+        color: #fff;
+        box-shadow: 0 2px 12px rgba(141, 157, 218, 0.4);
+        font-weight: 600;
         letter-spacing: 0.04em;
         margin-top: 0.5em;
       }
 
       .start-btn:hover {
-        background: linear-gradient(90deg, #38d769 0%, #2de0c2 100%);
+        background: linear-gradient(
+          90deg,
+          rgb(121, 134, 203) 0%,
+          rgb(101, 114, 183) 100%
+        );
       }
 
       /* Media queries for mobile optimization */
@@ -376,7 +385,7 @@
               for="session-slider"
               style="
                 font-size: 1.1em;
-                color: #b0e6c1;
+                color: rgb(141, 157, 218);
                 font-weight: 600;
                 letter-spacing: 0.02em;
                 font-family: 'Quicksand', Arial, sans-serif;
@@ -385,7 +394,7 @@
               <span
                 id="slider-value"
                 style="
-                  color: #43e97b;
+                  color: rgb(141, 157, 218);
                   font-size: 1.2em;
                   font-family: 'Quicksand', Arial, sans-serif;
                 "
@@ -398,7 +407,11 @@
               min="1"
               max="90"
               value="10"
-              style="width: 260px; accent-color: #43e97b; height: 2.2em"
+              style="
+                width: 260px;
+                accent-color: rgb(141, 157, 218);
+                height: 2.2em;
+              "
             />
           </div>
           <button id="start-session-btn" class="start-btn">

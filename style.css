@@ -1,3 +1,30 @@
+/* Add this at the top of your CSS file: */
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap");
+
+body,
+input,
+button,
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.quote,
+.heading-meditational,
+footer,
+.container,
+.guided-label,
+.sound-label,
+.card-content,
+.ambient-option-label,
+.music-option-label,
+.main-logo,
+.meditation-text {
+  font-family: "Comfortaa", cursive !important;
+}
+
 /* Mobile background notice styles */
 #mobileBgNotice.mute-notice {
   display: none;
